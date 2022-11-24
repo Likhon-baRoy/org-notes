@@ -1,0 +1,17 @@
+#+TITLE:  Go with ORG
+#+AUTHOR: Likhon Barai
+#+EMAIL:  likhonhere007@gmail.com
+#+DATE:   2022 Nov 24
+#+TAGS:   org blog todo
+
+* Introduction
+
+#+BEGIN_QUOTE
+  Org mode is for keeping notes, maintaining TODO lists, planning projects and authoring documents with a fast and effective plain text system. – [[http://orgmode.org/][ORG]]
+#+END_QUOTE
+
+** Getting started with ORG-Mode
+
+#+begin_quote options
+  “The best editor for writing with org-mode is Emacs.“
+#+end_quote

@@ -1,0 +1,112 @@
+#+TITLE:  Working with Git
+#+AUTHOR: Likhon Barai
+#+EMAIL:  likhonhere007@gmail.com
+#+DATE:   2022 Nov 13
+#+TAGS:   git github blog website
+#+TITLE:
+* Personal access tokens (classic)
+- This token was made for Head-first-git book tutorial purpose.
+
+#+begin_src
+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
+#+end_src
+
+* Introduce yourself to Git
+1. We will start with telling Git our full name.
+2. Next, we tell Git our email address.
+3. With the =config= command, you can also change your default editor.
+   For example, to change the default editor to Emacs, you would type:
+
+#+BEGIN_EXAMPLE sh
+ git config --global user.name "Likhon Barai"
+ git config --global user.email "me@i-love-git.com"
+ git config --global core.editor="emacs"
+#+END_EXAMPLE
+
+4. You can find the file recording your Git configuration on your home folder. For Windows, you can find it in =C:\Users\YourName\.gitconfig=. For Linux and Mac OS, you can find it in =/home/yourname/.gitconfig=.
+
+*Note:* You can always change these later by running the same command again with
+different values. You can run this in any directory.
+* Initializing Git
+1. Initialize git repository in your working directory by: ~git init~.
+2. Keep track of your files by: ~git status~ command.
+3. Now we are ready to commit our work. This involves two Git commands, namely
+   ~git add~ and ~git commit~.
+
+#+BEGIN_EXAMPLE sh
+ git init
+ git add <filename>
+ git commit -m "My first commit"
+#+END_EXAMPLE
+
+You can unstage a file using the Git command ~git rm~ with the option ~--cached~.
+
+#+BEGIN_SRC sh
+ git rm --cached README.md
+#+END_SRC
+
+We learned that committing to Git is a two-step process. You first
+add the files and then commit.
+
+Notice that the ~git add~ command takes as its argument the name of the file you
+wish to add to Git. And the git commit command has a flag, -m, followed by the
+commit message. The -m stands for “message” and is a mechanism for you to
+provide a meaningful reminder as to why you made this change.
+
+Commit objects are stored by Git in binary format, making them very hard for
+humans to read but super safe and efficient for Git.
+* Git branches
+Git by default uses a branch called =master=.
+You can use the branch command to create a new branch, list all the branches in
+your repository, and even delete branches. And, like everything you have done so far, all this happens inside your working directory.
+
+Let’s start by creating a new branch. You can use the ~branch~ command, giving it the name of the branch you wish to create as an argument.
+
+#+BEGIN_SRC sh
+  git branch my-first-branch
+#+END_SRC
+
+/Git does not report success or failure, but you can list all your branches by using the same branch command, except with no arguments./
+
+#+BEGIN_SRC sh
+  git branch
+#+END_SRC
+
+- Creating a new branch does not mean you can start to use it immediately. You have to switch to it first.
+- To switch to another branch, you will use yet another Git command, aptly named ~switch~, which takes one argument, namely the name of the branch you wish to switch to:
+
+  #+BEGIN_SRC sh
+ git switch my-first-branch
+  #+END_SRC
+
+- You can use ~git branch~ to list all the branches again: /asterisk/ ~(*)~ points to the branch you just switched to.
+
++ The ~git switch~ command lets you create a new branch and switch to it in one fell swoop. You can invoke the ~git switch~ command with the ~-c~ (or --create) flag, giving it the name of the branch you wish to create, like so:
+
+  #+BEGIN_SRC sh
+ git switch -c my-first-branch
+  #+END_SRC
+
+  This will prompt Git to create the branch called my-first-branch and switch to it immediately.
+
+* Quick setup for github
+
+- create a new repository on the command line
+
+#+BEGIN_SRC sh
+  echo "# dotfiles" >> README.md
+   git init
+   git add README.md
+   git commit -m "first commit"
+   git branch -M main
+   git remote add origin git@github.com:Likhon-baRoy/dotfiles.git
+   git push -u origin main
+#+END_SRC
+
+- or push an existing repository from the command line
+
+#+BEGIN_SRC sh
+   git remote add origin git@github.com:Likhon-baRoy/dotfiles.git
+   git branch -M main
+   git push -u origin main
+#+END_SRC

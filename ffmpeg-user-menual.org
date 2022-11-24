@@ -1,0 +1,67 @@
+#+TITLE: FFMPEG SHORTCUTS
+* Merge Videos
++ *NOTE:* all *.mp4 in the folder will be merged into one output.mp4.
+  SO, better to put your desired *.mp4 in a separate folder and then do it.
+
++ The following one-liner works in bash (Mac, Linux) and does not require an intermediate file:
+
+- =ffmpeg -f concat -safe 0 -i <(for f in ./*.mp4; do echo "file '$PWD/$f'"; done) -c copy output.mp4=
+
++ Here, the <() syntax actually creates a temporary file "in the background" so to say.
+
+** Merge with other formats
++ first you can convert your file into your desire format if you want.
+- ~ffmpeg -i _1.mp4_ -qscale 0 1.mpg~
+- =ffmpeg -i _2.mp4_ -qscale 0 2.mpg=
++ then merging two videos in one as output and put your desire format for it.
+- ~cat 1.mpg 2.mpg | ffmpeg -f mpeg -i - -qscale 0 -vcodec mpeg4 output.mp4~
+
++ alternative is ~*.ts~ format.
+- ffmpeg -i _myfile1.mp4_ -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts
+- ffmpeg -i _myfile2.mp4_ -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts
++ and then merge into one.
+- ffmpeg -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output.mp4
+
+* Cut the Clips
+
++ basic format to use:
+- ffmpeg _<start time>_ _<input file>_ _<cut duration>_ _<out file>_
+
+eg. cut 60 second clip after 1 minute of video
+
+- ffmpeg -ss 00:01:00 -to 00:02:00  -i input.mp4 -c copy output.mp4
+
+- ffmpeg -i inputVideo.mp4 -ss 00:03 -to 00:08 -c:v libx264 -crf 30 trim_opseek_encode.mp4
+
+- ffmpeg -i movie.mp4 -ss 00:00:03 -t 00:00:08 -async 1 cut.mp4
+
+*Notes:* start time before input file is faster.
+start time after input file is accurate/precise.
+
+* Recording
+
++ this clip does record your videos within headphone plug_in.
+#+begin_example ffmpeg
+
+#+end_example
+~ffmpeg -f pulse -ac 2 -i default -f x11grab -r 30 -s 1280x800 -i :0.0 -acodec pcm_s16le -vcodec libx264 -preset ultrafast -threads 0 -y ~/yt/recorded/$(date +%y-%m-%d).mkv"~
+
+* Convert
+** Convert Video to gif
+
+#+begin_example
+ffmpeg -ss 30 -t 3 -i input.mp4 \
+-vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+    -loop 0 output.gif
+#+end_example
+
+- This example will skip the first 30 seconds ~(-ss 30)~ of the input and create a 3 second output ~(-t 3)~.
+- ~fps~ filter sets the frame rate. A rate of 10 frames per second is used in the example.
+- ~scale~ filter will resize the output to 320 pixels wide and automatically determine the height while preserving the aspect ratio. The lanczos scaling algorithm is used in this example.
+- ~palettegen~ and ~paletteuse~ filters will generate and use a custom palette generated from your input. These filters have many options, so refer to the links for a list of all available options and values. Also see the Advanced options section below.
+- ~split~ filter will allow everything to be done in one command and avoids having to create a temporary PNG file of the palette.
+- Control looping with =1-loop= output option but the values are confusing. A value of 0 is infinite looping, -1 is no looping, and 1 will loop once meaning it will play twice. So a value of 10 will cause the GIF to play 11 times.
+
+#+BEGIN_SRC emacs-lisp
+  (setq notifications)
+#+END_SRC
