@@ -9,27 +9,28 @@ This is inside the drawer.
 :END:
 
 * Dired
-*C-x C-j*     (dired-jump)
+- C-x C-j
+  - (dired-jump) Jump to Dired buffer corresponding to current buffer.
 
 * Shell
 ** Shell History Ring
-*M-p / C-UP*
-    Fetch the next earlier old shell command (comint-previous-input).
+- M-p / C-UP
+  - Fetch the next earlier old shell command (comint-previous-input).
 
-*M-n / C-DOWN*
-    Fetch the next later old shell command (comint-next-input).
+- M-n / C-DOWN
+  - Fetch the next later old shell command (comint-next-input).
 
-*M-r*
-    Begin an incremental regexp search of old shell commands (comint-history-isearch-backward-regexp).
+- M-r
+  - Begin an incremental regexp search of old shell commands (comint-history-isearch-backward-regexp).
 
-*C-c C-x ¶*
-    Fetch the next subsequent command from the history (comint-get-next-from-history).
+- C-c C-x
+  - Fetch the next subsequent command from the history (comint-get-next-from-history).
 
-*C-c . ¶*
-    Fetch one argument from an old shell command (comint-input-previous-argument).
+- C-c .
+  - Fetch one argument from an old shell command (comint-input-previous-argument).
 
-*C-c C-l ¶*
-    Display the buffer’s history of shell commands in another window (comint-dynamic-list-input-ring).
+- C-c C-l
+  - Display the buffer’s history of shell commands in another window (comint-dynamic-list-input-ring).
 
 * Projectile
 - Simply open any file in the git project using =C-x C-f= and then try running
@@ -44,6 +45,7 @@ This is inside the drawer.
   considered part of the same project.
 
 * ORG
+** org-tempo
 - C-c C-, (org-insert-structure-template)
 for farther explanation, [[https://orgmode.org/manual/Structure-Templates.html#Structure-Templates][go here]]
 
@@ -63,7 +65,7 @@ s	‘#+BEGIN_SRC’ … ‘#+END_SRC’
 v	‘#+BEGIN_VERSE’ … ‘#+END_VERSE’
 #+end_src
 
-* Hideshow minor mode
+* Hide-show minor mode
 
 Here’s the keymap for folding-related functions in the two modes:
 
@@ -106,11 +108,13 @@ Here’s the keymap for folding-related functions in the two modes:
 
 - ~hs-special-modes-alist~
     A list of elements, each specifying how to initialize Hideshow variables for one major mode. See the variable's documentation string for more information.
-* Enter Numeric valus
-- Insert number input trough a significant point ~C-10 C-u 0~ this will enter 10
-  zeros after the point.
-[-] [X] [ ] -> :kissing_heart: 🍭🔖📚🐄💠
-- *C-x C-b o* to view a file in /other window/.
+* Enter Numeric values
+Insert integer trough a significant point
+- ~C-10 C-u 0~
+  - /will give =10= zeros after the point./
+
+- C-x C-b o
+  - /to view a file in /other window/./
 * Display line number
 - M-x d-nu RET
 * Formatting paragraph with shell cmnd
@@ -156,8 +160,8 @@ Here’s the keymap for folding-related functions in the two modes:
     the top location.  The global mark ring is updated
     automatically
 
-* Registers:
-** Save Positions in Registers:
+* Registers
+** Save Positions in Registers
 - C-x r SPC
   - runs point-to-register
 
@@ -170,13 +174,13 @@ Here’s the keymap for folding-related functions in the two modes:
 - C-x r C-@
   - (point-to-register REGISTER &optional ARG)
 
-* Search:
+* Search
 - M-p
   - select PREVIOUS search string
 - M-n
   - select NEXT search string
 
-* Help Menu:
+* Help Menu
 - C-h i m
   - go to info and SELECT *m* for menu
 
@@ -192,7 +196,7 @@ Here’s the keymap for folding-related functions in the two modes:
 - C-x l
   - Report number of lines on current page, and how many are before or after point.
 
-* Bookmarks:
+* Bookmarks
 
 - C-x r m 	runs bookmark-set
 - C-x r b 	runs bookmark-jump
@@ -205,9 +209,9 @@ push to the mark ring so that you can use ~C-u C-SPC~ to return afterwards. This
 includes isearch, so after using C-s to go somewhere, you can easily jump back
 again.
 
-* Exchange point and mark:
+* Exchange point and mark
 - C-x C-x runs exchange-point-and-mark which is very useful for jumping between
-  two locations. It also activates the mark/region,
+  two locations. It also activates the mark-or-region,
  use C-SPC to
   clear the highlighting.
 
@@ -229,24 +233,28 @@ The command C-x r j r switches to the buffer recorded in register r, pushes a ma
 If you use C-x r j to go to a saved position, but the buffer it was saved from has been killed, C-x r j tries to create the buffer again by visiting the same file. Of course, this works only for buffers that were visiting files.
 
 * Keyboard Macros
-- C-x (:      - Start recording key strokes.
+- C-x (      - Start recording key strokes.
 
-- C-x ):        Stop recording key strokes and save recording as a replayable keyboard macro.
+- C-x )        Stop recording key strokes and save recording as a replayable keyboard macro.
 
-- C-x e:        Replay the keyboard macro. Type e after typing this once to play it again.
+- C-x e        Replay the keyboard macro. Type e after typing this once to play it again.
 
-- C-a 	C-SPACE 	C-n		 M-w	 C-y	---Duplicate a whole line
-- CTRL-A	CTRL-K	 CTRL-K	 CTRL-Y	 CTRL-Y		---Duplicate a whole line
+- =C-a= 	=C-SPACE= 	=C-n=		 =M-w=	 =C-y=	/---Duplicate a whole line/
+- =C-A=	=C-K=	 =C-K=	 =C-Y=	 =C-Y=		/---Duplicate a whole line/
 
-- C-x C-e ;; execute current line elisp
-- C-x s 	---Save-some-buffer, giving the choice which buffer to save or not:
+- C-x C-e
+  - execute current line in elisp program.
+- C-x s 	---Save-some-buffer, giving the choice which buffer to save or not
 
-- M-a or M-e 			---M-a runs the command backward-sentence And M-e runs the command forward-sentence.
+- M-a
+  - runs the command backward-sentence.
+- M-e
+  - runs the command forward-sentence.
 
-- M-x eval-region ;; region
-- M-x eval-buffer ;; whole buffer
-- M-x load-file ~/.emacs.d/init.el
-- M-x revert-buffer
+- ~M-x~ =eval-region=
+- ~M-x~ =eval-buffer=
+- ~M-x~ =load-file= =~/.emacs.d/init.el=
+- ~M-x~ =revert-buffer=
 
 narrow-to-region (C-x n n) Then widen (C-x n w)
 
@@ -255,10 +263,11 @@ C-x C-e 	---to execute just that sexp. ;; Usually it's not necessary to reload t
 
 M-: (load user-init-file)
 ;; you type it in Eval: prompt (including the parentheses)
-;; user-init-file is a variable holding the ~/.emacs value (pointing to the configuration file path) by default
+;; user-init-file is a variable holding the =~/.emacs= value (pointing to the configuration file path) by default
 ;; (load) is shorter, older, and non-interactive version of (load-file); it is not an emacs command (to be typed in M-x) but a mere elisp function
 
-M-/ 	     - EXPAND ABBREVIATION - the command abbrev-expand, is an autoloaded interactive compiled Lisp function
+- M-/
+  - EXPAND ABBREVIATION - the command abbrev-expand, is an autoloaded interactive compiled Lisp function
 
 C-M-o
 Split line at point; text on the line after point becomes a new line indented to the same column that it now starts in (split-line).
@@ -377,7 +386,7 @@ Explanation of the regular expression:
 
 - C-M-SPC C-w, or (better with) C-M-k - Killing next word or sexp.
 
-* DELETE COMMANDS:
+* DELETE COMMANDS
 - SIFT-C-BS
   - Delete entire line the point is on
 - C-0 C-k or C-u 0 C-k
@@ -405,7 +414,7 @@ C-4 <backspace>
 
 - M-x (delete-whitespace-rectangle)
 
-* KILL COMMANDS:
+* KILL COMMANDS
 
 - M-BS
   - WORD LEFT of cursor
@@ -433,14 +442,14 @@ C-4 <backspace>
 - M-y
   - REPLACE YANKED with PREVIOUS KILL
 
-* REPEAT ANY COMMAND:
+* REPEAT ANY COMMAND
 - C-x z
 
 - C-u C-n C-x z z z z     - next-line CHAIN
 
 - C-/ C-x z z z z         - UNDO-CHAIN
 
-* SPELL CHECKING:
+* SPELL CHECKING
 
 - M-$
   - ispell PROGRAM sati
@@ -450,7 +459,9 @@ C-4 <backspace>
 - M-x load-theme
 - M-x disable-theme
 
-* UNDO-REDO:
-- C-/       - UNDO
+* UNDO-REDO
+- C-/
+  - UNDO
 
-- C-g C-/   - undo-redo 	REDO.
+- C-g C-/
+  - (undo-redo) REDO.
