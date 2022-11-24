@@ -5,8 +5,17 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
 
 :DRAWERNAME:
-This is inside the drawer.
+*NOTE:* /This documentation is still in progress, so you better stick to it. cheers!/
 :END:
+
+* Table of Contents                                                     :TOC:
+
+- [[#moving-around-emacs][Moving around Emacs]]
+- [[#help-menu][Help Menu]]
+- [[#search][Search]]
+- [[#bookmarks][Bookmarks]]
+- [[#org][ORG]]
+- [[#shell][Shell]]
 
 * Dired
 - C-x C-j
@@ -128,7 +137,7 @@ Insert integer trough a significant point
 - C-h i m emacs RET - guide to learning Emacs Lisp for non-programmers for
   reference. * The Emacs Lisp Reference *
 
-* Moving around on Emacs
+* Moving around Emacs
 ** make cursor jump back to the previous position?
 - C-SPC C-SPC
   -  In Emacs you can save the position of the cursor by pressing ~C-space C-space~.
@@ -210,41 +219,35 @@ includes isearch, so after using C-s to go somewhere, you can easily jump back
 again.
 
 * Exchange point and mark
-- C-x C-x runs exchange-point-and-mark which is very useful for jumping between
-  two locations. It also activates the mark-or-region,
- use C-SPC to
-  clear the highlighting.
+- C-x C-x
+  - =exchange-point-and-mark= which is very useful for jumping between two locations. It also activates the mark-or-region, use =C-SPC= to clear the highlighting.
 
-1. If you're taking advantage of register functionality in elisp, use some non-conflicting symbol for the name, rather than a char, so that you can't conflict with interactively-set registers (unless, of course, you want to do that).
+** Register
+If you're taking advantage of register functionality in elisp, use some non-conflicting symbol for the name, rather than a char, so that you can't conflict with interactively-set registers (unless, of course, you want to do that). \\
+The register retains this information until you store something else in it.
 
 - C-x r SPC r
-
-  - Record the position of point and the current buffer in register r (point-to-register).
+  - =point-to-register=, followed by a character r. Record the position of point and the current buffer in register =r=.
 
 - C-x r j r
+  - =jump-to-register= Jump to the position and buffer saved in register =r=.
 
-  - Jump to the position and buffer saved in register r
-    (jump-to-register).
-
-Typing C-x r SPC (point-to-register), followed by a character r, saves both the position of point and the current buffer in register r. The register retains this information until you store something else in it.
-
-The command C-x r j r switches to the buffer recorded in register r, pushes a mark, and moves point to the recorded position. (The mark is not pushed if point was already at the recorded position, or in successive calls to the command.) The contents of the register are not changed, so you can jump to the saved position any number of times.
+(The mark is not pushed if point was already at the recorded position, or in successive calls to the command.) The contents of the register are not changed, so you can jump to the saved position any number of times.
 
 If you use C-x r j to go to a saved position, but the buffer it was saved from has been killed, C-x r j tries to create the buffer again by visiting the same file. Of course, this works only for buffers that were visiting files.
 
 * Keyboard Macros
-- C-x (      - Start recording key strokes.
+- C-x (      /--- Start recording key strokes./
+- C-x )      /--- Stop recording key strokes and save recording as a replayable keyboard macro./
 
-- C-x )        Stop recording key strokes and save recording as a replayable keyboard macro.
+- C-x e
+  - Replay the keyboard macro. Type e after typing this once to play it again.
 
-- C-x e        Replay the keyboard macro. Type e after typing this once to play it again.
+- =C-a= =C-SPACE	=C-n =M-w =C-y=	/---Duplicate a whole line/
+- =C-A=	=C-K =C-K =C-Y =C-Y=		/---Duplicate a whole line/
 
-- =C-a= 	=C-SPACE= 	=C-n=		 =M-w=	 =C-y=	/---Duplicate a whole line/
-- =C-A=	=C-K=	 =C-K=	 =C-Y=	 =C-Y=		/---Duplicate a whole line/
-
-- C-x C-e
-  - execute current line in elisp program.
-- C-x s 	---Save-some-buffer, giving the choice which buffer to save or not
+- C-x s
+  - save-some-buffer, giving the choice which buffer to save or not.
 
 - M-a
   - runs the command backward-sentence.
@@ -258,35 +261,38 @@ If you use C-x r j to go to a saved position, but the buffer it was saved from h
 
 narrow-to-region (C-x n n) Then widen (C-x n w)
 
-;; You can also just move the point to the end of any sexp and press
-C-x C-e 	---to execute just that sexp. ;; Usually it's not necessary to reload the whole file if you're just changing a line or two.
+move the point to the end of any sexp and press
+- C-x C-e
+  - to execute just that sexp in elisp program.  Usually it's not necessary to reload the whole file if you're just changing a line or two.
 
-M-: (load user-init-file)
-;; you type it in Eval: prompt (including the parentheses)
-;; user-init-file is a variable holding the =~/.emacs= value (pointing to the configuration file path) by default
-;; (load) is shorter, older, and non-interactive version of (load-file); it is not an emacs command (to be typed in M-x) but a mere elisp function
+- M-: (load user-init-file)
+you type it in Eval: prompt (including the parentheses)
+user-init-file is a variable holding the =~/.emacs= value (pointing to the configuration file path) by default
+(load) is shorter, older, and non-interactive version of (load-file); it is not an emacs command (to be typed in M-x) but a mere elisp function
 
 - M-/
   - EXPAND ABBREVIATION - the command abbrev-expand, is an autoloaded interactive compiled Lisp function
 
-C-M-o
-Split line at point; text on the line after point becomes a new line indented to the same column that it now starts in (split-line).
-M-m
-Move (forward or back) to the first nonblank character on the current line (back-to-indentation).
-C-M-\
-Indent several lines to same column (indent-region).
-C-q TAB
-Insert a literal \T into your code somewhere.
-C-x TAB
-Shift block of lines rigidly right or left (indent-rigidly).
-M-i
-Indent from point to the next prespecified tab stop column (tab-to-tab-stop).
-M-x indent-relative
-Indent from point to under an indentation point in the previous line.
+- C-M-o
+  - Split line at point; text on the line after point becomes a new line indented to the same column that it now starts in (split-line).
+- M-m
+  - Move (forward or back) to the first nonblank character on the current line (back-to-indentation).
+- C-M-\
+  - Indent several lines to same column (indent-region).
+- C-q TAB
+  - Insert a literal \T into your code somewhere.
+- C-x TAB
+  - Shift block of lines rigidly right or left (indent-rigidly).
+- M-i
+  - Indent from point to the next prespecified tab stop column (tab-to-tab-stop).
+- M-x =indent-relative=
+  - Indent from point to under an indentation point in the previous line.
 
-C-5 C-x TAB  ---you can specify the number of spaces to indent by using a prefix argument
+- C-5 C-x TAB
+  - you can specify the number of spaces to indent by using a prefix argument
 
-C-x r t	     ---(M-x string-rectangle) This one inserts text at every line in the rectangle.
+- C-x r t or =M-x= =string-rectangle=
+  - This one inserts text at every line in the rectangle.
 
 %% Start by setting the mark at the beginning of the first line, and move your cursor to the first character of the last line you want to prefix:
 
