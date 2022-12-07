@@ -1,4 +1,9 @@
-#+TITLE: FFMPEG SHORTCUTS
+#+TITLE:  ffmpeg User Menual
+#+AUTHOR: Likhon Barai
+#+EMAIL:  likhonhere007@gmail.com
+#+DATE:   2022 Dec 06
+#+TAGS:   blog
+
 * Merge Videos
 + *NOTE:* all *.mp4 in the folder will be merged into one output.mp4.
   SO, better to put your desired *.mp4 in a separate folder and then do it.
@@ -40,19 +45,19 @@ start time after input file is accurate/precise.
 
 * Recording
 
-+ this clip does record your videos within headphone plug_in.
-#+begin_example ffmpeg
-
+This clip records videos within headphone plug-in.
+#+begin_example
+  ffmpeg -f pulse -ac 2 -i default -f x11grab -r 30 -s 1280x800 -i :0.0 -acodec pcm_s16le -vcodec libx264 -preset ultrafast -threads 0 -y ~/yt/recorded/$(date +%y-%m-%d).mkv
 #+end_example
-~ffmpeg -f pulse -ac 2 -i default -f x11grab -r 30 -s 1280x800 -i :0.0 -acodec pcm_s16le -vcodec libx264 -preset ultrafast -threads 0 -y ~/yt/recorded/$(date +%y-%m-%d).mkv"~
 
 * Convert
-** Convert Video to gif
+
+** Convert video to gif
 
 #+begin_example
-ffmpeg -ss 30 -t 3 -i input.mp4 \
--vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
-    -loop 0 output.gif
+  ffmpeg -ss 30 -t 3 -i input.mp4 \
+  -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+      -loop 0 output.gif
 #+end_example
 
 - This example will skip the first 30 seconds ~(-ss 30)~ of the input and create a 3 second output ~(-t 3)~.

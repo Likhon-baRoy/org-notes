@@ -1,0 +1,7 @@
+* Personal access tokens (classic)
+
+- This token was made for Head-first-git book tutorial purpose.
+
+#+begin_src
+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
+#+end_src

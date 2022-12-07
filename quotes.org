@@ -4,14 +4,18 @@
 #+DATE:   2022 Nov 15
 #+TAGS:   blog
 
-* Gar gi (2022)
+* Anime
+** Jujutsu
+- Criminals can only be judge under the law.
+
+* Indian
+** Gar gi (2022)
 quotes:
 - At the tip of a teardrop one can glimpse a silver of hope.
 
-* Jujutsu
-- Criminals can only be judge under the law.
-
-* 20th Century Boys
+* Books
+** Manga
+*** 20th Century Boys
 - people that can't understand this feeling will never understand.
   Not that I care whether or not they do.
 
@@ -30,18 +34,38 @@ quotes:
   Because my heart stands right here.
   Yes, neither Heaven nor Hell... Here.
 
-* Richard P. Feynman
+* Persons
+** J.R.R. Tolkien
+#+begin_quote options
+    It’s the job that’s never started that takes longest to finish. \\
+    — J.R.R. Tolkien
+#+end_quote
+
+** Richard P. Feynman
+
+#+BEGIN_QUOTE
+  I would rather have questions that can't be answered than answers that can't be questioned.
+#+END_QUOTE
+
+#+begin_quote
+
+I would rather have questions that can't be answered than answers that can't be questioned.
+
+#+end_quote
+
+
+
 + I would rather have questions that can't be answered than answers that can't be questioned.
 + Precise language is not the problem.  Clear language is the problem.
-* Queue
 
-- I think that going to war should be put to a national vote and that by voting for war, a person is also volunteering to fight.
-
-Not necessarily. If it's an important enough war, there will be enough votes to fight it. Not having enough votes to go to war means it's not important enough to the general public, which could be either a good or a bad thing. I think the bigger issue is the manner in which the issue is presented to voters. It's all too easy for media outlets to manufacture consent among the public by portraying things in a way most favorable to themselves. So, for this idea to work would mean we would have to deal with the monopoly a small handful of wealthy capitalists have over the media.
-
+** Random
 - Every war is just rich men sending poor men to kill other poor men. --John Merritt
 
-All is forgiven but nothing forgotten. -- Dark.
++ All is forgiven but nothing forgotten. -- Dark.
 
-- One Piece animation episode - 1041.
+- One Piece animation episode - 1042.
 - One Piece Manga chapter - 1056.
+
+* Bangla
+"দেশ থেকে বড় আর কিছু নেই।"
+- ছোটবেলা থেকে শিখানো ডাহা মিথ্যা 😴

@@ -18,8 +18,48 @@
 - [[#shell][Shell]]
 
 * Dired
+
+- C-x d        Open Directory (a prompt will pop-up asking you for the directory you wanna gain access to)
 - C-x C-j
   - (dired-jump) Jump to Dired buffer corresponding to current buffer.
+
+** Inside Directory
+
+- *Copy file*
+  - C                /Copy the file and give it a name./
+- *Rename file*
+  - R                /Give the file a new name./
+- *Mark/Unmark*
+  - d                /Marks it for deletion in order to delete at a later point when we want to./
+  - u                /Unmark/
+  - U                /Unmark all/
+- *Delete items*
+  - D                /Delete directly without marking./
+  - x                /Confirm deletion/
+- *Create Directory*
+  - +                /prompt will pop-up asking you input the name of the new directory/
+- *Move to Parent Directory*
+  - ^                /you'll send to parent of the present directory/
+- *Move file in the Directory*
+  - R                /same as Renaming a file, but you must give your desired dir name where you want to move the file. So you're actually moving the old filename to the location of a new filename/
+- *g*                /refresh the dired buffer/
+
+*** *Regular Expression*
+
+- =%= =m=
+In order to mark the items that are matched by the search terms. So the way you do a regular expression is by =%= and then the letter =m= and in the minibuffer area a prompt will come up asking you for the of regular expression. Let's search for all the files whose ending is =.el= by entering =\.el= in minibuffer.
+
+Now you can see item has been marked is by the astrict(=*=) sign on the left side of window. And you can do whatever you like with your items.
+
+**** Toggle the mark
+
+- t                /it'll reverse the matching terms. So instead of matching items, it do reverse of selection./
+
+*** Writable  Dired
+
+- C-x C-q                /Enter into editable mode/
+- C-c C-c                /Save and quit editing mode/
+- C-c Esc                /Abort changes and quit editing mode/
 
 * Shell
 ** Shell History Ring
@@ -399,7 +439,7 @@ Explanation of the regular expression:
   - Delete from point to beginning of line
 
 - C-u BS
-  - will delete 4 spaces backwards.
+  - will delete 4 =spaces= backwards.
 
 Equivalent bindings would be:
 
@@ -461,7 +501,6 @@ C-4 <backspace>
   - ispell PROGRAM sati
 - M-x flyspell-mode
 
-#+THEME
 - M-x load-theme
 - M-x disable-theme
 
