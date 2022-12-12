@@ -1,0 +1,5 @@
+#+STARTUP: hideall
+* Open a link
+- C-c C-o (Open the link in current point)
+* Move list Up/Down
+- M-↕

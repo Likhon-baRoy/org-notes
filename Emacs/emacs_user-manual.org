@@ -1,0 +1,553 @@
+#+TITLE: EMACS KEYBINDINGS
+#+AUTHOR: Likhon Barai
+#+PROPERTY: header-args :tangle yes :comments yes :result silent
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
+
+:DRAWERNAME:
+*NOTE:* /This documentation is still in progress, so you better stick to it. cheers!/ 🍻
+:END:
+
+* Table of Contents                                                     :TOC:
+
+- [[#moving-around-emacs][Moving around Emacs]]
+- [[#help-menu][Help Menu]]
+- [[#search][Search]]
+- [[#tweaks][Tweaks]]
+- [[#dired][Dired]]
+- [[#window-and-frames][Window and Frames]]
+- [[#bookmarks][Bookmarks]]
+- [[#Hide-show-minor-mode][Fold/Unfold Blocks]]
+- [[#org][ORG]]
+- [[#shell][Shell]]
+
+
+* Help Menu
+
+|------------+-------------------------+---------------------------------------------------------------------|
+| Keystrokes | Command Name            | Action                                                              |
+|------------+-------------------------+---------------------------------------------------------------------|
+| C-x C-f    | find-file               | find file and read it in a new buffer                               |
+| C-x C-v    | find-alternate-file     | read and alternate file replacing the one with (C-x C-f)            |
+| C-x i      | inset-file              | insert file at cursor position                                      |
+| C-x l      |                         | Report number of lines on current page(how many before-after point) |
+| C-x C-s    | save-buffer             | save file on current buffer                                         |
+| C-x C-w    | write-file              | write buffer contents (save buffer as a new file)                   |
+| C-x C-c    | save-buffers-kill-emacs | Offer to save each buffer, then kill Emacs                          |
+|------------+-------------------------+---------------------------------------------------------------------|
+
+** Meta Help
+
+|------------+----------------------------------+------------------------------------------------------------------------|
+| Keystrokes | Command Name                     | Action                                                                 |
+|------------+----------------------------------+------------------------------------------------------------------------|
+| C-h        | help command                     | enter the online help system                                           |
+| C-h t      | help-with-tutorial               | start emacs tutorial                                                   |
+| c-h f      | describe-function                | gives online help for a given command name                             |
+| C-h k      | describe-key                     | gives online help for a given keystroke sequence                       |
+| C-h i      | runs the command info            | enter Info, the documentation browser.                                 |
+| C-h c      | describe-key-briefly             | print the name of the functions KEY-LIST invokes                       |
+| C-h w      | where-is                         | Print message listing key sequences that invoke the command DEFINITION |
+| C-h h      | (view-hello-file)                | Display the HELLO file, which lists many languages and characters      |
+| C-h a      | Show commands that match PATTERN |                                                                        |
+| C-h i m    | -                                | go to info and SELECT *m* for menu                                     |
+|            |                                  |                                                                        |
+|------------+----------------------------------+------------------------------------------------------------------------|
+
+PATTERN can be a word, a list of words (separated by spaces), or a regexp (using
+    some regexp special characters).  If it is a word, search for matches for
+    that word as a substring.  If it is a list of words, search for matches for
+    any two (or more) of those words.
+
+* Dired
+
+- R 				- to rename the file (or dired-do-rename).
+- q 				- to go back to the (renamed) file buffer
+
+|------------+----------------------------+-------------------------------------------|
+| Keystrokes | Command Name               | Action                                    |
+|------------+----------------------------+-------------------------------------------|
+| C-x d      | dired-at-point             | Start Dired, defaulting to file at point  |
+| C-x C-j    | dired-jump                 | to the name of the current file, in Dired |
+| RET        | -                          | to select directory of current file       |
+| g          | refresh the dired buffer   | refresh to get the recent update          |
+| C          | Copy file                  | Copy the file and give it a name          |
+| R          | Rename file                | Give the file a new name                  |
+| R          | Move file in the Directory | write down the path and name of directory |
+| +          | Create Directory           | Create Directory with new name            |
+| ^          | Move to Parent Directory   | send to parent of the present directory   |
+|            |                            |                                           |
+|            |                            |                                           |
+|            |                            |                                           |
+|------------+----------------------------+-------------------------------------------|
+
+- *Mark/Unmark*
+  - d                /Marks it for deletion in order to delete at a later point when we want to./
+  - u                /Unmark/
+  - U                /Unmark all/
+- *Delete items*
+  - D                /Delete directly without marking./
+  - x                /Confirm deletion/
+
+*** Regular Expression
+
+- =%= =m=
+In order to mark the items that are matched by the search terms. So the way you do a regular expression is by =%= and then the letter =m= and in the minibuffer area a prompt will come up asking you for the of regular expression. Let's search for all the files whose ending is =.el= by entering =\.el= in minibuffer.
+
+Now you can see item has been marked is by the astrict(=*=) sign on the left side of window. And you can do whatever you like with your items.
+
+**** Toggle the mark
+
+- t                /it'll reverse the matching terms. So instead of matching items, it do reverse of selection./
+
+*** Writable  Dired
+
+- C-x C-q                /Enter into editable mode/
+- C-c C-c                /Save and quit editing mode/
+- C-c Esc                /Abort changes and quit editing mode/
+
+* Rename an open file in Emacs?
+
+- C-x C-w
+  - *save as* feature of Emacs, that's for an open file
+
+* Display line number
+
+Turn on relative line number mode.
+- C-[f5]
+  - toggle (=display-line-numbers-mode-relative=)
+
+* UNDO-REDO
+- C-/
+  - UNDO
+
+- C-g C-/
+  - (undo-redo) REDO.
+* Search
+- M-p
+  - select PREVIOUS search string
+- M-n
+  - select NEXT search string
+
+* Hide-show
+
+Here’s the keymap for folding-related functions in the two modes:
+
+|-------------+------------------+-----------------+-------------------------------------------|
+| Key binding | Hideshow mode    | Key binding     | Outline minor mode                        |
+|-------------+------------------+-----------------+-------------------------------------------|
+| C-c @ C-a   | hs-show-all      | C-c @ TAB       | outline-show-children                     |
+| C-c @ C-c   | hs-toggle-hiding | C-c @ C-k       | outline-show-branches                     |
+| C-c @ C-d   | hs-hide-block    | C-c @ C-o       | outline-hide-other                        |
+| C-c @ C-e   | hs-toggle-hiding | C-c @ C-q       | outline-hide-sub-levels                   |
+| C-c @ C-h   | hs-hide-block    | C-u n C-c @ C-l | Hide all blocks n levels below this block |
+| C-c @ C-l   | hs-hide-level    |                 |                                           |
+| C-c @ C-s   | hs-show-block    |                 |                                           |
+| C-c @ C-t   | hs-hide-all      |                 |                                           |
+| C-c @ ESC   | Prefix Command   |                 |                                           |
+| C-c @ C-M-h | hs-hide-all      |                 |                                           |
+| C-c @ C-M-s | hs-show-all      |                 |                                           |
+|-------------+------------------+-----------------+-------------------------------------------|
+
+
++ This is irritating on two levels.
+1. The key bindings are on a difficult to use keymap.
+2. There’s no easy entry point and there are too many commands to do simple
+   tasks.
+
+- These variables can be used to customize Hideshow mode:
++ If non-nil, C-c @ C-M-h (hs-hide-all) hides comments too.
+
+- ~hs-isearch-open~
+    Specifies what kind of hidden blocks to open in Isearch mode. The value should be one of these four symbols.
+
+    =code=
+        Open only code blocks.
+    =comment=
+        Open only comments.
+    ~t~
+        Open both code blocks and comments.
+    ~nil~
+        Open neither code blocks nor comments.
+
+- ~hs-special-modes-alist~
+    A list of elements, each specifying how to initialize Hideshow variables for one major mode. See the variable's documentation string for more information.
+* sexps
+
+Selecting words or sexps without moving the cursor.
+|---------------------+--------------+------------------------------------------------------|
+| Keystrokes          | Command Name | Action                                               |
+|---------------------+--------------+------------------------------------------------------|
+| C-M-SPC M-w         |              | This does not move the cursor                        |
+| C-M-SPC C-M-SPC M-w |              | If you want to select the next two words after point |
+| C-M-SPC C-w         |              | Killing next word or sexp                            |
+| C-M-K               |              | Killing next word or sexp                            |
+|---------------------+--------------+------------------------------------------------------|
+
+* Shell
+** eshell
+
+Enter on eshell:
+- C-!
+
+** Shell History Ring
+
+- M-p / C-UP
+  - Fetch the next earlier old shell command (comint-previous-input).
+
+- M-n / C-DOWN
+  - Fetch the next later old shell command (comint-next-input).
+
+- M-r
+  - Begin an incremental regexp search of old shell commands (comint-history-isearch-backward-regexp).
+
+- C-c C-x
+  - Fetch the next subsequent command from the history (comint-get-next-from-history).
+
+- C-c .
+  - Fetch one argument from an old shell command (comint-input-previous-argument).
+
+- C-c C-l
+  - Display the buffer’s history of shell commands in another window (comint-dynamic-list-input-ring).
+
+* Projectile
+- Simply open any file in the git project using =C-x C-f= and then try running
+  command ~C-c p f~.
+
++ Opening a file in a git project will make projectile recognize the project.
+
+- I think your project is indeed considered a project by =projectile= only if you
+  have a =.git= folder in it (did you forget to =git init=?). I'm not seeing one in
+  your case. You can alternatively add a =.projectile= file instead. Everything in
+  that folder containing the =.projectile= file and all subfolders will be
+  considered part of the same project.
+
+* Tweaks
+** switch themes
+- C-c T
+  - themes list will appear, choose your desired one and press =Enter=.
+** toggle transparency
+- C-c t
+  - toggle ON/OFF transparency.
+* ORG
+** org-tempo
+- C-c C-, (org-insert-structure-template)
+for farther explanation, [[https://orgmode.org/manual/Structure-Templates.html#Structure-Templates][go here]]
+
+also put this in your init.el
+- (require 'org-tempo)
+
+#+begin_src
+a	‘#+BEGIN_EXPORT ascii’ … ‘#+END_EXPORT’
+c	‘#+BEGIN_CENTER’ … ‘#+END_CENTER’
+C	‘#+BEGIN_COMMENT’ … ‘#+END_COMMENT’
+e	‘#+BEGIN_EXAMPLE’ … ‘#+END_EXAMPLE’
+E	‘#+BEGIN_EXPORT’ … ‘#+END_EXPORT’
+h	‘#+BEGIN_EXPORT html’ … ‘#+END_EXPORT’
+l	‘#+BEGIN_EXPORT latex’ … ‘#+END_EXPORT’
+q	‘#+BEGIN_QUOTE’ … ‘#+END_QUOTE’
+s	‘#+BEGIN_SRC’ … ‘#+END_SRC’
+v	‘#+BEGIN_VERSE’ … ‘#+END_VERSE’
+#+end_src
+
+* Enter Numeric values
+Insert integer trough a significant point
+- ~C-10 C-u 0~
+  - /will give =10= zeros after the point./
+
+- C-x C-b o
+  - /to view a file in /other window/./
+* Formatting paragraph with shell cmnd
+- First select the region for formatted then enter into shell by pressing ~M-!~.
+  And then enter command ~fmt -w 80~f
+
+- M-|               - runs the command shell-command-on-region
+
+- C-u M-|           - run shell command in buffer region
+
+- C-h i m emacs RET - guide to learning Emacs Lisp for non-programmers for
+  reference. * The Emacs Lisp Reference *
+
+* Moving around Emacs
+** make cursor jump back to the previous position?
+- C-SPC C-SPC
+  -  In Emacs you can save the position of the cursor by pressing ~C-space C-space~.
+  - set mark (activates and then deactivates region) pushes the
+    current position to the mark ring (without leaving it active).
+
+- C-u C-SPC
+  - When you are in another part of the document, jump back with
+    ~C-u C-space~.
+  - move to previous mark pops the mark ring, jumping to the
+    previous position. You can use this repeatedly to navigate
+    through the entire ring.
+
+- C-x C-x
+  - exchange-point-and-mark
+
+  - Put the mark where point is now, and point where the
+    mark is now.  This command works even when the mark is
+    not active, and it reactivates the mark.
+
+  - If Transient Mark mode is on, a prefix ARG deactivates
+    the mark if it is active, and otherwise avoids
+    reactivating it.  If Transient Mark mode is off, a
+    prefix ARG enables Transient Mark mode temporarily.
+
+- C-x C-@ and C-x C-SPC
+
+  - (pop-global-mark) Pop off global mark ring and jump to
+    the top location.  The global mark ring is updated
+    automatically
+
+* Registers
+** Save Positions in Registers
+- C-x r SPC
+  - runs point-to-register
+
+- C-x r j
+  - runs jump-to-register
+  Type any character to specify a register when prompted.
+
+- C-x r C-SPC
+
+- C-x r C-@
+  - (point-to-register REGISTER &optional ARG)
+
+* Bookmarks
+
+- C-x r m 	runs bookmark-set
+- C-x r b 	runs bookmark-jump
+- C-x r l 	list of your Bookmarks you've already save
+- DELETE		go ot Bookmark and SELECT by pressing ~d~ than to delete press ~x~
+
+Note that some commands (especially ones which are liable to move you an an
+unknown or arbitrary distance from your original location) will automatically
+push to the mark ring so that you can use ~C-u C-SPC~ to return afterwards. This
+includes isearch, so after using C-s to go somewhere, you can easily jump back
+again.
+
+* Exchange point and mark
+- C-x C-x
+  - =exchange-point-and-mark= which is very useful for jumping between two locations. It also activates the mark-or-region, use =C-SPC= to clear the highlighting.
+
+** Register
+If you're taking advantage of register functionality in elisp, use some non-conflicting symbol for the name, rather than a char, so that you can't conflict with interactively-set registers (unless, of course, you want to do that). \\
+The register retains this information until you store something else in it.
+
+- C-x r SPC r
+  - =point-to-register=, followed by a character r. Record the position of point and the current buffer in register =r=.
+
+- C-x r j r
+  - =jump-to-register= Jump to the position and buffer saved in register =r=.
+
+(The mark is not pushed if point was already at the recorded position, or in successive calls to the command.) The contents of the register are not changed, so you can jump to the saved position any number of times.
+
+If you use C-x r j to go to a saved position, but the buffer it was saved from has been killed, C-x r j tries to create the buffer again by visiting the same file. Of course, this works only for buffers that were visiting files.
+
+* Keyboard Macros
+- C-x (      /--- Start recording key strokes./
+- C-x )      /--- Stop recording key strokes and save recording as a replayable keyboard macro./
+
+- C-x e
+  - Replay the keyboard macro. Type e after typing this once to play it again.
+
+- =C-a= =C-SPACE	=C-n =M-w =C-y=	/---Duplicate a whole line/
+- =C-A=	=C-K =C-K =C-Y =C-Y=		/---Duplicate a whole line/
+
+- C-x s
+  - save-some-buffer, giving the choice which buffer to save or not.
+
+- M-a
+  - runs the command backward-sentence.
+- M-e
+  - runs the command forward-sentence.
+
+- ~M-x~ =eval-region=
+- ~M-x~ =eval-buffer=
+- ~M-x~ =load-file= =~/.emacs.d/init.el=
+- ~M-x~ =revert-buffer=
+
+narrow-to-region (C-x n n) Then widen (C-x n w)
+
+move the point to the end of any sexp and press
+- C-x C-e
+  - to execute just that sexp in elisp program.  Usually it's not necessary to reload the whole file if you're just changing a line or two.
+
+- M-: (load user-init-file)
+you type it in Eval: prompt (including the parentheses)
+user-init-file is a variable holding the =~/.emacs= value (pointing to the configuration file path) by default
+(load) is shorter, older, and non-interactive version of (load-file); it is not an emacs command (to be typed in M-x) but a mere elisp function
+
+- M-/
+  - EXPAND ABBREVIATION - the command abbrev-expand, is an autoloaded interactive compiled Lisp function
+
+- C-M-o
+  - Split line at point; text on the line after point becomes a new line indented to the same column that it now starts in (split-line).
+- M-m
+  - Move (forward or back) to the first nonblank character on the current line (back-to-indentation).
+- C-M-\
+  - Indent several lines to same column (indent-region).
+- C-q TAB
+  - Insert a literal \T into your code somewhere.
+- C-x TAB
+  - Shift block of lines rigidly right or left (indent-rigidly).
+- M-i
+  - Indent from point to the next prespecified tab stop column (tab-to-tab-stop).
+- M-x =indent-relative=
+  - Indent from point to under an indentation point in the previous line.
+
+- C-5 C-x TAB
+  - you can specify the number of spaces to indent by using a prefix argument
+
+- C-x r t or =M-x= =string-rectangle=
+  - This one inserts text at every line in the rectangle.
+
+%% Start by setting the mark at the beginning of the first line, and move your cursor to the first character of the last line you want to prefix:
+
+#+BEGIN_EXAMPLE
+*Hello
+There
+▮I am some code
+#+END_EXAMPLE
+
+%% Then use C-x r t, enter your prefix (I said) and press RET. This adds the text to each line in the rectangle:
+
+I said Hello
+I said There
+I said I am some code
+
+%% If you don't line up your cursor on the same column as your mark, it will overwrite that part of the rectangle:
+
+#+BEGIN_EXAMPLE
+*Hello
+There
+I am▮ some code
+#+END_EXAMPLE
+
+%% with the same command results in:
+
+#+BEGIN_EXAMPLE
+I said o
+I said e
+I said  some code
+#+END_EXAMPLE
+
+- C-x r t       - string-rectangle (used to insert any arbitrary text (spaces included) in a selected region.)
+
+%% Let's say you have this block of text and you want to insert 5 spaces in front of all lines.
+
+abc
+def
+ghi
+
+- C-x r t M-5 SPC RET   - That will give the below force indented text.
+#+BEGIN_EXAMPLE
+abc
+def
+ghi
+#+END_EXAMPLE
+
+%% for example, if you wanted a yellow bar 5 pixels wide in insert state and a
+purple-filled box in normal state, you could do the following:
+#+BEGIN_SRC emacs-lisp
+(setq evil-insert-state-cursor '((bar . 5) "yellow")
+evil-normal-state-cursor '(box "purple"))
+#+END_SRC
+
+- IMHO the standard way is:
+   1) Go to the top of your buffer.
+   2) Type C-M-% for query-replace-regexp.
+   3) Input ^\s-+ as regular expression and RET. (See explanation below.)
+   4) Leave the replacement string empty, i.e., press RET again.
+   5) You are prompted by query-replace-regexp in the minibuffer.
+   6) Press ! to perform all replacements at once.
+
+Explanation of the regular expression:
+
+1) The caret ^ stands for the beginning of line.
+2) The \s- stands for any character designated as space by the current modes syntax table.
+3) The + stands for one or more contiguous matches.
+
+- C-x 4 f       - to find a file in another window.
+
+- C-x 4 b       - to select a different buffer in another window.
+
+* Window and Frames
+- C-x 5 2
+  - to open a new frame
+- C-x 5 f [title of your new frame]
+  - open a frame on particular name of file.
+- C-x 5 b
+  - to move to a buffer and put it in a new frame.
+- C-x 5 o
+  - to go to another frame
+
+* DELETE COMMANDS
+- SIFT-C-BS
+  - Delete entire line the point is on
+- C-0 C-k or C-u 0 C-k
+  - Delete from point to beginning of line
+
+- C-u BS
+  - will delete 4 =spaces= backwards.
+
+Equivalent bindings would be:
+
+M-4 <backspace>
+C-4 <backspace>
+
+- M-\
+  - Delete all SPACES & TABS around point (delete-horizontal-space).
+
+- M-SPC
+  - Deletes all spaces and tabs around point, leaving one space
+
+- M-^
+  - (delete-indentation) command for joining multiple lines into one line
+
+- C-x C-o
+  - get rid off all blank line around current line except one.
+
+- M-x (delete-whitespace-rectangle)
+
+* KILL COMMANDS
+
+- M-BS
+  - WORD LEFT of cursor
+
+- M-d
+  - WORD RIGHT of cursor
+
+- M-z CHAR
+  - from cursor upto char
+
+- C-k
+  - from cursor to End of Line
+
+- M-w
+  - just to KILL RING
+
+- C-w
+  - REGION
+
+- C-y
+  - YANK LAST KILL
+- C-t
+  - Transpose two characters on either side of
+    point and move point forward by one
+- M-y
+  - REPLACE YANKED with PREVIOUS KILL
+
+* REPEAT ANY COMMAND
+- C-x z
+
+- C-u C-n C-x z z z z     - next-line CHAIN
+
+- C-/ C-x z z z z         - UNDO-CHAIN
+
+* SPELL CHECKING
+
+- M-$
+  - ispell PROGRAM sati
+- M-x flyspell-mode

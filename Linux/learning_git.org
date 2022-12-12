@@ -1,0 +1,214 @@
+#+TITLE:  Working with Git
+#+AUTHOR: Likhon Barai
+#+EMAIL:  likhonhere007@gmail.com
+#+DATE:   2022 Nov 13
+#+TAGS:   git github blog website
+
+* Introduce yourself to Git
+
+1. We will start with telling Git our full name.
+2. Next, we tell Git our email address.
+3. With the =config= command, you can also change your default editor.
+   For example, to change the default editor to Emacs, you would type:
+
+#+BEGIN_EXAMPLE sh
+ git config --global user.name "Likhon Barai"
+ git config --global user.email "your_email@example.com"
+ git config --global core.editor="emacs"
+#+END_EXAMPLE
+
+- You can find the file recording your Git configuration on your home folder. For *Windows* =C:\Users\YourName\.gitconfig=.
+   For *Linux* and *MacOS* =/home/yourname/.gitconfig=.
+
+*Note:* /You can always change these later by running the same command again with different values. You can run this in any directory./
+
+* Initializing Git
+
+1. Initialize git repository in your working directory by: ~git init~.
+2. Keep track of your files by: ~git status~ command.
+3. Now we are ready to commit our work. This involves two Git commands, namely
+   ~git add~ and ~git commit~.
+
+#+BEGIN_EXAMPLE sh
+ git init
+ git add <filename>
+ git commit -m "My first commit"
+#+END_EXAMPLE
+
+You can unstage a file using the Git command ~git rm~ with the option ~--cached~.
+
+#+BEGIN_SRC sh
+ git rm --cached README.md
+#+END_SRC
+
+We learned that committing to Git is a two-step process. You first
+add the files and then commit.
+
+Notice that the ~git add~ command takes as its argument the name of the file you
+wish to add to Git. And the git commit command has a flag, -m, followed by the
+commit message. The -m stands for “message” and is a mechanism for you to
+provide a meaningful reminder as to why you made this change.
+
+Commit objects are stored by Git in binary format, making them very hard for
+humans to read but super safe and efficient for Git.
+
+* Git to GitHub
+
+In order to push to GitHub under your account, you're going to have to prove to GitHub that you are the owner of your account. So you have to connect your local machine to your GitHub account.
+
+** Generating a new SSH key
+
+The way this is done is by using ~SSH keys~. You need to start by generating a key locally using the ~ssh-keygen~ command.
+
++ Better if you follow this official documentations here: [[https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent][Generate and Add SSH key (GitHub)​]] and [[https://docs.gitlab.com/ee/user/ssh.html][SSH keys (GitLab)​]]
+
+1. Open Terminal.
+2. Paste the text below, substituting in your GitHub email address.
+
+#+begin_src sh
+  ssh-keygen -t ed25519 -C "your_email@example.com"
+#+end_src
+
+   /But make sure that the email address you enter here is the same one you use to log into your GitHub account, click =Enter=./
+
+*Note:* /If you are using a legacy system that doesn't support the Ed25519 algorithm, use:/
+
+#+begin_src sh
+  ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+#+end_src
+
+3. At the prompt, type a secure passphrase. Or click =Enter= to leave it blank. And the key has been generated.
+
+Now, the default file for the SSH key is inside your user directory in the ~.ssh~ directory, and it'll be called ~id_rsa~.
+
+Now I'm going to search for the key that I just generated.
+And you can see that there are two. So there's ~id_rsa~ and ~id_rsa.pub~.
+So ~id_rsa.pub~ is the key that you're going to upload to your GitHub interface.
+
+Here =pub= stands for public, it's called your public key, which means that it's okay for other people to see this key.
+
+The key that was generated without the ~.pub~ extension is called your public key, and is the one that you have to keep secure on your local machine, you don't share this key with anybody.
+
+How it works is that the public key you put on GitHub, and then every time you want to connect to GitHub or ~push~ your code on GitHub or use your account via your local machine, you use your private key to show GitHub, that you're the one that generated this public key. It's a mathematical proof that only this private key could generated this public key.
+
+** Add an SSH key to your GitHub account
+
+I'm going to print out this public key. And your key should look something like this:
+
+#+begin_example
+  ssh-rsa B3NzaC1yc2EAAAADAQABAAACAQC0UvmTlMBPo2Le0xaXWmtbj534ke6/VK9t8OKQnZQsgmncrQdU4cwqln3vhRTSbIiQkHG4lrAFfno2sMoG9QFK4CJ+zl5KXTI6TpskMo3Tu7reIYTUG3Z+0ZK/SOumoccl1VedoZHWnCfKDfMTyrhKZqcmdLdhq4qCyKiGabHQmWvfMA4uh7Ku19JZrORNnK3NC73aQegqnEdYKBlC96hBoBLk7tWYCnWf+VnTimMyecxOuGQxSnHpopHSeQ54T2NsHWP4CmB1AGlVQ8cLtyM+/DdofWZzsVR9K7QaCwWPPmjlaG8FF99WaKK5UiCBFQfFjyhpgasN5jyf2Re+PZG+FlQPM0ZtUgFp11qaxTNsFhg3Nsr/mG9Z/2bID1LU1Q== email@example.com
+#+end_example
+
+It has a bunch of characters in the middle and it ends with your email.
+Now you need to copy this whole key, which you can do by highlighting it in your terminal and copy it with =Ctrl-Shift-c= or follow below if you're on *Linux*.
+
+*Linux* (requires the =xclip= package)
+
+#+begin_src sh
+  xclip -sel clip < ~/.ssh/id_ed25519.pub
+#+end_src
+
+Now it's copied to clipboard. On GitHub to go to settings. And the list of all settings, go to ~SSH and GPG keys~ and you can see: /This is a list of SSH key associated with your account/.
+
+Then you just click on =new SSH key=. You can give it whatever /TITLE/ you want. This is just for your reference. And then you paste your key in there. And remove the extra =Enter= at the end.
+
+And now =Add SSH key= and confirm password. And now you can see key was successfully added.
+
+The only thing left to do is to make sure that your /"local Git command line interface knows about the key you just generated"./
+
+** Adding your SSH key to the ssh-agent
+
+You need to start the SSH agent.
+Before adding a new SSH key to the ssh-agent to manage your keys, you should have checked for existing SSH keys and generated a new SSH key.
+
+1. Start the ssh-agent in the background.
+
+#+begin_src sh
+  $ eval "$(ssh-agent -s)"
+  > Agent pid 59566
+#+end_src
+
+Depending on your environment, you may need to use a different command. For example, you may need to use root access by running ~sudo -s -H~ before starting the ssh-agent, or you may need to use ~exec ssh-agent bash~ or ~exec ssh-agent zsh~ to run the ssh-agent.
+
+2. Add your SSH private key to the ssh-agent. If you created your key with a different name, or if you are adding an existing key that has a different name, replace =id_ed25519= in the command with the name of your private key file.
+
+#+begin_src sh
+  $ ssh-add ~/.ssh/id_ed25519
+#+end_src
+
++ If you're using macOS version-10.12.2 or later, you'll need to modify this file =~/.ssh/config=.
+
+Add this text to it:
+#+begin_src sh
+  Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentifyFile ~/.ssh/id_rsa
+#+end_src
+
+* Git Push
+
+Now there are two more arguments we have to put here,
+first one is =origin= and second one is =master=.
+Origin is an option set for us here and basically a word that stands for the location for our git repository.
+=master= is the branch that we want to push to.
+
+#+begin_src sh
+  git push origin master
+#+end_src
+
+* Git branches
+Git by default uses a branch called =master=.
+You can use the branch command to create a new branch, list all the branches in
+your repository, and even delete branches. And, like everything you have done so far, all this happens inside your working directory.
+
+Let’s start by creating a new branch. You can use the ~branch~ command, giving it the name of the branch you wish to create as an argument.
+
+#+BEGIN_SRC sh
+  git branch my-first-branch
+#+END_SRC
+
+/Git does not report success or failure, but you can list all your branches by using the same branch command, except with no arguments./
+
+#+BEGIN_SRC sh
+  git branch
+#+END_SRC
+
+- Creating a new branch does not mean you can start to use it immediately. You have to switch to it first.
+- To switch to another branch, you will use yet another Git command, aptly named ~switch~, which takes one argument, namely the name of the branch you wish to switch to:
+
+  #+BEGIN_SRC sh
+    git switch my-first-branch
+  #+END_SRC
+
+- You can use ~git branch~ to list all the branches again: /asterisk/ ~(*)~ points to the branch you just switched to.
+
++ The ~git switch~ command lets you create a new branch and switch to it in one fell swoop. You can invoke the ~git switch~ command with the ~-c~ (or --create) flag, giving it the name of the branch you wish to create, like so:
+
+  #+BEGIN_SRC sh
+    git switch -c my-first-branch
+  #+END_SRC
+
+  This will prompt Git to create the branch called my-first-branch and switch to it immediately.
+
+* Quick setup for GitHub
+
+- create a new repository on the command line
+
+#+BEGIN_SRC sh
+  echo "# dotfiles" >> README.md
+   git init
+   git add README.md
+   git commit -m "first commit"
+   git branch -M main
+   git remote add origin git@github.com:Likhon-baRoy/dotfiles.git
+   git push -u origin main
+#+END_SRC
+
+- or push an existing repository from the command line
+
+#+BEGIN_SRC sh
+   git remote add origin git@github.com:Likhon-baRoy/dotfiles.git
+   git branch -M main
+   git push -u origin main
+#+END_SRC
