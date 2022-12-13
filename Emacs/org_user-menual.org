@@ -1,5 +1,27 @@
+#+TITLE:  Org User Menual
+#+AUTHOR: Likhon Barai
+#+EMAIL:  likhonhere007@gmail.com
+#+DATE:   2022 Dec 13
+#+TAGS:   blog org emacs
 #+STARTUP: hideall
-* Open a link
-- C-c C-o (Open the link in current point)
+#+PROPERTY: header-args :tangle yes :comments yes :result silent
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
+
+:DRAWERNAME:
+*NOTE:* /I personally prefer Emacs for writing and working with ORG. \\
+This documentation is still in progress, so you better stick to it. cheers!/ 🍻
+:END:
+
+* Table of Contents                                                     :TOC:
+
+- [[#startup-with-org][Startup with ORG]]
+
+* ORG to Many
+- =C-c C-e=
+  - =org-export-dispatcher=
+* All about link
+- =C-c C-l= /Add or Show Link./
+- =C-c C-o= /Open the link in current point./
 * Move list Up/Down
-- M-↕
+- =M-↕=

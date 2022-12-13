@@ -6,15 +6,16 @@
 #+PROPERTY: header-args :tangle yes :comments yes :result silent
 
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
-
+
 :DRAWERNAME:
-*NOTE:* /This documentation is still in progress, so you better stick to it. cheers!/ 🍻
+*NOTE:* /I personally prefer Emacs build-in TUTORIAL first, which is very well documented and easy to understand. \\
+This documentation is still in progress, so you better stick to it. cheers!/ 🍻
 :END:
 
 * Table of Contents                                                     :TOC:
 
-- Basics
-  - [[#moving-around-on-emacs][Moving around on Emacs]]
+- [[#basics-of-emacs][Basics of Emacs]]
+  - [[#moving-around][Moving Around]]
   - [[#file-navigation][File Navigation]]
 - [[#modeline][Modeline]]
 - [[#search][Search]]
@@ -33,14 +34,14 @@
 - [[#fold/unfold-blocks][Fold/Unfold Blocks]]
 - [[#bookmarks][Bookmarks]]
 - [[#registers][Registers]]
-- [[#keyboard-macros][Keyboard Macros]]
+- [[#macros][Macros]]
 - [[#projectile][Projectile]]
 - [[#org][ORG]]
 - [[#spell-checking][Spell Checking]]
 
-* Basics
-** Moving around on Emacs
-
+* Basics of Emacs
+** Moving Around
+General Shortcuts
 |------------+-----------------------------------+---------------------------------------------------------|
 | Keystrokes | Command Name                      | Action                                                  |
 |------------+-----------------------------------+---------------------------------------------------------|
@@ -55,14 +56,14 @@
 | M-e        | forward-sentence                  | move forward one sentence                               |
 | M-a        | backwards-sentence                | move backwards one sentence                             |
 | M-}        | forward-paragraph                 | move forward one paragraph                              |
-| M={        | backwards-paragraph               | move backwards one paragraph                            |
+| M-{        | backwards-paragraph               | move backwards one paragraph                            |
 | C-v        | scroll-up                         | move forward one screen                                 |
 | M-v        | scroll-down                       | move backward one screen                                |
 | C-x [      | forward-page                      | move forward one page                                   |
 | C-x ]      | backward-page                     | move backward one page                                  |
 | M-<        | beginning-of-buffer               | move to beginning of file                               |
 | M->        | end-of-buffer                     | move to end of file                                     |
-| C-l        | recenter                          | Redraw screen with current line in center               |
+| C-l        | recenter-top-bottom               | Redraw screen with current line in center               |
 | M-r        | move-to-window-line-top-to-bottom | without moving the text on the screen, reposition point |
 | M-(n)      | digit-argument                    | repeat the next command (N) times                       |
 | C-u (n)    | universal-argument                | repeat the next command (N) times                       |
@@ -80,6 +81,7 @@
 | C-x i      | inset-file               | insert file at cursor position                                      |
 | C-x l      | -                        | Report number of lines on current page(how many before-after point) |
 | C-x C-s    | save-buffer              | save current buffer in visited file if modified                     |
+| C-x s      | save-some-buffer         | giving the choice which buffer to save or not.                      |
 | C-x C-w    | write-file (Rename-file) | write buffer contents (save buffer as a new file)                   |
 | C-x C-c    | save-buffers-kill-emacs  | Offer to save each buffer, then kill Emacs                          |
 |------------+--------------------------+---------------------------------------------------------------------|
@@ -91,29 +93,27 @@
 |-----------+----------------------------------------------|
 | Character | Meaning                                      |
 |-----------+----------------------------------------------|
-| --        | buffer has not been modified                 |
-| **        | buffer has been modified                     |
-| %%        | read only mode; buffer has not been modified |
-| %*        | read only mode; buffer has been modified     |
+| =--=      | buffer has not been modified                 |
+| =**=      | buffer has been modified                     |
+| =%%=      | read only mode; buffer has not been modified |
+| =%*=      | read only mode; buffer has been modified     |
 |-----------+----------------------------------------------|
 
 * Search
 
-|------------+-------------------------+----------------------------------------------------------------------------------|
-| Keystrokes | Command Name            | Action                                                                           |
-|------------+-------------------------+----------------------------------------------------------------------------------|
-| C-s        | isearch-forward         | start incremental search forward by search string,                               |
-|            |                         | also find next occurrence (forward) of search string                             |
-| C-r        | isearch-backward        | start incremental search backward by search string,                              |
-|            |                         | also find next occurrence (backward) of search string                            |
-| C-s C-s    | isearch-repeat-forward  | repeat previous search                                                           |
-| C-r C-r    | isearch-repeat-backward | repeat previous search backward                                                  |
-| C-s C-w    | isearch-yank-word       | start with the word the cursor is on as search string                            |
-| C-s C-y    | isearch-yank-line       | start with the text from cursor position to the end of the line as search string |
-| C-s M-y    | isearch-yank-kill       | start with the text from kill ring as search string                              |
-| M-p        |                         | select PREVIOUS search string                                                    |
-| M-n        |                         | select NEXT search string                                                                             |
-|------------+-------------------------+----------------------------------------------------------------------------------|
+|------------+-------------------------+-----------------------------------------------------------------------------------------------------------|
+| Keystrokes | Command Name            | Action                                                                                                    |
+|------------+-------------------------+-----------------------------------------------------------------------------------------------------------|
+| C-s        | isearch-forward         | start incremental search forward by search string, also find next occurrence (forward) of search string   |
+| C-r        | isearch-backward        | start incremental search backward by search string, also find next occurrence (backward) of search string |
+| C-s C-s    | isearch-repeat-forward  | repeat previous search                                                                                    |
+| C-r C-r    | isearch-repeat-backward | repeat previous search backward                                                                           |
+| C-s C-w    | isearch-yank-word       | start with the word the cursor is on as search string                                                     |
+| C-s C-y    | isearch-yank-line       | start with the text from cursor position to the end of the line as search string                          |
+| C-s M-y    | isearch-yank-kill       | start with the text from kill ring as search string                                                       |
+| M-p        |                         | select PREVIOUS search string                                                                             |
+| M-n        |                         | select NEXT search string                                                                                 |
+|------------+-------------------------+-----------------------------------------------------------------------------------------------------------|
 
 * Mark/Unmark
 |------------+--------------------------+-----------------------------------------|
@@ -163,24 +163,27 @@
     the top location.  The global mark ring is updated
     automatically
 * Help Menu
-
 ** Meta Help
 
-|------------+----------------------------------+------------------------------------------------------------------------|
-| Keystrokes | Command Name                     | Action                                                                 |
-|------------+----------------------------------+------------------------------------------------------------------------|
-| C-h        | help command                     | enter the online help system                                           |
-| C-h t      | help-with-tutorial               | start emacs tutorial                                                   |
-| c-h f      | describe-function                | gives online help for a given command name                             |
-| C-h k      | describe-key                     | gives online help for a given keystroke sequence                       |
-| C-h i      | runs the command info            | enter Info, the documentation browser.                                 |
-| C-h c      | describe-key-briefly             | print the name of the functions KEY-LIST invokes                       |
-| C-h w      | where-is                         | Print message listing key sequences that invoke the command DEFINITION |
-| C-h h      | (view-hello-file)                | Display the HELLO file, which lists many languages and characters      |
-| C-h a      | Show commands that match PATTERN |                                                                        |
-| C-h i m    | -                                | go to info and SELECT *m* for menu                                       |
-|            |                                  |                                                                        |
-|------------+----------------------------------+------------------------------------------------------------------------|
+|------------+-------------------------+------------------------------------------------------------------------|
+| Keystrokes | Command Name            | Action                                                                 |
+|------------+-------------------------+------------------------------------------------------------------------|
+| C-h        | help command            | enter the online help system                                           |
+| C-h t      | help-with-tutorial      | start Emacs TUTORIAL                                                   |
+| C-h ?      | help-for-help           | runs the command help-for-help                                         |
+| C-h C-h    | help-for-help           | -                                                                      |
+| C-h l      | view-lossage            | Display last few input keystrokes and the commands run.                |
+| C-h m      | describe-mode           | help information for the current buffers modes                         |
+| C-h k      | describe-key            | gives online help for a given keystroke sequence                       |
+| C-h f      | describe-function       | Display the full documentation of FUNCTION                             |
+| C-h x      | describe-command        | help information for a command (a function available using =M-x=).     |
+| C-h c      | describe-key-briefly    | print the name of the functions KEY-LIST invokes                       |
+| C-h w      | where-is                | Print message listing key sequences that invoke the command DEFINITION |
+| C-h h      | (view-hello-file)       | display the HELLO file, which lists many languages and characters      |
+| C-h a      | apropos-command PATTERN | Show commands that match PATTERN                                       |
+| C-h i      | runs the command info   | enter Info, the documentation browser                                  |
+| C-h i m    | -                       | go to info and SELECT *m* for menu                                     |
+|------------+-------------------------+------------------------------------------------------------------------|
 
 PATTERN can be a word, a list of words (separated by spaces), or a regexp (using
     some regexp special characters).  If it is a word, search for matches for
@@ -262,6 +265,12 @@ C-4 <backspace>
 - C-[f5]
   - toggle (=display-line-numbers-mode-relative=)
 * Window and Frames
+
+
+- C-x 4 f       - to find a file in another window.
+
+- C-x 4 b       - to select a different buffer in another window.
+
 - C-x 5 2
   - to open a new frame
 - C-x 5 f [title of your new frame]
@@ -279,24 +288,29 @@ C-4 <backspace>
 - C-/ C-x z z z z         - UNDO-CHAIN
 
 * Build in Programs
-** Dired
+** Dired Buffer
 
 - R 				- to rename the file (or dired-do-rename).
 - q 				- to go back to the (renamed) file buffer
 
-|------------+----------------------------+-------------------------------------------|
-| Keystrokes | Command Name               | Action                                    |
-|------------+----------------------------+-------------------------------------------|
-| C-x d      | dired-at-point             | Start Dired, defaulting to file at point  |
-| C-x C-j    | dired-jump                 | to the name of the current file, in Dired |
-| RET        | -                          | to select directory of current file       |
-| g          | refresh the dired buffer   | refresh to get the recent update          |
-| C          | Copy file                  | Copy the file and give it a name          |
-| R          | Rename file                | Give the file a new name                  |
-| R          | Move file in the Directory | write down the path and name of directory |
-| +          | Create Directory           | Create Directory with new name            |
-| ^          | Move to Parent Directory   | send to parent of the present directory   |
-|------------+----------------------------+-------------------------------------------|
+|------------+----------------------------------+------------------------------------------------------------------------------|
+| Keystrokes | Command Invoked                  | Description                                                                  |
+|------------+----------------------------------+------------------------------------------------------------------------------|
+| C-x d      | dired-at-point                   | Start Dired, defaulting to file at point                                     |
+| C-x C-j    | dired-jump                       | to the name of the current file, in Dired                                    |
+| RET        | -                                | to select directory of current file                                          |
+| g          | refresh the dired buffer         | refresh to get the recent update                                             |
+| C          | Copy file                        | Copy the file and give it a name                                             |
+| R          | Rename file                      | Give the file a new name                                                     |
+| R          | Move file in the Directory       | write down the path and name of directory                                    |
+| C-o        | dired-display-file               | Preview file but stay in Dired buffer.                                       |
+| C-u k      | dired-do-kill-lines              | Remove section.                                                              |
+| X          | dired-do-shell-command           | Execute shell command on file.                                               |
+| Q          | dired-do-find-regexp-and-replace | Query replace marked files, <space> accept, n decline and C-x s to save all. |
+| +          | dired-create-directory           | Create directory.                                                            |
+| ^          | dired-up-directory               | Go up one directory.                                                         |
+|            | find-name-dired                  | Recursively find a file.                                                     |
+|------------+----------------------------------+------------------------------------------------------------------------------|
 
 - *Mark/Unmark*
   - d                /Marks it for deletion in order to delete at a later point when we want to./
@@ -434,10 +448,14 @@ push to the mark ring so that you can use ~C-u C-SPC~ to return afterwards. This
 includes isearch, so after using C-s to go somewhere, you can easily jump back
 again.
 
-- C-x r m 	runs bookmark-set
-- C-x r b 	runs bookmark-jump
-- C-x r l 	list of your Bookmarks you've already save
-- DELETE		go ot Bookmark and SELECT by pressing ~d~ than to delete press ~x~
+| Shortcut | Command Invoked     | Description            |
+|----------+---------------------+------------------------|
+| C-x r m  | bookmark-set        | Create / set bookmark. |
+| C-x r b  | bookmark-jump       | Open bookmark.         |
+| C-x r l  | bookmark-bmenu-list | List bookmarks.        |
+
+- DELETE
+  - go ot Bookmark and SELECT by pressing ~d~ than to Delete press ~x~
 
 * Registers
 
@@ -466,23 +484,20 @@ If you use C-x r j to go to a saved position, but the buffer it was saved from h
 
 - C-x r C-@
   - (point-to-register REGISTER &optional ARG)
-* Keyboard Macros
-- C-x (      /--- Start recording key strokes./
-- C-x )      /--- Stop recording key strokes and save recording as a replayable keyboard macro./
+* Macros
 
-- C-x e
-  - Replay the keyboard macro. Type e after typing this once to play it again.
+| Shortcut        | Command Invoked           | Description                                                          |
+|-----------------+---------------------------+----------------------------------------------------------------------|
+| C-x (           | kmacro-start-macro        | Define keyboard macro. (Start recording key strokes)                 |
+| C-x )           | kmacro-end-macro          | End keyboard macro definition. (Stop and save recording key strokes) |
+| C-x e           | kmacro-end-and-call-macro | Playback keyboard macro, can just keep pressing e after first press. |
+| C-x C-k <space> | kmacro-step-edit-macro    | Open keyboard macro debugger.                                        |
+| C-x C-k e       | edit-kbd-macro            | Enter macro editor, (C-c C-c) to finish editing.                     |
+| C-x C-k n       | kmacro-name-last-macro    | Save the keyboard macro for later use.                               |
+|                 | insert-kbd-macro          | Insert a saved macro into the file, in Emacs lisp.                   |
 
 - =C-a= =C-SPACE	=C-n =M-w =C-y=	/---Duplicate a whole line/
 - =C-A=	=C-K =C-K =C-Y =C-Y=		/---Duplicate a whole line/
-
-- C-x s
-  - save-some-buffer, giving the choice which buffer to save or not.
-
-- M-a
-  - runs the command backward-sentence.
-- M-e
-  - runs the command forward-sentence.
 
 - ~M-x~ =eval-region=
 - ~M-x~ =eval-buffer=
@@ -557,24 +572,17 @@ I said  some code
 - C-x r t       - string-rectangle (used to insert any arbitrary text (spaces included) in a selected region.)
 
 %% Let's say you have this block of text and you want to insert 5 spaces in front of all lines.
-
+#+begin_example
 abc
 def
 ghi
-
+#+end_example
 - C-x r t M-5 SPC RET   - That will give the below force indented text.
 #+BEGIN_EXAMPLE
 abc
 def
 ghi
 #+END_EXAMPLE
-
-%% for example, if you wanted a yellow bar 5 pixels wide in insert state and a
-purple-filled box in normal state, you could do the following:
-#+BEGIN_SRC emacs-lisp
-(setq evil-insert-state-cursor '((bar . 5) "yellow")
-evil-normal-state-cursor '(box "purple"))
-#+END_SRC
 
 - IMHO the standard way is:
    1) Go to the top of your buffer.
@@ -585,14 +593,9 @@ evil-normal-state-cursor '(box "purple"))
    6) Press ! to perform all replacements at once.
 
 Explanation of the regular expression:
-
 1) The caret ^ stands for the beginning of line.
 2) The \s- stands for any character designated as space by the current modes syntax table.
 3) The + stands for one or more contiguous matches.
-
-- C-x 4 f       - to find a file in another window.
-
-- C-x 4 b       - to select a different buffer in another window.
 
 * Projectile
 - Simply open any file in the git project using =C-x C-f= and then try running
@@ -615,11 +618,30 @@ Insert integer trough a significant point
   - /to view a file in /other window/./
 
 * ORG
-** org-tempo
-- C-c C-, (org-insert-structure-template)
-for farther explanation, [[https://orgmode.org/manual/Structure-Templates.html#Structure-Templates][go here]]
+** Org Buffer
 
-also put this in your init.el
+| Shortcut    | Command Invoked          | Description                                    |
+|-------------+--------------------------+------------------------------------------------|
+| S-M-RET     | org-insert-todo-heading  | Insert a new TODO entry below the current one. |
+| C-c / t     | org-match-sparse-tree    | View todo items in a sparse tree.              |
+| C-c C-t     | org-todo                 | Toggle todo item state.                        |
+| C-c C-s     | org-schedule             | Schedule todo item.                            |
+| C-c C-d     | org-deadline             | Add deadline to todo item.                     |
+| C-c [       | org-agenda-file-to-front | Add file to agenda.                            |
+| C-c ]       | org-remove-file          | Remove file to agenda.                         |
+| C-c .       | org-timestamp            | Insert current date.                           |
+| C-c C-e     | org-export-dispatch      | Open exporter.                                 |
+| C-c C-e #   | org-export-dispatch      | Insert template.                               |
+| C-c C-e P x | org-export-dispatch      | Export specific project.                       |
+
+** org-tempo
+- =C-c C-,=
+  =org-insert-structure-template=
+
+/for farther explanation/, [[https://orgmode.org/manual/Structure-Templates.html#Structure-Templates][go here]].
+
+also put this in your =init.el=.
+
 - (require 'org-tempo)
 
 #+begin_src
@@ -637,6 +659,13 @@ v	‘#+BEGIN_VERSE’ … ‘#+END_VERSE’
 
 * Spell checking
 
-- M-$
-  - ispell PROGRAM sati
-- M-x flyspell-mode
+Interface To Spell (Ispell) and On The Fly Spell (Flyspell)
+
+| Shortcut | Command Invoked                    | Description                                                      |
+|----------+------------------------------------+------------------------------------------------------------------|
+| M $      | ispell-word                        | Check and correct spelling of the word at point.                 |
+| C-M i    | completion-at-point                | Complete the word before point based on the spelling dictionary. |
+| C-c $    | flyspell-correct-word-before-point | Correct word before point.                                       |
+| M-x      | flyspell-mode                      | Enable Fly-spell mode, which highlights all misspelled words.    |
+| -        | flyspell-prog-mode                 | Enable Fly-spell mode for comments and strings only.             |
+| -        | flyspell-buffer                    | Check and correct spelling in the buffer.                        |
