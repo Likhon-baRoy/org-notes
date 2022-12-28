@@ -176,40 +176,9 @@ We can put all these inside an interactive function and call it using M-x.
 ** Workflow
 - Change the input-method using C-\
 - Enable company-wordfreq and other changes for a nice experience using =M-x bn-company-wordfreq=
-- =TAB= to get suggestions.
-- =ARROW= -> to select one.
-
-* All the icons
-This installs a bunch of icons and fonts - no more blank squares anywhere.
-** TODO
-- Lets add a package. A good one to start with is all-the-icons. This installs a bunch of icons and fonts - no more blank squares anywhere.  Add the following:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons)
-#+end_src
-
--With your cursor at the end of the line, smash that =C-x C-e= and Emacs will
-install the package. It works because we have /(setq use-package-always-ensure t)/
-set. This particular package has a one-time setup step - go ahead and execute
-=M-x all-the-icons-install-fonts= now so you never have to worry about it again.
-
-You should be good to go!
 
 * Installation
-- for more check-out source here : https://github.com/domtronn/all-the-icons.el
-You should be able to install this package in the standard way, add it to the
-load path and then calling
-
-#+BEGIN_SRC emacs-lisp
-(when (display-graphic-p)
-(require 'all-the-icons))
-;; or
-(use-package all-the-icons
- :if (display-graphic-p))
-#+END_SRC
-
-** Installing Fonts
--In order for the icons to work it is very important that you install the
+In order for the icons to work it is very important that you install the
 Resource Fonts included in this package, they are available in the fonts
 directory. You can also install the latest fonts for this package in the
 (guessed?) based on the OS by calling the following function;
@@ -220,7 +189,7 @@ directory. You can also install the latest fonts for this package in the
 take some time to complete. For Windows, this function will prompt for a
 download directory for you to install them manually.  Usage
 
--The simplest usage for this package is to use the following functions;
+The simplest usage for this package is to use the following functions;
 - The value of time
   - hello
     +next item

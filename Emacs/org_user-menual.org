@@ -9,13 +9,85 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
 
 :DRAWERNAME:
-*NOTE:* /I personally prefer Emacs for writing and working with ORG. \\
-This documentation is still in progress, so you better stick to it. cheers!/ 🍻
+*NOTE:* This documentation is still in progress, you better stick to it. cheers! 🍻
 :END:
 
 * Table of Contents                                                     :TOC:
 
 - [[#startup-with-org][Startup with ORG]]
+
+
+* Org Buffer
+|-------------+----------------------------+------------------------------------------------|
+| Shortcut    | Command Invoked            | Description                                    |
+|-------------+----------------------------+------------------------------------------------|
+| S-M-RET     | org-insert-todo-heading    | Insert a new TODO entry below the current one. |
+| C-c / t     | org-match-sparse-tree      | View todo items in a sparse tree.              |
+| C-c C-t     | org-todo                   | Toggle todo item state.                        |
+| C-c C-s     | org-schedule               | Schedule todo item.                            |
+| C-c C-d     | org-deadline               | Add deadline to todo item.                     |
+| C-c [       | org-agenda-file-to-front   | Add file to agenda.                            |
+| C-c ]       | org-remove-file            | Remove file to agenda.                         |
+| C-c .       | org-timestamp              | Insert current date.                           |
+| C-c C-e     | org-export-dispatch        | Open exporter.                                 |
+| C-c C-e #   | org-export-dispatch        | Insert template.                               |
+| C-c C-e P x | org-export-dispatch        | Export specific project.                       |
+| C-c C-x \   | org-toggle-pretty-entities |                                                |
+|-------------+----------------------------+------------------------------------------------|
+
+* org-tempo
+- =C-c C-,=
+  =org-insert-structure-template=
+
+/for farther explanation/, [[https://orgmode.org/manual/Structure-Templates.html#Structure-Templates][go here]].
+
+also put this in your =init.el=.
+
+- (require 'org-tempo)
+
+#+begin_src
+a	‘#+BEGIN_EXPORT ascii’ … ‘#+END_EXPORT’
+c	‘#+BEGIN_CENTER’ … ‘#+END_CENTER’
+C	‘#+BEGIN_COMMENT’ … ‘#+END_COMMENT’
+e	‘#+BEGIN_EXAMPLE’ … ‘#+END_EXAMPLE’
+E	‘#+BEGIN_EXPORT’ … ‘#+END_EXPORT’
+h	‘#+BEGIN_EXPORT html’ … ‘#+END_EXPORT’
+l	‘#+BEGIN_EXPORT latex’ … ‘#+END_EXPORT’
+q	‘#+BEGIN_QUOTE’ … ‘#+END_QUOTE’
+s	‘#+BEGIN_SRC’ … ‘#+END_SRC’
+v	‘#+BEGIN_VERSE’ … ‘#+END_VERSE’
+#+end_src
+* Set Timer
+Focus on your work within Built-in Timer!
+
+You can do this from anywhere in Emacs, just make sure that you've loaded =org-mode= first.
+
+To use, run the command:
+- =C-c= =C-x= =;= or =M-x= =org-timer-set-timer=
+Type in a number for the number of minutes for the timer and press =Enter=.
+Now in the mode line you'll see the timer counting down to show you how much time you have left.
+
++ Pause Timer =org-timer-pause-or-continue=
++ Stop Timer =org-timer-stop=
+
+Emacs has a built-in =Pomodoro= Timer. And a =Pomodoro= timer wouldn't be complete without a bell. So let's add one:
+#+BEGIN_SRC emacs-lisp
+  (require 'org)
+  (setq org-clock-sound "~/.emacs.d/etc/bell.wav")
+#+END_SRC
+just set the variable =org-clock-sound= to the path of a =.wav= file.
+
+There's an =org-pomodoro= package too.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro
+    :after org
+    :config
+    (setq org-pomodoro-start-sound "~/.dotfiles/.emacs.d/sounds/focus_bell.wav")
+    (setq org-pomodoro-short-break-sound "~/.dotfiles/.emacs.d/sounds/three_beeps.wav")
+    (setq org-pomodoro-long-break-sound "~/.dotfiles/.emacs.d/sounds/three_beeps.wav")
+    (setq org-pomodoro-finished-sound "~/.dotfiles/.emacs.d/sounds/meditation_bell.wav")
+#+END_SRC
+I often have little bits of time that are too short for the pomodoro default 25 minutes on 5 minutes off. This hits the spot.
 
 * ORG to Many
 - =C-c C-e=
