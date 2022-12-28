@@ -8,8 +8,8 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
 
 :DRAWERNAME:
-📝 *NOTE:* (/for Beginners/) I personally prefer Emacs build-in TUTORIAL first,
-which is very well documented and easy to understand. In this document I'm use
+📝 *NOTE:* (/for Beginners/) I personally prefer Emacs built-in TUTORIAL first,
+which is very well documented and easy to understand. In this documentation I'll use
 =Ctrl= as =C=, =Alt= as =M=, =Shift= as =S=, =Space= as =SPC= and =BackSpace= as
 =BS=.
 
@@ -51,8 +51,8 @@ General Shortcuts
 |------------+-----------------------------------+---------------------------------------------------------|
 | Keystrokes | Command Name                      | Action                                                  |
 |------------+-----------------------------------+---------------------------------------------------------|
-| C-n        | next-line                         | move to next line (Up)                                  |
-| C-p        | previous-line                     | move to previous line (Down)                            |
+| C-n        | next-line                         | move to next line (Down)                                  |
+| C-p        | previous-line                     | move to previous line (Up)                            |
 | C-f        | forward-char                      | move forward one char (Right)                           |
 | C-b        | backward-char                     | move backward one char (Left)                           |
 | M-f        | forward-word                      | move one forward                                        |
@@ -213,10 +213,10 @@ The help system is simple. Type =C-h= (or =F1=) and follow the directions. If yo
 | (none)     | backward-kill-paragraph | delete previous paragraph                        |
 |------------+-------------------------+--------------------------------------------------|
 
-- SIFT-C-BS
+- SHIFT-C-BS
   - Delete entire line the point is on
 - C-0 C-k or C-u 0 C-k
-  - Delete from point to beginning of line
+  - Delete from point to begining of line
 
 - C-u BS
   - will delete 4 =spaces= backwards.
@@ -257,7 +257,7 @@ C-4 <backspace>
   - (undo-redo) REDO.
 
 - =M-x= =revert-buffer=
-  - If you want to undo all-changes made science you last saved the file.
+  - If you want to undo all-changes made since you last saved the file.
 
 * Tweaks
 ** switch themes
@@ -352,8 +352,8 @@ C-4 <backspace>
 
 - C-/ C-x z z z z         - UNDO-CHAIN
 
-* Build in Programs
-You can quit any Emacs build-in-program by pressing =q=.
+* Built in Programs
+You can quit any Emacs built-in-program by pressing =q=.
 ** Dired Buffer
 
 |------------+----------------------------------+--------------------------------------------------------------------------------|
