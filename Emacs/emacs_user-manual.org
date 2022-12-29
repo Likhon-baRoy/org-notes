@@ -23,17 +23,23 @@ which is very well documented and easy to understand. In this document I'm use
   - [[#files][Files]]
 - [[#modeline][Modeline]]
 - [[#search][Search]]
-- [[#mark/unmark][Mark/Unmark]]
+  - [[#search-&-replace][Search & Replace]]
+- [[#mark-region-and-kill-ring][Mark, region and kill-ring]]
 - [[#getting-help][Getting Help]]
 - [[#killing-and-delete][Killing and Deleting]]
 - [[#undo/redo][Undo/Redo]]
 - [[#tweaks][Tweaks]]
 - [[#window-and-frames][Window and Frames]]
+  - [[#emacs-buffer][Emacs Buffer]]
+  - [[#emacs-window][Emacs Window]]
+  - [[#emacs-frame][Emacs Frame]]
 - [[#repeat-command][Repeat Command]]
 - [[#build-in-programs][Build in Programs]]
   - [[#dired][Dired]]
   - [[#eww][eww]]
 - [[#shells][Shells]]
+  - [[#eshell][Eshell]]
+- [[#emacs-client][Emacs-client]]
 - [[#sexps][SEXPS]]
 - [[#fold/unfold-blocks][Fold/Unfold Blocks]]
 - [[#bookmarks][Bookmarks]]
@@ -41,9 +47,9 @@ which is very well documented and easy to understand. In this document I'm use
 - [[#keyboard-macros][Keyboard Macros]]
 - [[#miscellaneous][Miscellaneous]]
   - [[#enter-numeric-values][Enter Numeric values]]
+- [[#Spelling-check][Spelling Check]]
 - [[#projectile][Projectile]]
 - [[#org][ORG]]
-- [[#Spelling-check][Spelling Check]]
 
 * Basics of Emacs
 ** Moving Around in the Buffer
@@ -65,6 +71,8 @@ General Shortcuts
 | M-{        | backwards-paragraph               | move backwards one paragraph                            |
 | C-v        | scroll-up                         | move forward one screen                                 |
 | M-v        | scroll-down                       | move backward one screen                                |
+| C-M-v      | scroll-other-window               | Scroll next window downward (when opened 2 >= windows)  |
+| C-M-S-v    | scroll-other-window               | Scroll next window upward                               |
 | C-x [      | forward-page                      | move forward one page                                   |
 | C-x ]      | backward-page                     | move backward one page                                  |
 | M-<        | beginning-of-buffer               | move to beginning of file                               |
@@ -75,6 +83,7 @@ General Shortcuts
 | C-u (n)    | universal-argument                | repeat the next command (N) times                       |
 | M-g c      | goto-char                         | goto char (N) of file                                   |
 | M-g M-g    | goto-line                         | goto line (N) of file                                   |
+| C-g        | keyboard-quit                     | to cancel a command                                     |
 |------------+-----------------------------------+---------------------------------------------------------|
 
 ** Files
@@ -92,6 +101,25 @@ General Shortcuts
 | C-x C-c    | save-buffers-kill-emacs  | Offer to save each buffer, then kill Emacs                          |
 | C-z        | suspend-emacs            | Suspend Emacs temporarily                                           |
 |------------+--------------------------+---------------------------------------------------------------------|
+
+** Asking input on quit
+
++ =save file /home/Document ? (y, n, !, ., q, C-r, C-h)=
+  |-----------+--------------------------------------------|
+  | Character | Description                                |
+  |-----------+--------------------------------------------|
+  | =y=       | Save the specific file                     |
+  | =n=       | Do not save the specific file              |
+  | =!=       | to Save all of files at once and then Quit |
+  | =q=       | Quit immediately without saving            |
+  | =.=       | Save the specific file and then Quit       |
+  | =C-r=     | View the specific file                     |
+  | =C-h=     | Display help information                   |
+  |-----------+--------------------------------------------|
+If you try to Quit when there are still files that are not Saved, Emacs will ask
+you to confirm your intentions.  You'll see a message like:
+
+=Modified buffer exist; exist anyway?(yes/no)=
 
 * Modeline
 
@@ -118,24 +146,75 @@ General Shortcuts
 | C-s C-w    | isearch-yank-word       | start with the word the cursor is on as search string                                                     |
 | C-s C-y    | isearch-yank-line       | start with the text from cursor position to the end of the line as search string                          |
 | C-s M-y    | isearch-yank-kill       | start with the text from kill ring as search string                                                       |
-| M-p        |                         | select PREVIOUS search string                                                                             |
-| M-n        |                         | select NEXT search string                                                                                 |
+| M-p        | previous-search-string  | select PREVIOUS search string                                                                             |
+| M-n        | next-search-string      | select NEXT search string                                                                                 |
+| M-s w      | isearch-forward-word    | start forward incremental Word search.                                                                    |
+| M-s w C-r  | isearch-backward-word   | start backward incremental Word search.                                                                   |
+| M-C-s      | isearch-forward-regexp  | start forward incremental REGEXP search.                                                                  |
+| M-C-r      | isearch-backward-regexp | start backward incremental REGEXP search.                                                                 |
 |------------+-------------------------+-----------------------------------------------------------------------------------------------------------|
++ Lower-case on searching is: (Case-Insensitive)
++ Upper-case on searching is: (Case-Sensitive)
+
+** Search & Replace
+
+|-------------+------------------------+-------------------------------------------|
+| Keystrokes  | Command Name           | Description                               |
+|-------------+------------------------+-------------------------------------------|
+| M-%         |                        | Query: search and replace                 |
+| M-C-%       |                        | Query: search and replace (REGEXP)        |
+| (none)      | replace-string         | No query: search and replace              |
+| (none)      | replace-regexp         | No query: search and replace (REGEXP)     |
+| C-x ESC ESC | repeat-complex-command | Edit and re-evaluate last complex command |
+| M-p         |                        | to see previous                           |
+| M-n         |                        | to see next                               |
+|-------------+------------------------+-------------------------------------------|
+
+* Regular Expression
+
+Basic character you can use to create a regular expression.
+|-----------+---------------------------------------------------------------------------------------------------------|
+| Character | Description                                                                                             |
+|-----------+---------------------------------------------------------------------------------------------------------|
+| (char)    | any regular character matches itself.                                                                   |
+| .         | match any single character except =RET= and (like *?* in file name).                                    |
+| *         | match zero or more of the preceding char.                                                               |
+| +         | match one or more of the preceding char.                                                                |
+| ?         | match exactly zero or more of the preceding char.                                                       |
+| ^         | match the beginning of a line.                                                                          |
+| $         | match the end of a line.                                                                                |
+| \<        | match the beginning of a word.                                                                          |
+| \>        | match the end of a word.                                                                                |
+| \b        | match the beginning or end of a word.                                                                   |
+| \B        | match anywhere not at the beginning or end of a word.                                                   |
+| \d        | matches any single digit(0-9).                                                                          |
+| \D        | matches any char but a digit.                                                                           |
+| \`        | match the beginning of the buffer.                                                                      |
+| \'        | match the end of the buffer.                                                                            |
+| \(char)   | quotes a special character.                                                                             |
+| []        | match one of the enclosed characters.                                                                   |
+| [^ ]      | match any character that is not enclosed.                                                               |
+| \s        | match any whitespace character, space, a newline, a tab, a carriage, return, a formfeed or a backspace. |
+| \S         | matches any char except whitespace.                                                                     |
+| \w        | matches any "word" char (upper-lower letters, digit, underscore).                                       |
+| \W        | matches any char but not these (upper-lower letters, digit, underscore).                                |
+|-----------+---------------------------------------------------------------------------------------------------------|
+*e.g.* search for the characters (Welcome) at the beginning of a line, press =M-C-s= and type =^Welcome=.
 
 * Mark, region and kill-ring
 
-|------------+--------------------------+------------------------------------------------|
-| Keystrokes | Command Name             | Action                                         |
-|------------+--------------------------+------------------------------------------------|
-| C-@/C-SP   | set-mark-command         | mark the beginning (or end) of a region        |
-| C-x C-x    | exchange-point-and-mark  | exchange location of cursor and mark           |
-| M-h        | mark-paragraph           | mark paragraph                                 |
+|------------+--------------------------+--------------------------------------------------|
+| Keystrokes | Command Name             | Action                                           |
+|------------+--------------------------+--------------------------------------------------|
+| C-@/C-SP   | set-mark-command         | mark the beginning (or end) of a region          |
+| C-x C-x    | exchange-point-and-mark  | exchange location of cursor and mark             |
+| M-h        | mark-paragraph           | mark paragraph                                   |
 | M-w        | kill-region-save         | copy the region (so it can be pasted with =C-y=) |
-| C-x C-p    | mark-page                | mark the page                                  |
-| C-x h      | mark-whole-buffer        | mark buffer                                    |
-| M-@        | set mark after next word | do not move point(cursor)                      |
-| ESC n M-@  | "   " more than one word | use a prefix argument(n)                       |
-|------------+--------------------------+------------------------------------------------|
+| C-x C-p    | mark-page                | mark the page                                    |
+| C-x h      | mark-whole-buffer        | mark buffer                                      |
+| M-@        | set mark after next word | do not move point(cursor)                        |
+| ESC n M-@  | "   " more than one word | use a prefix argument(n)                         |
+|------------+--------------------------+--------------------------------------------------|
 
 ** make cursor jump back to the previous position
 
@@ -178,86 +257,63 @@ The help system is simple. Type =C-h= (or =F1=) and follow the directions. If yo
 | C-h t      | help-with-tutorial      | start Emacs TUTORIAL                                                   |
 | C-h ?      | help-for-help           | runs the command help-for-help                                         |
 | C-h C-h    | help-for-help           | -                                                                      |
-| C-h C-a    | about-emacs             | Display the ~*About GNU Emacs*~ buffer.                                  |
+| C-h C-a    | about-emacs             | Display the ~*About GNU Emacs*~ buffer.                                |
 | C-h l      | view-lossage            | Display last few input keystrokes and the commands run.                |
 | C-h m      | describe-mode           | help information for the current buffers modes                         |
 | C-h k      | describe-key            | gives online help for a given keystroke sequence                       |
 | C-h f      | describe-function       | Display the full documentation of FUNCTION                             |
-| C-h x      | describe-command        | help information for a command (a function available using =M-x=).       |
+| C-h x      | describe-command        | help information for a command (a function available using =M-x=).     |
 | C-h b      | describe-bindings       | showing a list of all defined keys, and their definitions.             |
 | C-h c      | describe-key-briefly    | print the name of the functions KEY-LIST invokes                       |
 | C-h w      | where-is                | Print message listing key sequences that invoke the command DEFINITION |
 | C-h h      | (view-hello-file)       | display the HELLO file, which lists many languages and characters      |
 | C-h a      | apropos-command PATTERN | Show commands that match PATTERN                                       |
 | C-h i      | runs the command info   | enter Info, the documentation browser                                  |
-| C-h i m    | -                       | go to info and SELECT *m* for menu                                       |
+| C-h i m    | -                       | go to info and SELECT *m* for menu                                     |
 |------------+-------------------------+------------------------------------------------------------------------|
 
 * Killing and Deleting
 
-|------------+-------------------------+--------------------------------------------------|
-| Keystrokes | Command Name            | Action                                           |
-|------------+-------------------------+--------------------------------------------------|
-| C-d        | delete-char             | delete char under cursor                         |
-| BS         | delete-backward-char    | delete previous char                             |
-| M-d        | kill-word               | delete next word                                 |
-| M-BS       | backward-kill-word      | delete previous word                             |
-| C-k        | kill-line               | delete from the cursor to end-of-line            |
-| M-k        | kill-sentence           | delete next sentence                             |
-| C-x BS     | backward-kill-sentence  | delete previous sentence                         |
-| C-y        | yank                    | restore what you've deleted (YANK LAST KILL)     |
-| M-y        | yank-pop                | REPLACE YANKED with PREVIOUS KILL                |
-| C-w        | kill-region             | delete a marked region                           |
-| M-w        | kill-region-save        | copy the region (so it can be pasted with =C-y=) |
-| (none)     | kill-paragraph          | delete next paragraph                            |
-| (none)     | backward-kill-paragraph | delete previous paragraph                        |
-|------------+-------------------------+--------------------------------------------------|
+|------------+-----------------------------+------------------------------------------------------------------|
+| Keystrokes | Command Name                | Action                                                           |
+|------------+-----------------------------+------------------------------------------------------------------|
+| C-d        | delete-char                 | delete char under cursor                                         |
+| BS         | delete-backward-char        | delete previous char                                             |
+| M-z CHAR   | zap-to-char                 | kill from cursor upto char                                       |
+| M-^        | delete-indentation          | join this line to previous and fix up whitespace at join.        |
+| M-\        | delete-horizontal-space     | delete all SPC & TABS around point (either side of point)        |
+| M-SPC      | just-one-space              | delete all SPC & TABS around point, leaving one space.           |
+| M-d        | kill-word                   | delete next word                                                 |
+| M-BS       | backward-kill-word          | delete previous word                                             |
+| C-k        | kill-line                   | delete from the cursor to end-of-line                            |
+| M-k        | kill-sentence               | delete next sentence                                             |
+| C-M-k      | kill-sexp                   | kill the sexp (balanced expression) following point.             |
+| C-S-BS     | kill-whole-line             | delete entire line the point is on                               |
+| C-x BS     | backward-kill-sentence      | delete previous sentence                                         |
+| C-x C-o    | delete-blank-lines          | get rid off all blank line around current line except one        |
+| C-y        | yank                        | restore what you've deleted (YANK LAST KILL)                     |
+| C-u C-y    | same as  (C-y)              | cursor at beginning                                              |
+| M-y        | yank-pop                    | REPLACE YANKED with PREVIOUS KILL                                |
+| C-w        | kill-region                 | delete a marked region                                           |
+| M-w        | kill-region-save            | copy the region (so it can be pasted with =C-y=)                 |
+| M-C-w      | append-next-kill            | append next kill to newest kill ring entry                       |
+| (none)     | kill-paragraph              | delete next paragraph                                            |
+| (none)     | backward-kill-paragraph     | delete previous paragraph                                        |
+| (none)     | delete-whitespace-rectangle | delete all whitespace following a specified column in each line. |
+|------------+-----------------------------+------------------------------------------------------------------|
 
-- SIFT-C-BS
-  - Delete entire line the point is on
 - C-0 C-k or C-u 0 C-k
   - Delete from point to beginning of line
 
-- C-u BS
-  - will delete 4 =spaces= backwards.
-
-Equivalent bindings would be:
-
-M-4 <backspace>
-C-4 <backspace>
-
-- M-\
-  - Delete all SPACES & TABS around point (delete-horizontal-space).
-
-- M-SPC
-  - Deletes all spaces and tabs around point, leaving one space
-
-- M-^
-  - (delete-indentation) command for joining multiple lines into one line
-
-- C-x C-o
-  - get rid off all blank line around current line except one.
-
-- M-x (delete-whitespace-rectangle)
-
-
-- M-z CHAR
-  - from cursor upto char
-
-- C-t
-  - Transpose two characters on either side of
-    point and move point forward by one
-
 * Undo/Redo
-- C-/ or C-_
-  - Undo
-- C-?
-  - Redo
-- C-g C-/
-  - (undo-redo) REDO.
 
-- =M-x= =revert-buffer=
-  - If you want to undo all-changes made science you last saved the file.
+|---------------+---------------+-----------------------------------------------------------|
+| Keystrokes    | Command Name  | Action                                                    |
+|---------------+---------------+-----------------------------------------------------------|
+| ~C-/~ / ~C-_~ | undo          | Undo some previous changes.                               |
+| ~C-?~         | undo-redo     | Undo the last undos, i.e. Redo the last changes           |
+| (none)        | revert-buffer | to Undo all-changes made science you last saved the file. |
+|---------------+---------------+-----------------------------------------------------------|
 
 * Tweaks
 ** switch themes
@@ -270,27 +326,52 @@ C-4 <backspace>
 - C-[f5]
   - toggle (=display-line-numbers-mode-relative=)
 * Advance Editing
-
 ** Text conversion and transposition
 
 - Text conversion and transposition
 + M-l, M-u, M-c: lowercase, uppercase, capitalize first character
 + C-t, M-t, C-M-t, C-x C-t: transpose character, word, expression, line
 
-|------------+----------------------------------------------|
-| Keystrokes | Description                                  |
-|------------+----------------------------------------------|
-| M-l        | change following word to lowercase           |
-| M-u        | change following word to uppercase           |
-| M-c        | change following word initial letter capital |
-| M-- l      | change previous word to lowercase            |
-| M-- u      | change previous word to uppercase            |
-| M-- c      | change previous word initial letter capital  |
-| C-t        | Transpose two adjacent characters            |
-| M-t        | Transpose two adjacent word                  |
-| C-M-t      | Transpose two adjacent expression            |
-| C-x C-t    | Transpose two adjacent consecutive lines     |
-|------------+----------------------------------------------|
+|--------------+-----------------------------------------------------------------|
+| Keystrokes   | Description                                                     |
+|--------------+-----------------------------------------------------------------|
+| M-l          | change following word to lowercase                              |
+| M-u          | change following word to uppercase                              |
+| M-c          | change following word initial letter capital                    |
+| M-- l        | change previous word to lowercase                               |
+| M-- u        | change previous word to uppercase                               |
+| M-- c        | change previous word initial letter capital                     |
+| C-x C-l      | Convert the region to lower case                                |
+| C-x C-u      | Convert the region to upper case                                |
+| C-t          | Transpose two adjacent characters and move point forward by one |
+| M-t          | Transpose two adjacent word                                     |
+| C-M-t        | Transpose two adjacent expression                               |
+| C-x C-t      | Transpose two adjacent consecutive lines                        |
+| C-u 2 M-z e  | delete all characters to the 2nd occurrence of =e=              |
+| M-- M-z e    | delete all characters to the previous occurrence of =e=         |
+| C-u -4 M-z e | delete all characters to the 4th previous occurrence of =e=     |
+|--------------+-----------------------------------------------------------------|
+
+** Recursive Editing
+
+Let's say you are in middle of a long search and replace operation, and you
+happen to notice a different change you want to make.  At such a times, it can
+be inconvenient to stop what you are doing just to make a single change.
+However, if you wait until your search and replace operation is finished, you
+may forgot what it was you wanted to change.
+
+Instead you can press =C-r=. This pauses the search and replace, and put you back
+into a recursive editing environment.  You can now make any change you want.
+When you are finished, press =M-C-c=.  This will stop recursive editing and return
+you to the search and replace operation, exactly where you left.  Or, =C-]=
+(abort-recursive-editing)
+
+Whenever you press =C-r=, Emacs will put square brackets =[= and =]= around the name
+of the mode on your modeline.
+
+Another way to start recursive editing during a search and replace operation is
+by pressing =C-w=.  This will delete the current matching pattern and then start
+recursive editing.
 
 * Buffers, Windows and Frames
 ** Emacs Buffer
@@ -346,11 +427,15 @@ C-4 <backspace>
   - to go to another frame
 
 * Repeat Command
-- C-x z
 
-- C-u C-n C-x z z z z     - next-line CHAIN
-
-- C-/ C-x z z z z         - UNDO-CHAIN
+|-------------+------------------------+--------------------------------------------|
+| Keystrokes  | Command Name           | Description                                |
+|-------------+------------------------+--------------------------------------------|
+| C-x z       | repeat                 | Repeat most recently executed command.     |
+| C-x ESC ESC | repeat-complex-command | Edit and re-evaluate last complex command. |
+| M-p         |                        | to see previous                            |
+| M-n         |                        | to see next                                |
+|-------------+------------------------+--------------------------------------------|
 
 * Build in Programs
 You can quit any Emacs build-in-program by pressing =q=.
@@ -392,7 +477,7 @@ You can quit any Emacs build-in-program by pressing =q=.
 | Keystrokes | Description                      |
 |------------+----------------------------------|
 | d          | Flag file for Deletion.          |
-| x          | Delete files flagged by (=d=).     |
+| x          | Delete files flagged by (=d=).   |
 | D          | Delete directly without marking. |
 |------------+----------------------------------|
 
@@ -472,7 +557,7 @@ Eshell comes with a feature-rich command history facility.  Because Eshell does 
 - C-a / C-e
   - Move to the beginning or end of line.
 
-    Unfortunately, the search-as-you-type history search in M-x shell (bound to M-r) is not implemented in Eshell.
++ Unfortunately, the search-as-you-type history search in =M-x= shell (bound to =M-r=) is not implemented in Eshell.
 
 Because I program a lot, I tend to use M-m instead of C-a to move to the beginning of the line. M-m skips indentation and moves to the first non-whitespace char, unlike C-a.
 
@@ -578,7 +663,19 @@ completes to
 
 * SEXPS
 
-Selecting words or sexps without moving the cursor.
+|------------+------------------+---------------------------------------------------------|
+| Keystrokes | Command Name     | Action                                                  |
+|------------+------------------+---------------------------------------------------------|
+| C-M-f      | forward-sexp     | Move forward by s-expression.                           |
+| C-M-b      | backward-sexp    | Move backward by s-expression.                          |
+| C-M-d      | down-list        | Move forward down one level of parentheses.             |
+| C-M-u      | backward-up-list | Move backward out of one level of parentheses.          |
+| C-M-n      | forward-list     | Move forward across one balanced group of parentheses.  |
+| C-M-p      | backward-list    | Move backward across one balanced group of parentheses. |
+| C-M-k      | kill-sexp        | Kill the sexp (balanced expression) following point.    |
+|------------+------------------+---------------------------------------------------------|
+
++ Selecting words or sexps without moving the cursor:
 |---------------------+--------------+------------------------------------------------------|
 | Keystrokes          | Command Name | Action                                               |
 |---------------------+--------------+------------------------------------------------------|
@@ -676,37 +773,6 @@ If you use C-x r j to go to a saved position, but the buffer it was saved from h
 
 - C-x r C-@
   - (point-to-register REGISTER &optional ARG)
-
-* Regular Expression
-
-Basic character you can use to create a regular expression.
-|-----------+---------------------------------------------------------------------------------------------------------|
-| Character | Description                                                                                             |
-|-----------+---------------------------------------------------------------------------------------------------------|
-| (char)    | any regular character matches itself.                                                                   |
-| .         | match any single character except =RET= and (like *?* in file name).                                        |
-| *         | match zero or more of the preceding char.                                                               |
-| +         | match one or more of the preceding char.                                                                |
-| ?         | match exactly zero or more of the preceding char.                                                       |
-| ^         | match the beginning of a line.                                                                          |
-| $         | match the end of a line.                                                                                |
-| \<        | match the beginning of a word.                                                                          |
-| \>        | match the end of a word.                                                                                |
-| \b        | match the beginning or end of a word.                                                                   |
-| \B        | match anywhere not at the beginning or end of a word.                                                   |
-| \d        | matches any single digit(0-9).                                                                          |
-| \D        | matches any char but a digit.                                                                           |
-| \`        | match the beginning of the buffer.                                                                      |
-| \'        | match the end of the buffer.                                                                            |
-| \(char)   | quotes a special character.                                                                             |
-| []        | match one of the enclosed characters.                                                                   |
-| [^ ]      | match any character that is not enclosed.                                                               |
-| \s        | match any whitespace character, space, a newline, a tab, a carriage, return, a formfeed or a backspace. |
-| \S         | matches any char except whitespace.                                                                     |
-| \w        | matches any "word" char (upper-lower letters, digit, underscore).                                       |
-| \W        | matches any char but not these (upper-lower letters, digit, underscore).                                |
-|-----------+---------------------------------------------------------------------------------------------------------|
-*e.g.* search for the characters (Welcome) at the beginning of a line, press =M-C-s= and type =^Welcome=.
 
 * Keyboard Macros
 
@@ -824,10 +890,19 @@ Explanation of the regular expression:
 |------------+------------------------------+-------------------------------------------------------------------------------------------|
 | Keystrokes | Command Name                 | Action                                                                                    |
 |------------+------------------------------+-------------------------------------------------------------------------------------------|
+| (none)     | auto-fill-mode               | Turn ON/OFF auto-fill-mode                                                                |
+| M-q        | fill-paragraph               | Fill paragraph at or after point.                                                         |
+| ESC 1 M-q  | -                            | Justify and Fill paragraph at or after point.                                             |
+| (none)     | fill-region                  | Fill each paragraph in the region.                                                        |
+| ESC 1 M-x  | fill-region                  | Justify and Fill each paragraph in the region.                                            |
+| (none)     | fill-region-as-paragraph     | Fill region as one long paragraph.                                                        |
+| ESC 1 M-x  | -                            | Justify and Fill region as one long paragraph.                                            |
+| C-x f      | set-fill-column              | set the fill column value.                                                                |
 | M-=        | count-words-region START END | Count the lines, number of words and characters in the region.                            |
 | C-u num    | universal-argument           | begin a numeric argument for the following command.                                       |
 | M--        | negative-argument            | begin a negative numeric argument for the next command.                                   |
 | C-q char   | quoted-insert                | read next input character and insert it. This is useful for inserting control characters. |
+| C-x C-q    | read-only-mode               | to execute command (read-only-mode) ON/OFF                                                |
 |------------+------------------------------+-------------------------------------------------------------------------------------------|
 
 ** Enter Numeric values
