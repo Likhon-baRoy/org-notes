@@ -88,19 +88,27 @@ General Shortcuts
 
 ** Files
 
-|-------------+--------------------------+---------------------------------------------------------------------|
-| Keystrokes  | Command Name             | Action                                                              |
-|-------------+--------------------------+---------------------------------------------------------------------|
-| =C-x= =C-f= | find-file                | find file and read it in a new buffer                               |
-| =C-x= =C-v= | find-alternate-file      | read and alternate file replacing the one with (C-x C-f)            |
-| =C-x= =i=   | inset-file               | insert file at cursor position                                      |
-| =C-x= =l=   | -                        | Report number of lines on current page(how many before-after point) |
-| =C-x= =C-s= | save-buffer              | save current buffer in visited file if modified                     |
-| =C-x= =s=   | save-some-buffer         | giving the choice which buffer to save or not.                      |
-| =C-x= =C-w= | write-file (Rename-file) | write buffer contents (save buffer as a new file)                   |
-| =C-x= =C-c= | save-buffers-kill-emacs  | Offer to save each buffer, then kill Emacs                          |
-| =C-z=       | suspend-emacs            | Suspend Emacs temporarily                                           |
-|-------------+--------------------------+---------------------------------------------------------------------|
+|---------------------------+--------------------------+----------------------------------------------------------|
+| Keystrokes                | Command Name             | Action                                                   |
+|---------------------------+--------------------------+----------------------------------------------------------|
+| =C-x= =C-f=               | find-file                | find file and read it in a new buffer                    |
+| =C-x= =C-v=               | find-alternate-file      | close current and open another                           |
+| =C-x= =C-f= =M-p=         |                          | open previously saved or opened                          |
+| =C-x= =i=                 | inset-file               | insert file at cursor position                           |
+| =C-x= =l=                 | -                        | Report number of lines on current page.                  |
+| =C-x= =C-s=               | save-buffer              | save current buffer in visited file if modified          |
+| =C-x= =s=                 | save-some-buffer         | giving the choice which buffer to save or not.           |
+| =C-u= =C-x= =s=           | -                        | save any buffer that has been modified with no questions |
+| =C-x= =C-w=               | write-file (Rename-file) | write buffer contents (save buffer as a new file)        |
+| =C-x= =d= =M-p= =RET= =R= | -                        | rename previously saved or opened                        |
+| =C-x= =C-c=               | save-buffers-kill-emacs  | Offer to save each buffer, then kill Emacs               |
+| =C-u C-x C-c=             | -                        | force save buffers and quit                              |
+| =C-x= =C-q=               | read-only-mode           | toggle as read only                                      |
+| =M-~=                     | not-modified             | mark buffer as unmodified                                |
+| =C-u= =M-~=               | -                        | mark buffer as modified                                  |
+| (none)                    | kill-emacs               | force quit                                               |
+| =C-z=                     | suspend-emacs            | Suspend Emacs temporarily                                |
+|---------------------------+--------------------------+----------------------------------------------------------|
 
 ** Asking input on quit
 
@@ -248,30 +256,56 @@ Basic character you can use to create a regular expression.
     The global mark ring is updated automatically
 
 * Getting Help
+** Menu
+
+|------------+---------------+----------------------------------------|
+| Keystrokes | Command Name  | Action                                 |
+|------------+---------------+----------------------------------------|
+| =M-`=      |               | text interaction with drop-down menu   |
+| =F10=      |               | same as (=M-`=)                        |
+| (none)     | menu-bar-mode | toggle existence of drop-down menu     |
+| (none)     | tool-bar-mode | toggle existence of clickable tool bar |
+|------------+---------------+----------------------------------------|
+
 ** Meta Help
 The help system is simple. Type =C-h= (or =F1=) and follow the directions. If you are a first-time user, type =C-h= =t= for TUTORIAL.
-|---------------+-------------------------+------------------------------------------------------------------------|
-| Keystrokes    | Command Name            | Action                                                                 |
-|---------------+-------------------------+------------------------------------------------------------------------|
-| ~C-h~         | help command            | enter the online help system                                           |
-| ~C-h~ ~t~     | help-with-tutorial      | start Emacs TUTORIAL                                                   |
-| ~C-h~ ~?~     | help-for-help           | runs the command help-for-help                                         |
-| ~C-h~ ~C-h~   | help-for-help           | -                                                                      |
-| ~C-h~ ~C-a~   | about-emacs             | display the ~*About GNU Emacs*~ buffer.                                |
-| ~C-h~ ~l~     | view-lossage            | display last few input keystrokes and the commands run.                |
-| ~C-h~ ~m~     | describe-mode           | help information for the current buffers modes                         |
-| ~C-h~ ~k~     | describe-key            | gives online help for a given keystroke sequence                       |
-| ~C-h~ ~f~     | describe-function       | display the full documentation of FUNCTION                             |
-| ~C-h~ ~x~     | describe-command        | help information for a command (a function available using =M-x=).     |
-| ~C-h~ ~v~     | describe-variable       | display the full documentation of VARIABLE                             |
-| ~C-h~ ~b~     | describe-bindings       | showing a list of all defined keys, and their definitions.             |
-| ~C-h~ ~c~     | describe-key-briefly    | print the name of the functions KEY-LIST invokes                       |
-| ~C-h~ ~w~     | where-is                | Print message listing key sequences that invoke the command DEFINITION |
-| ~C-h~ ~h~     | (view-hello-file)       | display the HELLO file, which lists many languages and characters      |
-| ~C-h~ ~a~     | apropos-command PATTERN | Show commands that match PATTERN                                       |
-| ~C-h~ ~i~     | runs the command info   | enter Info, the documentation browser                                  |
-| ~C-h~ ~i~ ~m~ | -                       | go to info and SELECT *m* for menu                                     |
-|---------------+-------------------------+------------------------------------------------------------------------|
+|------------------------------+----------------------+------------------------------------------------------------|
+| Keystrokes                   | Command Name         | Action                                                     |
+|------------------------------+----------------------+------------------------------------------------------------|
+| ~C-h~                        | help command         | enter into Emacs help system                               |
+| ~C-h~ ~?~                    | help-for-help        | runs the command help-for-help                             |
+| ~C-h~ ~C-h~                  | help-for-help        | -                                                          |
+| ~C-h~ ~t~                    | help-with-tutorial   | start Emacs TUTORIAL                                       |
+| ~C-h~ ~c~ ~<key>~ ~RET~      | describe-key-briefly | what is command for KEY                                    |
+| ~C-h~ ~k~ ~<key>~ ~RET~      | describe-key         | describe command for KEY                                   |
+| ~C-h~ ~w~ ~<command>~ ~RET~  | where-is             | where is key binding for COMMAND                           |
+| ~C-h~ ~m~                    | describe-mode        | show the current buffers modes                             |
+| ~C-h~ ~b~                    | describe-bindings    | show current key bindings                                  |
+| ~C-x~ ~C-h~                  | -                    | list bindings starting with C-x (see “key” below)          |
+| ~C-c~ ~C-h~                  | -                    | list bindings starting with C-c (see “key” below)          |
+| ~C-h~ ~a~                    | apropos-command      | list commands matching search                              |
+| ~C-u~ ~C-h~ ~a~              | -                    | list commands and functions matching search                |
+| ~C-h~ ~f~ ~function~         | describe-function    | describe FUNCTION                                          |
+| ~M-x~ ~M-p~ ~C-h~ ~f~ ~RET~  | -                    | describe last command executed with M-x                    |
+| ~C-h~ ~v~ ~<variable>~ ~RET~ | describe-variable    | describe and show values for VARIABLE                      |
+| ~C-h~ ~l~                    | view-lossage         | display last few input keystrokes and the commands run.    |
+| ~C-h~ ~x~                    | describe-command     | help info for a command (a function available using =M-x=) |
+| ~C-h~ ~h~                    | view-hello-file      | lists many languages and characters                        |
+|------------------------------+----------------------+------------------------------------------------------------|
+
++ Info help
+|---------------+--------------------+----------------------------------------|
+| Keystrokes    | Command Name       | Action                                 |
+|---------------+--------------------+----------------------------------------|
+| ~C-h~ ~i~     | info               | open directory of manuals              |
+| ~C-h~ ~i~ ~m~ | -                  | go to info and SELECT *m* for menu     |
+| ~C-h~ ~r~     | -                  | Emacs info manual                      |
+| ~C-h~ ~F~     | -                  | Emacs FAQ                              |
+| ~C-h~ ~C-a~   | about-emacs        | display the ~*About GNU Emacs*~ buffer |
+| =C-h= =s=     | describe-syntax    | in the syntax table of BUFFER.         |
+| =C-h= =S=     | info-lookup-symbol | find description of symbol in manual   |
+|               |                    |                                        |
+|---------------+--------------------+----------------------------------------|
 
 * Killing and Deleting
 
@@ -394,6 +428,15 @@ of the mode on your modeline.
 Another way to start recursive editing during a search and replace operation is
 by pressing =C-w=.  This will delete the current matching pattern and then start
 recursive editing.
+
+|-------------+-----------------------|
+| Keystrokes  | Description           |
+|-------------+-----------------------|
+| =C-]=         | exit recursive edit   |
+| =C-M-c=       | cancel recursive edit |
+| =C-[ C-c=     | same as (=C-M-c=)       |
+| (=top-level=) | cancel all            |
+|-------------+-----------------------|
 
 * Buffers, Windows and Frames
 ** Emacs Buffer
@@ -538,6 +581,33 @@ It'll reverse the matching terms. So instead of matching items, it do reverse of
 |------------+-------------------------------------------|
 ** customize
 - Tools to help you change user options.
+|--------------------------------+-----------------------------------------------------|
+| Commands                       | Description                                         |
+|--------------------------------+-----------------------------------------------------|
+| emacs-init-time                | run time of loading user init file                  |
+| customize                      | main menu                                           |
+| customize-variable             | variable                                            |
+| customize-apropos              | search                                              |
+| customize-mode                 | mode                                                |
+| global-set-key                 | define key binding                                  |
+| local-set-key                  | define key binding for current buffer               |
+| normal-mode                    | reread settings in file local variables             |
+| display-time                   | show clock, system load and email flag in mode line |
+| display-time-mode              | turn off                                            |
+| display-time-world             | show times around the world                         |
+| display-battery-mode           | show system power                                   |
+| size-indication-mode           | show size in mode line                              |
+| column-number-mode             | show column number in mode line                     |
+| toggle-indicate-empty-lines    | show end of file in fringe                          |
+| ruler-mode                     | add a ruler to the current buffer’s window          |
+| menu-bar-mode                  | toggle existence of drop-down menu                  |
+| tool-bar-mode                  | toggle existence of clickable tool bar              |
+| scroll-bar-mode                | toggle scroll bar                                   |
+| toggle-scroll-bar              | toggle scroll bar in current frame                  |
+| blink-cursor-mode              | toggle blinking of cursor                           |
+| normal-erase-is-backspace-mode | fix delete and backspace keys                       |
+|--------------------------------+-----------------------------------------------------|
+
 ** eww
 *eww*: Emacs web browser.
 ** ses
@@ -917,6 +987,7 @@ Explanation of the regular expression:
 |------------+------------------------------+-------------------------------------------------------------------------------------------|
 | Keystrokes | Command Name                 | Action                                                                                    |
 |------------+------------------------------+-------------------------------------------------------------------------------------------|
+| (none)     | emacs-uptime                 | show time since Emacs started                                                             |
 | (none)     | auto-fill-mode               | Turn ON/OFF auto-fill-mode                                                                |
 | M-q        | fill-paragraph               | Fill paragraph at or after point.                                                         |
 | ESC 1 M-q  | -                            | Justify and Fill paragraph at or after point.                                             |
@@ -929,7 +1000,6 @@ Explanation of the regular expression:
 | C-u num    | universal-argument           | begin a numeric argument for the following command.                                       |
 | M--        | negative-argument            | begin a negative numeric argument for the next command.                                   |
 | C-q char   | quoted-insert                | read next input character and insert it. This is useful for inserting control characters. |
-| C-x C-q    | read-only-mode               | to execute command (read-only-mode) ON/OFF                                                |
 |------------+------------------------------+-------------------------------------------------------------------------------------------|
 
 ** Enter Numeric values
