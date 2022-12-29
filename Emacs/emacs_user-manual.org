@@ -11,7 +11,7 @@
 📝 *NOTE:* (/for Beginners/) I personally prefer Emacs build-in TUTORIAL first,
 which is very well documented and easy to understand. In this document I'm use
 =Ctrl= as =C=, =Alt= as =M=, =Shift= as =S=, =Space= as =SPC= and =BackSpace= as
-=BS=.
+=BS=. \\
 
 /This documentation is still in progress, so you better stick to it. cheers!/ 🍻
 :END:
@@ -257,12 +257,13 @@ The help system is simple. Type =C-h= (or =F1=) and follow the directions. If yo
 | C-h t      | help-with-tutorial      | start Emacs TUTORIAL                                                   |
 | C-h ?      | help-for-help           | runs the command help-for-help                                         |
 | C-h C-h    | help-for-help           | -                                                                      |
-| C-h C-a    | about-emacs             | Display the ~*About GNU Emacs*~ buffer.                                |
-| C-h l      | view-lossage            | Display last few input keystrokes and the commands run.                |
+| C-h C-a    | about-emacs             | display the ~*About GNU Emacs*~ buffer.                                |
+| C-h l      | view-lossage            | display last few input keystrokes and the commands run.                |
 | C-h m      | describe-mode           | help information for the current buffers modes                         |
 | C-h k      | describe-key            | gives online help for a given keystroke sequence                       |
-| C-h f      | describe-function       | Display the full documentation of FUNCTION                             |
+| C-h f      | describe-function       | display the full documentation of FUNCTION                             |
 | C-h x      | describe-command        | help information for a command (a function available using =M-x=).     |
+| C-h v      | describe-variable       | display the full documentation of VARIABLE                             |
 | C-h b      | describe-bindings       | showing a list of all defined keys, and their definitions.             |
 | C-h c      | describe-key-briefly    | print the name of the functions KEY-LIST invokes                       |
 | C-h w      | where-is                | Print message listing key sequences that invoke the command DEFINITION |
@@ -316,15 +317,36 @@ The help system is simple. Type =C-h= (or =F1=) and follow the directions. If yo
 |---------------+---------------+-----------------------------------------------------------|
 
 * Tweaks
-** switch themes
-- C-c T
-  - themes list will appear, choose your desired one and press =Enter=.
-** Toggle mode
 
-- C-c t
-  - toggle ON/OFF transparency.
-- C-[f5]
-  - toggle (=display-line-numbers-mode-relative=)
++ Attention: This topic here is only applicable for my personal configuration of
+  [[https://github.com/Likhon-baRoy/.emacs.d][GNU Emacs]].  If you're using my config than it's totally fine, go ahead and use
+  as it say's. 👍🏼
+
+|------------+----------------------------------------------------------|
+| Keystrokes | Action                                                   |
+|------------+----------------------------------------------------------|
+| C-c t      | Toggle ON/OFF transparency.                              |
+| C-c T      | Change themes, choose your desired one and press =Enter=   |
+| C-[f5]     | Toggle (=display-line-numbers-mode-relative=)              |
+| M-(0-5)    | Change workspace (=eyebrowse=)                             |
+| C-`        | Copy current line                                        |
+| C-h        | (=backward-delete-char=), same as using =BackSpace= in Emacs |
+| C-S-H      | (=kill-whole-line=)                                        |
+| C-w        | (=backward-kill-word=)                                     |
+| C-q        | (=kill-region=)                                            |
+| C-z        | (=undo-only=)                                              |
+| C-S-z      | (=undo-tree-redo=)                                         |
+| C-!        | Eshell                                                   |
+| M-p        | previous-buffer                                          |
+| M-n        | next-buffer                                              |
+| M-o        | other-window                                             |
+| C-.        | other-window                                             |
+| C-,        | previous-window                                          |
+| C-S-r      | rename-file                                              |
+| C-c D      | Delete-current-file                                      |
+| C-x C-l    | toggle-truncate-lines                                    |
+|------------+----------------------------------------------------------|
+
 * Advance Editing
 ** Text conversion and transposition
 
