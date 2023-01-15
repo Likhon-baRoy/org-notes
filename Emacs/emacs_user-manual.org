@@ -51,9 +51,7 @@ which is very well documented and easy to understand. In this documentation I'll
   - [[#calender][Calender]]
 - [[#shells][Shells]]
   - [[#eshell][eshell]]
-  - [[#shell-history-ring][Shell History Ring]]
-  - [[#formatting-paragraph-with-shell-cmnd][Formatting paragraph with shell cmnd]]
-- [[#emacs-client][Emacs-client]]
+- [[#emacsclient][emacsclient]]
   - [[#what-is-so-cool-about-the-emacs-server][What is so cool about the emacs server?]]
 - [[#sexps][SEXPS]]
 - [[#foldunfold-blocks][Fold/Unfold Blocks]]
@@ -665,22 +663,22 @@ It'll reverse the matching terms. So instead of matching items, it do reverse of
 
 Enter into shell by: =M-x= /shell/.
 Look at the menu: you have several keys to interact with the shell. Some of them are:
-|----------+-------------------------------------------------------------------|
-| Key      | Action                                                            |
-|----------+-------------------------------------------------------------------|
-| =M-p=    | previous input of command line                                    |
-| =M-r=    | search backward a regexp in commands' history. Use =C-r= to cycle |
-| =C-c =r= | go to beginning of output                                         |
-| =C-c =p= | go to beginning of previous output group                          |
-| =C-c =c= | send the =C-c= command to the shell                               |
-| =C-c =o= | delete the output of the last command                             |
-|----------+-------------------------------------------------------------------|
+|------------------+--------------------------------------------------------------|
+| Key              | Action                                                       |
+|------------------+--------------------------------------------------------------|
+| =M-p= / =C-up=   | fetch previous input of command line                         |
+| =M-n= / =C-down= | fetch next input of command line                             |
+| =M-r=            | search backward a regexp in cmnd history. =C-r= to cycle     |
+| =C-c= =C-x=      | fetch the next subsequent command from the history           |
+| =C-c= =.=        | fetch one argument from an old shell command                 |
+| =C-c C-l=        | display the buffer’s history of shell cmnd in another window |
+| =C-c =r=         | go to beginning of output                                    |
+| =C-c =p=         | go to beginning of previous output group                     |
+| =C-c =c=         | send the =C-c= command to the shell                          |
+| =C-c =o=         | delete the output of the last command                        |
+|------------------+--------------------------------------------------------------|
 
 ** eshell
-
-Enter into *eshell*:
-- ~C-!~
-
 *** Command History and Prompt Key Bindings
 
 Eshell comes with a feature-rich command history facility.  Because Eshell does not use comint-mode it does not have all the history features available to it, but most of the common ones do exist.
@@ -743,31 +741,8 @@ quote delimiter is encountered. If you use double quotes Eshell will expand
 subshell commands and do variable expansion. In this sense it’s quite similar to
 bash, though without the support for bash heredocs.
 
-** Shell History Ring
 
-- M-p / C-UP
-  - Fetch the next earlier old shell command (comint-previous-input).
-
-- M-n / C-DOWN
-  - Fetch the next later old shell command (comint-next-input).
-
-- M-r
-  - Begin an incremental regexp search of old shell commands (comint-history-isearch-backward-regexp).
-
-- C-c C-x
-  - Fetch the next subsequent command from the history (comint-get-next-from-history).
-
-- C-c .
-  - Fetch one argument from an old shell command (comint-input-previous-argument).
-
-- C-c C-l
-  - Display the buffer’s history of shell commands in another window (comint-dynamic-list-input-ring).
-
-** Formatting paragraph with shell cmnd
-
-- C-h i m emacs RET - guide to learning Emacs Lisp for non-programmers for
-  reference. * The Emacs Lisp Reference *
-* Emacs-client
+* emacsclient
 
 An Emacs server creates a special emacs process that listens on a socket for connecting to it. This way the initialisation is already done before you connect to it and all configurations are already loaded. This is the actual "slow" part of emacs. And is a bit similar to starting python, which also needs to load its libraries at start.
 
