@@ -653,28 +653,30 @@ It'll reverse the matching terms. So instead of matching items, it do reverse of
 - *Calendar* and *Diary*
 * Shells
 
-|------------+-------------------------+-------------------------------------------------------------------|
-| Keystrokes | Command Name            | Description                                                       |
-|------------+-------------------------+-------------------------------------------------------------------|
-| ~M-!~        | shell command           | Execute string COMMAND in inferior shell; display output, if any. |
-| ~M-│~        | shell-command-on-region | Execute string COMMAND in inferior shell with region as input.    |
-| ~M-x~        | shell                   | start a separate shell in it's own Buffer.                        |
-| ~C-u~ ~M-│~    |                         | run shell command in buffer region                                |
-|------------+-------------------------+-------------------------------------------------------------------|
+|-------------+-------------------------+-------------------------------------------------------------------|
+| Keystrokes  | Command Name            | Description                                                       |
+|-------------+-------------------------+-------------------------------------------------------------------|
+| ~M-!~       | shell command           | Execute string COMMAND in inferior shell; display output, if any. |
+| ~M-│~       | shell-command-on-region | Execute string COMMAND in inferior shell with region as input.    |
+| ~M-x~       | shell                   | start a separate shell in it's own Buffer.                        |
+| ~C-u~ ~M-│~ |                         | run shell command in buffer region                                |
+|-------------+-------------------------+-------------------------------------------------------------------|
 *e.g.* First select the region for formatted then enter into shell by pressing ~M-|~.
   And then enter command ~fmt -w 80~ to set width and show result on minibuffer.
 
 ** basics
 
-M-x shell
-Look at the menu: you have several keys to interact with the shell. Some of them are:
-
-    [M-p] previous input of command line
-    [M-r] search backward a regexp in commands' history (like C-r in term). Use C-r to cycle.
-    [C-c r] go to beginning of output (useful when you have a large output and want to read through the beginning)
-    [C-c-p] go to beginning of previous output group
-    [C-c-c] send the C-c command to the shell
-    [C-c-o] delete the output of the last command
+Enter into shell by: =M-x= /shell/
+|----------+-------------------------------------------------------------------|
+| Key      | Action                                                            |
+|----------+-------------------------------------------------------------------|
+| =M-p=    | previous input of command line                                    |
+| =M-r=    | search backward a regexp in commands' history. Use =C-r= to cycle |
+| =C-c =r= | go to beginning of output                                         |
+| =C-c =p= | go to beginning of previous output group                          |
+| =C-c =c= | send the =C-c= command to the shell                               |
+| =C-c =o= | delete the output of the last command                             |
+|----------+-------------------------------------------------------------------|
 
 ** eshell
 
@@ -685,22 +687,26 @@ Enter into *eshell*:
 
 Eshell comes with a feature-rich command history facility.  Because Eshell does not use comint-mode it does not have all the history features available to it, but most of the common ones do exist.
 
-- M-r / M-s
-  - Search backwards or forwards for a command by regexp
-- M-p / M-n
-  - Goes backwards or forwards in the command history list
-- C-c C-p / C-c C-n
-  - Jump to the previous or next command prompt in Eshell
-- C-c M-r / C-c M-s
-  - Jumps to the previous or next command that shares the command currently used as input. So it jumps to other instances of the command foo if that is the current input.
-- C-c C-o
-  - Kills the output of the previous command.
-- C-a / C-e
-  - Move to the beginning or end of line.
+|-----------------------+--------------------------------------------------------------|
+| Keystrokes            | Action                                                       |
+|-----------------------+--------------------------------------------------------------|
+| =M-r= / =M-s=         | search backwards/forwards for a command by regexp            |
+| =M-p= / =M-n=         | goes backwards/forwards in the command history list          |
+| =C-a= / =C-e=         | move to the beginning or end of line                         |
+| =C-c= =C-o=           | kills the output of the previous command                     |
+| =C-c= =M-b=           | inserts the printed buffer name at point                     |
+| =C-c= =M-i=           | inserts the printed process name at point                    |
+| =C-c= =M-v=           | inserts an environment variable name at point                |
+| =C-c= =M-d=           | toggles between direct input and delayed input (send on RET) |
+| =C-c C-p= / =C-c C-n= | jump to the previous/next cmnd prompt in Eshell              |
+| =C-c M-r= / =C-c M-s= | eshell-previous/next-matching-input-from-input               |
+|-----------------------+--------------------------------------------------------------|
 
 + Unfortunately, the search-as-you-type history search in =M-x= shell (bound to =M-r=) is not implemented in Eshell.
 
-Because I program a lot, I tend to use M-m instead of C-a to move to the beginning of the line. M-m skips indentation and moves to the first non-whitespace char, unlike C-a.
+Because I program a lot, I tend to use M-m instead of C-a to move to the
+beginning of the line. M-m skips indentation and moves to the first
+non-whitespace char, unlike C-a.
 
 That command does not work in Eshell, for obvious reasons, but you can rebind it to the same key as C-a:
 
@@ -714,48 +720,30 @@ You can rewrite previous commands found in Eshell’s history. The syntax is sim
 
 You may also want to read my article on Shell & Comint Secrets: History commands. Although it concerns comint-mode-derived things, it’s useful to know about anyway.
 
-- =!!=
-  - Repeats the last command
-- =!ls=
-  - Repeats the last command beginning with ls
-- =!?ls=
-  - Repeats the last command containing ls
-- =!ls:n=
-  - Extract the nth argument from the last command beginning with ls
-- =!ls<tab>=
-  - Using pcomplete, show completion results matches ls
-- =^old^new=
-  - Quick substitution. Using the last command, replaceold with new and run it again. Appears to be buggy.
-- =$_=
-  - Returns the last parameter in the last executed command.
+|------------+-----------------------------------------------------------------|
+| Chars      | Action                                                          |
+|------------+-----------------------------------------------------------------|
+| =!!=       | repeats the last command                                        |
+| =!ls=      | repeats the last command beginning with =ls=                    |
+| =!?ls=     | repeats the last command containing =ls=                        |
+| =$_=       | returns the last parameter in the last executed command         |
+| =!ls:n=    | extract the nth argument from the last cmnd beginning with =ls= |
+| =!ls<tab>= | using pcomplete, show completion results matches =ls=           |
+| =^old^new= | using the last command, replaceold with new and run it again    |
+|------------+-----------------------------------------------------------------|
 
-Eshell also has some support for bash history modifiers (like !!:s/old/new/) and the bash reference on history interaction would be a good place to brush up on that.
-Commandline Interaction
-The Eshell Prompt
++ *Commandline Interaction*
+Eshell also has some support for bash history modifiers (like !!:s/old/new/) and
+the bash reference on history interaction would be a good place to brush up on
+that.
 
-You can customize the Eshell prompt by modifying eshell-prompt-function, a variable that takes a function that defines what the prompt should contain. By relegating prompt configuration to elisp you can do just about anything you like with it. The only problem is, of course, that Eshell will need to be told what the prompt “looks” like, so you must also edit the variable eshell-prompt-regexp so Eshell knows what the prompt is.
+You can use =\= to escape newlines and it supports rudimentary multi-line input that way.
 
-Instead of going to the trouble of changing it yourself, you can give the package Eshell prompt extras a try.
-The Command Line
-
-You can use \ to escape newlines and it supports rudimentary multi-line input that way.
-
-Another way of doing multi-line literal strings is with single quotes: begin a single quote and hit enter, and you are free to enter text until the closing quote delimiter is encountered. If you use double quotes Eshell will expand subshell commands and do variable expansion. In this sense it’s quite similar to bash, though without the support for bash heredocs.
-
-Due to the way Eshell works, you can even go back and modify the text you entered, in quotes.
-Useful Keybindings
-
-Eshell comes equipped with a couple of quality-of-life improvements that make interacting with Emacs and Eshell a lot easier.
-
-- C-c M-b
-  - Inserts the printed buffer name at point
-- C-c M-i
-  - Inserts the printed process name at point
-- C-c M-v
-  - Inserts an environment variable name at point
-- C-c M-d
-  - Toggles between direct input and delayed input (send on RET).
- Useful for some programs that don’t work correctly with buffered input.
+Another way of doing multi-line literal strings is with single quotes: begin a
+single quote and hit enter, and you are free to enter text until the closing
+quote delimiter is encountered. If you use double quotes Eshell will expand
+subshell commands and do variable expansion. In this sense it’s quite similar to
+bash, though without the support for bash heredocs.
 
 ** Shell History Ring
 
