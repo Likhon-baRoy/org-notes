@@ -671,11 +671,11 @@ Look at the menu: you have several keys to interact with the shell. Some of them
 | =M-r=            | search backward a regexp in cmnd history. =C-r= to cycle     |
 | =C-c= =C-x=      | fetch the next subsequent command from the history           |
 | =C-c= =.=        | fetch one argument from an old shell command                 |
-| =C-c C-l=        | display the buffer’s history of shell cmnd in another window |
-| =C-c =r=         | go to beginning of output                                    |
-| =C-c =p=         | go to beginning of previous output group                     |
-| =C-c =c=         | send the =C-c= command to the shell                          |
-| =C-c =o=         | delete the output of the last command                        |
+| =C-c= =C-l=      | display the buffer’s history of shell cmnd in another window |
+| =C-c= =r=        | go to beginning of output                                    |
+| =C-c= =p=        | go to beginning of previous output group                     |
+| =C-c= =c=        | send the =C-c= command to the shell                          |
+| =C-c= =o=        | delete the output of the last command                        |
 |------------------+--------------------------------------------------------------|
 
 ** eshell
