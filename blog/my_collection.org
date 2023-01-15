@@ -1,0 +1,45 @@
+#+TITLE:       My_Collection
+#+AUTHOR:      Likhon Barai
+#+EMAIL:       Symbol’s function definition is void: user-mail-address
+#+DATE:        2022 Dec 30
+#+TAGS:        blog
+#+LANGUAGE:    en
+#+DESCRIPTION:
+
+* English
+
+#+begin_quote
+Suicide is a valid cause of death.
+Basically all humans are thought to posses the possibility to commit suicide.  It is therefore, not something "unbelievable to think of".
+#+end_quote
+
+#+begin_quote
+As long as one is given a chance, a person's soul will be open up.
+#+end_quote
+
+* Bangla
+
+** General Knowledge
+
++ শেয়াল যেন না আসে সে জন্যে তুষ ছিটিয়ে দেয়া হয় কবর এর ওপর।
++ অন্ধকার হয়ে যাবার পর Civilian Helicopter আকাশে উড়তে পাড়ে না। শুধুমাত্র Air Force এর Helicopter উড়তে পাড়ে।
++ মাথায় আঘাত পাওয়া রোগীকে জল দেয়া যাবে না। ডক্টররা বলেন।
+
+* Poems
+
+** ফুল ফুটুক না ফুটুক
+-- সুভাষ মুখোপাধ্যায় (১৯৫৭)
+ফুল ফুটুক না ফুটুক
+আজ বসন্ত
+শান বাধানো ফুটপাথে
+
++ Better let than never -- সুভাষ মুখোপাধ্যায়
+
+** সভ্যতার প্রতি
+-- রবীন্দ্রনাথ ঠাকুর
+দাও ফির সে অরন্য,লও এ নগর,
++ প্রকৃতির কাছাকাছি যে জীবন, সে হচ্ছে সত্যিকারের জীবন। -- অজানা
+
+* Book's Suggetion
+
++ প্রথম প্রতিশ্রতি -(আশাপূর্ণা দেবী)

@@ -1,24 +1,23 @@
-#+TITLE: Basic Needs for Configurations
+#+TITLE: Basic Configurations
 
-* Tasks
-** DONE Start new org file for tutorial
-CLOSED: [2022-09-27 Tue 2:16pm]
-* ORG-MODE Usage
-- And you can choose your desired one from the generated list.
+* org usage
 
 #+begin_example org
 *bold* /italic/ _underline_ +strike-through+ =verbatim= ~code~ _/*combine*/_ *_~inner-most~_* =_literally_= [[link-here][description-here]]
 #+end_example
 
-# Comments
-Org mode has a variety of ways to add comments.
-    Line comments start with #.
-    Inline comments wrap @@comment:like so@@.
-    Block comments are wrapped with #+BEGIN_COMMENT and #+END_COMMENT.
-    Section comments can be created by adding the COMMENT keyword to a heading * COMMENT like so
+#+begin_example org
+  # Comments
+  Org mode has a variety of ways to add comments.
+  Line comments start with #.
+  Inline comments wrap @@comment:like so@@.
+  Block comments are wrapped with #+BEGIN_COMMENT and #+END_COMMENT.
+  Section comments can be created by adding the COMMENT keyword to
+  a heading * COMMENT like so
+#+end_example
 
-** TODO : keyboard configuration
-*** TODO : key-map of keyboard
+* keyboard configuration
+** key-map of keyboard
 - ~xmodmap~ is a program. Through this program you can change your key-map.
   Here's an example of changing *Esc*, *Caps_Lock* and *Control_L*
 
@@ -46,42 +45,48 @@ add Control = Control_L
 
 - Now save this file by the name ~.xmodmap~ in your home(~) directory and Run: =xmodmap .xmodmap= in your terminal. And you're all set to go.
 
-*** TODO : change keyboard-layout based on language
-- there are many command to do this kind of jobs.
-  among them most populer are =setxkbmap= AND =localectl=
+For a .xinitrc or .Xsession file when the Caps Lock key is at the far left of the home row:
 
-- This one's for ~Probhat~ layout
+** Bind the key labeled 'Caps Lock' to 'Control'
+# (Such a broken user interface suggests that keyboard manufacturers
+# think that computers are typewriters from 1885.)
+
 #+BEGIN_SRC sh
-localectl set-x11-keymap us,bd '' ,probhat grp:lctrl_lwin_toggle
+  xmodmap -e "clear Lock"
+  xmodmap -e "add Control = Caps_Lock"
 #+END_SRC
+In a .xinitrc or .Xsession file, to convert an ALT key to a META key:
 
-- This one's for ~Jatiyo~ layout
+# Some ill designed keyboards have a key labeled ALT and no Meta
 #+BEGIN_SRC sh
-localectl set-x11-keymap us,bd "" , grp:alt_space_toggle
+  xmodmap -e "keysym Alt_L = Meta_L Alt_L"
 #+END_SRC
-*** For checking the available keystrokes for switching keyboard layouts
-- Different computer has differnt types of keybindings based on their configuration
-  So, to check your one run this command:
+
+* change keyboard-layout based on language
+
+There are many command to do this kind of jobs.  Among them most populer are:
+=setxkbmap= and =localectl=.
+
+This one's for ~Probhat~ layout
 #+BEGIN_SRC sh
-localectl list-x11-keymap-options
+  localectl set-x11-keymap us,bd '' ,probhat grp:lctrl_lwin_toggle
 #+END_SRC
 
-* A top level heading
-** COMMENT This section and subsections are commented out
-*** This heading inherits the =COMMENT= keyword
-This text is commented out
-
-* What are you staring at?
-
-#+BEGIN_SRC emacs-lisp
-(require 'loadhist)
-(file-dependents (feature-file 'cl))
+This one's for ~Jatiyo~ layout
+#+BEGIN_SRC sh
+  localectl set-x11-keymap us,bd "" , grp:alt_space_toggle
 #+END_SRC
 
-#+RESULTS:
-| /home/raxit/.emacs.d/elpa/emmet-mode-20210820.1124/emmet-mode.elc |
+** available keystrokes for switching keyboard layouts
 
-* Typing Bangla in emacs
+Different computer has differnt types of keybindings based on their configuration.
+So, to check your one run this command:
+
+#+BEGIN_SRC sh
+  localectl list-x11-keymap-options
+#+END_SRC
+
+* Typing Bangla in Emacs
 
 link here : [[https://md-arif-shaikh.github.io/2021/05/27/typing-bangla-in-emacs.html][click]]
 
@@ -100,10 +105,10 @@ input-method, you can make it the default input-method you want to toggle to by
 using the following in your settings.
 
 #+BEGIN_SRC emacs-lisp
-(setq default-input-method "bengali-itrans")
-(set-fontset-font "fontset-default" 'bengali (font-spec :family "Kalpurush" :size 18))
+  (setq default-input-method "bengali-itrans")
+  (set-fontset-font "fontset-default" 'bengali (font-spec :family "Kalpurush" :size 18))
 
-(use-package company-wordfreq :straight t)
+  (use-package company-wordfreq :straight t)
 #+END_SRC
 
 additionally you may want to use a nice font for Bangla text. For example to use
@@ -129,23 +134,23 @@ using quail-select-current. For this, we want to override the quail-completion
 using the following
 
 #+BEGIN_SRC emacs-lisp
-(defun remove-quail-completion ()
-    (quail-select-current))
-(advice-add 'quail-completion :override #'remove-quail-completion)
+  (defun remove-quail-completion ()
+      (quail-select-current))
+  (advice-add 'quail-completion :override #'remove-quail-completion)
 #+END_SRC
 
 We also don't want the echo in the buffer from qual, so we do the following
 
 #+BEGIN_SRC emacs-lisp
-(defun remove-quail-show-guidance ()
-  nil)
-(advice-add 'quail-show-guidance :override #'remove-quail-show-guidance)
+  (defun remove-quail-show-guidance ()
+    nil)
+  (advice-add 'quail-show-guidance :override #'remove-quail-show-guidance)
 #+END_SRC
 
 We then set the local dictionary for ispell-local-dictionary. You can download the dictionary for available languages using M-x company-wordfreq-download-list and choosing the language. The dictionary is downloaded in the ~/.emacs.d/wordfreq-dicts as <languag-name>.txt. Then set the ispell-local-dictionary using
 
 #+BEGIN_SRC emacs-lisp
-(setq ispell-local-dictionary "bengali")
+  (setq ispell-local-dictionary "bengali")
 #+END_SRC
 
 where the language name is bengali. You can also download the dictionary from any other source and put it in that directory. Here is a repo containing Bangla dictionary.
@@ -153,31 +158,28 @@ where the language name is bengali. You can also download the dictionary from an
 Lastly, we need to set the following for the current buffer
 
 #+BEGIN_SRC emacs-lisp
-(setq-local company-backends '(company-wordfreq))
-(setq-local company-transformers nil)
+  (setq-local company-backends '(company-wordfreq))
+  (setq-local company-transformers nil)
 #+END_SRC
 
 We can put all these inside an interactive function and call it using M-x.
 
 #+BEGIN_SRC emacs-lisp
-(defun remove-quail-show-guidance ()
-  nil)
-(defun remove-quail-completion ()
-  (quail-select-current))
-(defun bn-company-wordfreq ()
-  (interactive)
-  (advice-add 'quail-show-guidance :override #'remove-quail-show-guidance)
-  (advice-add 'quail-completion :override #'remove-quail-completion)
-  (setq ispell-local-dictionary "bengali")
-  (setq-local company-backends '(company-wordfreq))
-  (setq-local company-transformers nil))
+  (defun remove-quail-show-guidance ()
+    nil)
+  (defun remove-quail-completion ()
+    (quail-select-current))
+  (defun bn-company-wordfreq ()
+    (interactive)
+    (advice-add 'quail-show-guidance :override #'remove-quail-show-guidance)
+    (advice-add 'quail-completion :override #'remove-quail-completion)
+    (setq ispell-local-dictionary "bengali")
+    (setq-local company-backends '(company-wordfreq))
+    (setq-local company-transformers nil))
 #+end_src
 
-** Workflow
-- Change the input-method using C-\
-- Enable company-wordfreq and other changes for a nice experience using =M-x bn-company-wordfreq=
+* all-the-icons
 
-* Installation
 In order for the icons to work it is very important that you install the
 Resource Fonts included in this package, they are available in the fonts
 directory. You can also install the latest fonts for this package in the
@@ -185,16 +187,9 @@ directory. You can also install the latest fonts for this package in the
 
 =M-x all-the-icons-install-fonts=
 
--Bear in mind, this will also run fc-cache -f -v on MacOS and Linux which can
+Bear in mind, this will also run =fc-cache -f -v= on *MacOS* and *Linux* which can
 take some time to complete. For Windows, this function will prompt for a
-download directory for you to install them manually.  Usage
-
-The simplest usage for this package is to use the following functions;
-- The value of time
-  - hello
-    +next item
-    1. The following
-    2. And another
+download directory for you to install them manually.
 
 #+BEGIN_SRC emacs-lisp
     all-the-icons-icon-for-buffer
@@ -204,10 +199,11 @@ The simplest usage for this package is to use the following functions;
     all-the-icons-icon-for-url
 #+END_SRC
 
--Which can be used to get a formatted icon which you can insert into buffers,
+Which can be used to get a formatted icon which you can insert into buffers,
 e.g.
+
 #+begin_src emacs-lisp
-(insert (all-the-icons-icon-for-file "foo.js"))
-    ;; Inserts a javascript icon
-    ;; #("js-icon" 0 1 (display (raise -0.24) face (:family "alltheicon" :height 1.08 :foreground "#FFD446")))
+  (insert (all-the-icons-icon-for-file "foo.js"))
+  ;; Inserts a javascript icon
+  ;; #("js-icon" 0 1 (display (raise -0.24) face (:family "alltheicon" :height 1.08 :foreground "#FFD446")))
 #+end_src
