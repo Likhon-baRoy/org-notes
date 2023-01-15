@@ -50,7 +50,6 @@ which is very well documented and easy to understand. In this documentation I'll
   - [[#ses][ses]]
   - [[#calender][Calender]]
 - [[#shells][Shells]]
-  - [[#basics][basics]]
   - [[#eshell][eshell]]
   - [[#shell-history-ring][Shell History Ring]]
   - [[#formatting-paragraph-with-shell-cmnd][Formatting paragraph with shell cmnd]]
@@ -664,9 +663,8 @@ It'll reverse the matching terms. So instead of matching items, it do reverse of
 *e.g.* First select the region for formatted then enter into shell by pressing ~M-|~.
   And then enter command ~fmt -w 80~ to set width and show result on minibuffer.
 
-** basics
-
-Enter into shell by: =M-x= /shell/
+Enter into shell by: =M-x= /shell/.
+Look at the menu: you have several keys to interact with the shell. Some of them are:
 |----------+-------------------------------------------------------------------|
 | Key      | Action                                                            |
 |----------+-------------------------------------------------------------------|
