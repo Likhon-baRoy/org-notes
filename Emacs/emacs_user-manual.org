@@ -237,7 +237,7 @@ Basic character you can use to create a regular expression.
 | ~\d~      | matches any single digit(0-9).                                                   |
 | ~\D~      | matches any char but a digit.                                                    |
 | ~\`~      | match the beginning of the buffer.                                               |
-| =\'=      | match the end of the buffer.                                                     |
+| \'        | match the end of the buffer.                                                     |
 | ~\(char)~ | quotes a special character.                                                      |
 | ~[~ ~]~   | match one of the enclosed characters.                                            |
 | ~[^ ]~    | match any character that is not enclosed.                                        |
@@ -287,17 +287,13 @@ Basic character you can use to create a regular expression.
 
 ** Block editing
 
-|------------+---------------------------------------------|
-| Keystrokes | Action                                      |
-|------------+---------------------------------------------|
-| =C-x= =r= =t=    | inserts text at every line in the rectangle |
-|            |                                             |
-|------------+---------------------------------------------|
-
-- C-x r t or =M-x= =string-rectangle=
+|---------------+----------------------------------------------------------------|
+| Keystrokes    | Action                                                         |
+|---------------+----------------------------------------------------------------|
+| =C-x= =r= =t= | (string-rectangle) inserts text at every line in the rectangle |
+|---------------+----------------------------------------------------------------|
 
 - =C-x C-@= */* =C-x C-SPC=
-
   - (pop-global-mark) Pop off global mark ring and jump to the top location.
     The global mark ring is updated automatically
 

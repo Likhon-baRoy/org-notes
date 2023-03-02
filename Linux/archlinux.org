@@ -1,0 +1,57 @@
+#+TITLE:        Archlinux Troubleshooting
+#+AUTHOR:       Likhon Barai
+#+EMAIL:        likhonhere007@gmail.com
+#+DATE:         [2023-Feb-22 Wed]
+#+TAGS:         blog archlinux linux troubleshooting
+
+:PROPERTIES:
+#+OPTIONS:
+:END:
+
+
+* Table of Contents                                                     :TOC:
+- [[#clear-cache][Clear Cache]]
+- [[#system-update][System Update]]
+
+* Clear Cache
+
+Archlinux keep it's old pkg's store in your system drive. In case you may have to roll back for some reason like: system break.
+So, It keep it on your root. cache রিমুভ করে দেন। পুরাতন প্যাকেজগুলি।
+আমি তো ভাবছিলাম প্যাকেজ রিমুভ করলে এগুলা অটো ক্লিন হয়ে যায়?
+অনেক সময় কিছু ভার্সন পুরানো প্যাকেজ পাওয়া যায় না রিপোতে, যদি নতুন গুলিতে বাগ থাকে এবং ঐটায় না থাকে তাহলে ঐটায় ব্যাক করতে পারবে। কিছু ভার্সন পুরানো গুলি রিপো থেকে ডিলিট করে দেয়।
+
+#+begin_src bash
+  rm /var/cache/pacman/pkg/*
+#+end_src
+
+* System Update
+
+If you facing this type of problem when trying to update/upgrade your system.
+
+#+begin_src bash
+  :: Synchronizing package databases...
+  error: failed to synchronize all databases (unable to lock database)
+#+end_src
+
+Then you've to remove this and try again.
+It removes =db.lck= file after pacman's transaction finishes.
+
+#+begin_src bash
+  sudo rm /var/lib/pacman/db.lck
+#+end_src
+
+Or, you can just edit like this file here:
+=sudo emacs /usr/share/libalpm/hooks/120-remove-db-lock.hook=
+
+#+begin_src sh
+  [Trigger]
+  Type = Package
+  Operation = Install
+  Operation = Upgrade
+  Target = appstream
+
+  [Action]
+  Description = removing-pacman-lock
+  When = PostTransaction
+  Exec = rm /var/lib/pacman/db.lck
+#+end_src
