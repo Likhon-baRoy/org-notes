@@ -14,11 +14,11 @@
 
 * Table of Contents                                                     :TOC:
 - [[#org-buffer][Org Buffer]]
+- [[#org-table][Org Table]]
 - [[#org-tempo][org-tempo]]
 - [[#set-timer][Set Timer]]
-- [[#org-to-many][ORG to Many]]
+- [[#convert-org-to-other][Convert Org to Other]]
 - [[#all-about-link][All about link]]
-- [[#move-list-updown][Move list Up/Down]]
 
 * TODO COMMENT org-setup
  And now the huge org-mode configuration
@@ -476,28 +476,38 @@ To use this, I just need to do (alert "this is a message").
 - =C-RET= to create same level headings after end of recent block.
 - =M-RET= to create same level headings instantly right next to it.
 - =TAB= on headings to toggle the heading into sub-heading.
-- =M-<right_arrow>= to promote a heading
-- =M-<left_arrow>= to demote a heading
+- =M-↕=  Move subtree or move table row Up/Down.
+- =M-S-↕= Drag the line at point Up/Down.
+- =M-↔= to promote/demote a heading
 - =M-S-RET= to create TODO heading.
 - =C-c C-x C-v= (org-toggle-inline-images)
-|-------------+----------------------------+------------------------------------------------|
-| Shortcut    | Command Invoked            | Description                                    |
-|-------------+----------------------------+------------------------------------------------|
-| S-M-RET     | org-insert-todo-heading    | Insert a new TODO entry below the current one. |
-| C-c / t     | org-match-sparse-tree      | View todo items in a sparse tree.              |
-| C-c C-t     | org-todo                   | Toggle todo item state.                        |
-| C-c C-s     | org-schedule               | Schedule todo item.                            |
-| C-c C-d     | org-deadline               | Add deadline to todo item.                     |
-| C-c [       | org-agenda-file-to-front   | Add file to agenda.                            |
-| C-c ]       | org-remove-file            | Remove file to agenda.                         |
-| C-c .       | org-timestamp              | Insert current date.                           |
-| C-c C-e     | org-export-dispatch        | Open exporter.                                 |
-| C-c C-e #   | org-export-dispatch        | Insert template.                               |
-| C-c C-e P x | org-export-dispatch        | Export specific project.                       |
-| C-c C-x \   | org-toggle-pretty-entities |                                                |
-|-------------+----------------------------+------------------------------------------------|
+
+|-------------+----------------------------+-----------------------------------------------|
+| Shortcut    | Command Invoked            | Description                                   |
+|-------------+----------------------------+-----------------------------------------------|
+| S-M-RET     | org-insert-todo-heading    | Insert a new TODO entry below the current one |
+| C-c / t     | org-match-sparse-tree      | View todo items in a sparse tree.             |
+| C-c C-t     | org-todo                   | Toggle todo item state.                       |
+| C-c C-s     | org-schedule               | Schedule todo item.                           |
+| C-c C-d     | org-deadline               | Add deadline to todo item.                    |
+| C-c [       | org-agenda-file-to-front   | Add file to agenda.                           |
+| C-c ]       | org-remove-file            | Remove file to agenda.                        |
+| C-c .       | org-timestamp              | Insert current date.                          |
+| C-c C-e     | org-export-dispatch        | Open exporter.                                |
+| C-c C-e #   | org-export-dispatch        | Insert template.                              |
+| C-c C-e P x | org-export-dispatch        | Export specific project.                      |
+| C-c C-x \   | org-toggle-pretty-entities |                                               |
+|-------------+----------------------------+-----------------------------------------------|
+
+* Org Table
+
+- =C-c |= - convert the region into table.
+- =M-up= / =M-down= - to move current row up's & down's.
+- =M-right= / =M-left= - to move current column right or left.
+- =C-c -= / =|- TAB= - to make a broder-line in a row of a table.
 
 * org-tempo
+
 - =C-c C-,=
   =org-insert-structure-template=
 
@@ -519,6 +529,7 @@ q	‘#+BEGIN_QUOTE’ … ‘#+END_QUOTE’
 s	‘#+BEGIN_SRC’ … ‘#+END_SRC’
 v	‘#+BEGIN_VERSE’ … ‘#+END_VERSE’
 #+end_src
+
 * Set Timer
 Focus on your work within Built-in Timer!
 
@@ -551,11 +562,9 @@ There's an =org-pomodoro= package too.
 #+END_SRC
 I often have little bits of time that are too short for the pomodoro default 25 minutes on 5 minutes off. This hits the spot.
 
-* ORG to Many
+* Convert Org to Other
 - =C-c C-e=
   - =org-export-dispatcher=
 * All about link
 - =C-c C-l= /Add or Show Link./
 - =C-c C-o= /Open the link in current point./
-* Move list Up/Down
-- =M-↕=

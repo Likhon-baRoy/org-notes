@@ -263,27 +263,29 @@ Basic character you can use to create a regular expression.
 
 * Mark, region and kill-ring
 
-|-----------------+--------------------------+------------------------------|
-| Keystrokes      | Command Name             | Action                       |
-|-----------------+--------------------------+------------------------------|
-| ~C-@~ / ~C-SP~  | set-mark-command         | activate mark where point is |
-| ~C-x~ ~C-x~     | exchange-point-and-mark  | exchange location            |
-| ~M-h~           | mark-paragraph           | mark paragraph               |
-| ~M-w~           | kill-region-save         | copy the region              |
-| ~C-x~ ~C-p~     | mark-page                | mark the page                |
-| ~C-x~ ~h~       | mark-whole-buffer        | mark buffer                  |
-| ~M-@~           | set mark after next word | do not move point            |
-| ~ESC~ ~n~ ~M-@~ | "   " more than one word | use a prefix argument(n)     |
-|-----------------+--------------------------+------------------------------|
+|------------+--------------------------+---------------------------------|
+| Keystrokes | Command Name             | Action                          |
+|------------+--------------------------+---------------------------------|
+| ~C-@~ / ~C-SP~ | set-mark-command         | activate mark where point is    |
+| ~C-x~ ~C-x~    | exchange-point-and-mark  | exchange location               |
+| ~M-h~        | mark-paragraph           | move the point to the beginning |
+| ~C-M-h~      | mark-defun               | mark the whole function         |
+| ~M-w~        | kill-region-save         | copy the region                 |
+| ~C-x~ ~C-p~    | mark-page                | marks the entire page           |
+| ~C-x~ ~h~      | mark-whole-buffer        | select the whole buffer         |
+| ~M-@~        | set mark after next word | do not move point               |
+| ~ESC~ ~n~ ~M-@~  | "   " more than one word | use a prefix argument(n)        |
+| ~C-M-@~      | "  " after current sexp  | without moving point            |
+|------------+--------------------------+---------------------------------|
 
 + Using set-mark-command to Remember Locations
-|-----------------+-------------------------------------------------------------------------|
-| Key Sequence    | Action                                                                  |
-|-----------------+-------------------------------------------------------------------------|
-| =C-SPC= =C-SPC= | Push current position onto mark ring                                    |
-| =C-u= =C-SPC=   | Return to previous position in the same buffer                          |
-| =C-x= =C-SPC=   | Return to previous position, which may or may not be in the same buffer |
-|-----------------+-------------------------------------------------------------------------|
+|--------------+-------------------------------------------------------------------------|
+| Key Sequence | Action                                                                  |
+|--------------+-------------------------------------------------------------------------|
+| =C-SPC= =C-SPC=  | Push current position onto mark ring                                    |
+| =C-u= =C-SPC=    | Return to previous position in the same buffer                          |
+| =C-x= =C-SPC=    | Return to previous position, which may or may not be in the same buffer |
+|--------------+-------------------------------------------------------------------------|
 
 ** Block editing
 
@@ -339,18 +341,18 @@ The help system is simple. Type =C-h= (or =F1=) and follow the directions. If yo
 |------------------------------+-------------------------+------------------------------------------------------------|
 
 + Info help
-|---------------+--------------------+----------------------------------------|
-| Keystrokes    | Command Name       | Action                                 |
-|---------------+--------------------+----------------------------------------|
-| ~C-h~ ~i~     | info               | open directory of manuals              |
-| ~C-h~ ~i~ ~m~ | -                  | go to info and SELECT *m* for menu     |
-| ~C-h~ ~r~     | -                  | Emacs info manual                      |
-| ~C-h~ ~F~     | -                  | Emacs FAQ                              |
-| ~C-h~ ~C-a~   | about-emacs        | display the ~*About GNU Emacs*~ buffer |
-| =C-h= =s=     | describe-syntax    | in the syntax table of BUFFER.         |
-| =C-h= =S=     | info-lookup-symbol | find description of symbol in manual   |
-|               |                    |                                        |
-|---------------+--------------------+----------------------------------------|
+|------------+--------------------+--------------------------------------|
+| Keystrokes | Command Name       | Action                               |
+|------------+--------------------+--------------------------------------|
+| ~C-h~ ~i~      | info               | open directory of manuals            |
+| ~C-h~ ~i~ ~m~    | -                  | go to info and SELECT *m* for menu     |
+| ~C-h~ ~r~      | -                  | Emacs info manual                    |
+| ~C-h~ ~F~      | -                  | Emacs FAQ                            |
+| ~C-h~ ~C-a~    | about-emacs        | display the ~*About GNU Emacs*~ buffer |
+| =C-h= =s=      | describe-syntax    | in the syntax table of BUFFER.       |
+| =C-h= =S=      | info-lookup-symbol | find description of symbol in manual |
+|            |                    |                                      |
+|------------+--------------------+--------------------------------------|
 
 * Killing and Deleting
 

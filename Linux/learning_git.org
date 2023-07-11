@@ -91,31 +91,6 @@ The key that was generated without the ~.pub~ extension is called your public ke
 
 How it works is that the public key you put on GitHub, and then every time you want to connect to GitHub or ~push~ your code on GitHub or use your account via your local machine, you use your private key to show GitHub, that you're the one that generated this public key. It's a mathematical proof that only this private key could generated this public key.
 
-** Add an SSH key to your GitHub account
-
-I'm going to print out this public key. And your key should look something like this:
-
-#+begin_example
-  ssh-rsa B3NzaC1yc2EAAAADAQABAAACAQC0UvmTlMBPo2Le0xaXWmtbj534ke6/VK9t8OKQnZQsgmncrQdU4cwqln3vhRTSbIiQkHG4lrAFfno2sMoG9QFK4CJ+zl5KXTI6TpskMo3Tu7reIYTUG3Z+0ZK/SOumoccl1VedoZHWnCfKDfMTyrhKZqcmdLdhq4qCyKiGabHQmWvfMA4uh7Ku19JZrORNnK3NC73aQegqnEdYKBlC96hBoBLk7tWYCnWf+VnTimMyecxOuGQxSnHpopHSeQ54T2NsHWP4CmB1AGlVQ8cLtyM+/DdofWZzsVR9K7QaCwWPPmjlaG8FF99WaKK5UiCBFQfFjyhpgasN5jyf2Re+PZG+FlQPM0ZtUgFp11qaxTNsFhg3Nsr/mG9Z/2bID1LU1Q== email@example.com
-#+end_example
-
-It has a bunch of characters in the middle and it ends with your email.
-Now you need to copy this whole key, which you can do by highlighting it in your terminal and copy it with =Ctrl-Shift-c= or follow below if you're on *Linux*.
-
-*Linux* (requires the =xclip= package)
-
-#+begin_src sh
-  xclip -sel clip < ~/.ssh/id_ed25519.pub
-#+end_src
-
-Now it's copied to clipboard. On GitHub to go to settings. And the list of all settings, go to ~SSH and GPG keys~ and you can see: /This is a list of SSH key associated with your account/.
-
-Then you just click on =new SSH key=. You can give it whatever /TITLE/ you want. This is just for your reference. And then you paste your key in there. And remove the extra =Enter= at the end.
-
-And now =Add SSH key= and confirm password. And now you can see key was successfully added.
-
-The only thing left to do is to make sure that your /"local Git command line interface knows about the key you just generated"./
-
 ** Adding your SSH key to the ssh-agent
 
 You need to start the SSH agent.
@@ -145,6 +120,31 @@ Add this text to it:
   UseKeychain yes
   IdentifyFile ~/.ssh/id_rsa
 #+end_src
+
+** Add an SSH key to your GitHub account
+
+I'm going to print out this public key by =cat ~/.ssh/id_ed25519.pub=. And your key should look something like this:
+
+#+begin_example
+  ssh-rsa B3NzaC1yc2EAAAADAQABAAACAQC0UvmTlMBPo2Le0xaXWmtbj534ke6/VK9t8OKQnZQsgmncrQdU4cwqln3vhRTSbIiQkHG4lrAFfno2sMoG9QFK4CJ+zl5KXTI6TpskMo3Tu7reIYTUG3Z+0ZK/SOumoccl1VedoZHWnCfKDfMTyrhKZqcmdLdhq4qCyKiGabHQmWvfMA4uh7Ku19JZrORNnK3NC73aQegqnEdYKBlC96hBoBLk7tWYCnWf+VnTimMyecxOuGQxSnHpopHSeQ54T2NsHWP4CmB1AGlVQ8cLtyM+/DdofWZzsVR9K7QaCwWPPmjlaG8FF99WaKK5UiCBFQfFjyhpgasN5jyf2Re+PZG+FlQPM0ZtUgFp11qaxTNsFhg3Nsr/mG9Z/2bID1LU1Q== email@example.com
+#+end_example
+
+It has a bunch of characters in the middle and it ends with your email.
+Now you need to copy this whole key, which you can do by highlighting it in your terminal and copy it with =Ctrl-Shift-c= or follow below if you're on *Linux*.
+
+*Linux* (requires the =xclip= package)
+
+#+begin_src sh
+  xclip -sel clip < ~/.ssh/id_ed25519.pub
+#+end_src
+
+Now it's copied to clipboard. On GitHub to go to settings. And the list of all settings, go to ~SSH and GPG keys~ and you can see: /This is a list of SSH key associated with your account/.
+
+Then you just click on =new SSH key=. You can give it whatever /TITLE/ you want. This is just for your reference. And then you paste your key in there. And remove the extra =Enter= at the end.
+
+And now =Add SSH key= and confirm password. And now you can see key was successfully added.
+
+The only thing left to do is to make sure that your /"local Git command line interface knows about the key you just generated"./
 
 * Git Push
 
