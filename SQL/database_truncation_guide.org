@@ -1,0 +1,99 @@
+#+TITLE: Database Truncation Reference Guide
+#+DESCRIPTION: A quick-reference guide for truncating all tables across different database management systems (PostgreSQL, MySQL, SQL Server).
+#+AUTHOR: Database Administration Documentation
+#+DATE: [2026-05-18 Mon]
+
+* Introduction
+This document serves as a cheat sheet for safely or quickly wiping all data from tables across various SQL dialects. Wiping tables requires handling identity counters (auto-increments) and managing foreign key constraints properly to avoid relational integrity violations.
+
+* PostgreSQL
+PostgreSQL allows you to truncate multiple tables in a single command and cleanly handles sequence resets and foreign keys using inline modifiers.
+
+** Explicit Multi-Table Truncate
+You can list tables explicitly separated by commas. This is useful for manual execution or targeted wipes.
+
+#+begin_src sql
+  TRUNCATE TABLE
+      users,
+      orders,
+      payments,
+      logs
+  RESTART IDENTITY CASCADE;
+#+end_src
+
+*** Modifier Definitions
+- *Tables to truncate* :: =users=, =orders=, =payments=, =logs=
+- =RESTART IDENTITY= :: Automatically restarts any sequences owned by columns of the truncated table(s) (resets auto-increment IDs back to 1).
+- =CASCADE= :: Automatically truncates all tables that have foreign-key references to any of the named tables, or to any tables added via =CASCADE=.
+
+** Dynamic Script (Wipe Entire Database)
+To dynamically target all user tables without naming them manually, execute this anonymous code block:
+
+#+begin_src sql
+  DO $$
+  DECLARE
+      r RECORD;
+  BEGIN
+      SET CONSTRAINTS ALL DEFERRED;
+      FOR r IN (SELECT schemaname, tablename
+                FROM pg_tables
+                WHERE schemaname NOT IN ('pg_catalog', 'information_schema'))
+      LOOP
+          EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.schemaname) || '.' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE';
+      END LOOP;
+  END $$;
+#+end_src
+
+* MySQL
+MySQL enforces foreign key constraints stringently during a =TRUNCATE= operation. To wipe tables cleanly, constraint checking must be temporarily disabled.
+
+** Multi-Table Execution Pattern
+MySQL does not support comma-separated tables in a single =TRUNCATE TABLE= statement, nor does it have a =CASCADE= keyword for truncation. Each table must be truncated individually.
+
+#+begin_src sql
+  -- Step 1: Temporarily bypass constraint validation
+  SET FOREIGN_KEY_CHECKS = 0;
+
+  -- Step 2: Individual truncation commands (Auto-increment resets automatically)
+  TRUNCATE TABLE users;
+  TRUNCATE TABLE orders;
+  TRUNCATE TABLE payments;
+  TRUNCATE TABLE logs;
+
+  -- Step 3: Re-enable safety validations
+  SET FOREIGN_KEY_CHECKS = 1;
+#+end_src
+
+** Query Generator
+Use this metadata query to construct your manual script dynamically:
+
+#+begin_src sql
+  SELECT CONCAT('TRUNCATE TABLE ', table_schema, '.', table_name, ';') AS truncate_query
+  FROM information_schema.tables
+  WHERE table_schema = 'your_database_name';
+#+end_src
+
+* Microsoft SQL Server (T-SQL)
+SQL Server completely prohibits =TRUNCATE TABLE= if the target table is referenced by a =FOREIGN KEY= constraint, even if the referencing table is entirely empty.
+
+** Constraint Drop & Re-Enable Wrapper
+The standard approach involves globally disabling constraints, running the operations, and re-enabling them.
+
+#+begin_src sql
+  -- Step 1: Disable all foreign key constraints across the schema
+  EXEC sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all";
+
+  -- Step 2: Loop and truncate every table (Resets IDENTITY seeds automatically)
+  EXEC sp_MSforeachtable "TRUNCATE TABLE ?";
+
+  -- Step 3: Re-verify and enforce all foreign key constraints
+  EXEC sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all";
+#+end_src
+
+* Quick Engine Reference Matrix
+
+| Feature / Behavior | PostgreSQL | MySQL | SQL Server |
+|--------------------+------------+-------+------------|
+| Comma-Separated Syntax | Supported | Unsupported | Unsupported |
+| Foreign Key Handling | =CASCADE= keyword | =SET FOREIGN_KEY_CHECKS = 0= | =ALTER TABLE ... NOCHECK= |
+| Identity/Auto-Inc Reset | =RESTART IDENTITY= | Automatic | Automatic |

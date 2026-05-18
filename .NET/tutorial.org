@@ -61,6 +61,17 @@ Create a console app:
 dotnet new console -n HelloApp
 #+end_src
 
+Create a new MVC Web App:
+#+begin_src sh
+  dotnet new mvc -n MvcApp
+#+end_src
+
+Folder structure:
+- Controllers → Request handling
+- Models → Data
+- Views → Razor UI (.cshtml)
+- wwwroot → Static files
+
 Create ASP.NET Core Web API:
 #+begin_src sh
 dotnet new webapi -n ApiApp
