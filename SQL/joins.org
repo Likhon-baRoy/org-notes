@@ -1,0 +1,272 @@
+#+TITLE: SQL JOINs Quick Revision & Reference Guide
+#+AUTHOR: Revision Document
+#+DESCRIPTION: A fast-recall cheat sheet for SQL JOIN syntax, use cases, and behavior.
+#+STARTUP: showall
+
+* Fundamentals of JOINs
+JOINs are used to combine rows from two or more tables based on a related column between them.
+
+** The Mental Model
+Think of JOINs in terms of Set Theory (Venn Diagrams). You have a *Left Table (Table A)* and a *Right Table (Table B)*. The JOIN condition defines how the circles overlap.
+
+** Sample Schema for Visualization
+To keep examples consistent, assume we have two tables: =employees= and =departments=.
+
+*** Employees Table
+| emp_id | name    | dept_id |
+|-------+---------+--------|
+|     1 | Alice   |     10 |
+|     2 | Bob     |     20 |
+|     3 | Charlie |   NULL |
+
+*** Departments Table
+| dept_id | dept_name  |
+|--------+-----------|
+|     10 | HR        |
+|     20 | Engine    |
+|     30 | Marketing |
+
+* Types of JOINs
+
+** 1. INNER JOIN
+*** Concept
+Returns records that have matching values in *both* tables. If a row in the left table doesn't have a matching row in the right table (or vice versa), it is excluded from the result.
+
+*** When to use
+When you only want to see complete records where data exists in both entities (e.g., "Show me all employees who belong to a department").
+
+*** Syntax
+#+BEGIN_SRC sql
+  SELECT e.name, d.dept_name
+  FROM employees e
+  INNER JOIN departments d ON e.dept_id = d.dept_id;
+#+END_SRC
+
+*** Expected Result
+| name  | dept_name |
+|-------+----------|
+| Alice | HR       |
+| Bob   | Engine   |
+
+** 2. LEFT (OUTER) JOIN
+*** Concept
+Returns *all* records from the left table, and the matched records from the right table. If there is no match, the result is =NULL= on the right side.
+
+*** When to use
+When the left table is your primary entity and you want to keep all its records regardless of whether they have a match in the secondary table (e.g., "List all employees and their departments, including employees without a department").
+
+*** Syntax
+#+BEGIN_SRC sql
+  SELECT e.name, d.dept_name
+  FROM employees e
+  LEFT JOIN departments d ON e.dept_id = d.dept_id;
+#+END_SRC
+
+*** Expected Result
+| name    | dept_name |
+|---------+----------|
+| Alice   | HR       |
+| Bob     | Engine   |
+| Charlie | NULL     |
+
+** 3. RIGHT (OUTER) JOIN
+*** Concept
+Returns *all* records from the right table, and the matched records from the left table. If there is no match, the result is =NULL= on the left side.
+
+*** When to use
+Practically identical to =LEFT JOIN= but reverses the table order. Used when you want to ensure all records from the second table are displayed (e.g., "List all departments and any employees assigned to them, including departments with no employees").
+/Tip: Most developers stick to LEFT JOIN and just reorder tables for readability./
+
+*** Syntax
+#+BEGIN_SRC sql
+  SELECT e.name, d.dept_name
+  FROM employees e
+  RIGHT JOIN departments d ON e.dept_id = d.dept_id;
+#+END_SRC
+
+*** Expected Result
+| name  | dept_name  |
+|-------+-----------|
+| Alice | HR        |
+| Bob   | Engine    |
+| NULL  | Marketing |
+
+** 4. FULL (OUTER) JOIN
+*** Concept
+Returns *all* records when there is a match in either left or right table. It combines the results of both =LEFT JOIN= and =RIGHT JOIN=.
+
+*** When to use
+When you want a complete data dump of both tables mapping where matches exist and preserving records from both sides that do not match.
+
+*** Syntax
+#+BEGIN_SRC sql
+  SELECT e.name, d.dept_name
+  FROM employees e
+  FULL OUTER JOIN departments d ON e.dept_id = d.dept_id;
+#+END_SRC
+/Note: MySQL does not natively support FULL JOIN. You simulate it using a LEFT JOIN and a RIGHT JOIN combined with a UNION./
+
+*** Expected Result
+| name    | dept_name  |
+|---------+-----------|
+| Alice   | HR        |
+| Bob     | Engine    |
+| Charlie | NULL      |
+| NULL    | Marketing |
+
+** 5. CROSS JOIN (Cartesian Product)
+*** Concept
+Returns the Cartesian product of the two tables—it joins every row of the first table with every row of the second table. No =ON= clause is used.
+
+*** When to use
+When you need to generate all possible combinations of items (e.g., combining sizes and colors for inventory variations).
+
+*** Syntax
+#+BEGIN_SRC sql
+  SELECT e.name, d.dept_name
+  FROM employees e
+  CROSS JOIN departments d;
+#+END_SRC
+
+** 6. SELF JOIN
+*** Concept
+A regular join, but the table is joined with *itself*. This requires using different aliases for the same table to avoid ambiguity.
+
+*** When to use
+When a table contains a hierarchical relationship within its own rows (e.g., an employee table that contains a =manager_id= pointing back to another employee's =emp_id=).
+
+*** Syntax
+#+BEGIN_SRC sql
+  SELECT e.name AS Employee, m.name AS Manager
+  FROM employees e
+  LEFT JOIN employees m ON e.manager_id = m.emp_id;
+#+END_SRC
+
+* Advanced Patterns & Exclusion Joins
+Sometimes you want to find records that do *not* match. This is done by combining an Outer Join with a =WHERE ... IS NULL= clause.
+
+** Left Exclusion Join (Left Only)
+  - *Goal:* Find records unique to the left table.
+  - *Use Case:* "Show me employees who are not assigned to any department."
+    #+BEGIN_SRC sql
+      SELECT e.name
+      FROM employees e
+      LEFT JOIN departments d ON e.dept_id = d.dept_id
+      WHERE d.dept_id IS NULL;
+    #+END_SRC
+
+** Anti-Join (Symmetric Difference)
+  - *Goal:* Find records that exist in either table but *do not* overlap.
+  - *Use Case:* "Find all unassigned employees and all departments without employees."
+    #+BEGIN_SRC sql
+      SELECT e.name, d.dept_name
+      FROM employees e
+      FULL OUTER JOIN departments d ON e.dept_id = d.dept_id
+      WHERE e.dept_id IS NULL OR d.dept_id IS NULL;
+    #+END_SRC
+
+* Quick-Recall Summary Matrix
+
+| JOIN Type   | Left Table Rows | Right Table Rows | Non-Matching Rows Behavior     |
+|-------------+-----------------+------------------+--------------------------------|
+| INNER       | Only Matched    | Only Matched     | Dropped entirely               |
+| LEFT OUTER  | All Rows        | Only Matched     | Filled with =NULL= on Right side |
+| RIGHT OUTER | Only Matched    | All Rows         | Filled with =NULL= on Left side  |
+| FULL OUTER  | All Rows        | All Rows         | Filled with =NULL= where vacant  |
+| CROSS       | All Rows        | All Rows         | Multiplies (M x N rows)        |
+
+* Key Rules of Thumb for Performance
+1. *Index your FKs:* Always ensure the columns used in the =ON= clause (especially Foreign Keys) are indexed.
+2. *Filter Early:* If you have filters (=WHERE= conditions), try to keep them specific to reduce the dataset size before joining large tables.
+3. *ON vs WHERE:* The =ON= clause defines /how/ rows match. The =WHERE= clause filters the /resulting/ rows. For =INNER JOIN=, they act similarly, but for =LEFT JOIN=, placing a filter on the right table inside the =ON= clause vs the =WHERE= clause yields completely different results.
+
+* Plain JOIN vs INNER JOIN
+** Concept
+   When you see =JOIN= written by itself without any prefix keyword (like =INNER=, =LEFT=, or =RIGHT=), it defaults entirely to an =INNER JOIN=. The =INNER= keyword is optional and serves only as explicit documentation. Both variations produce the exact same execution plan in the database engine.
+
+** Syntax
+   #+BEGIN_SRC sql
+     -- These two statements function identically:
+     SELECT e.name, d.dept_name
+     FROM employees e
+     JOIN departments d ON e.dept_id = d.dept_id;
+
+     SELECT e.name, d.dept_name
+     FROM employees e
+     INNER JOIN departments d ON e.dept_id = d.dept_id;
+   #+END_SRC
+
+* Complex Multi-Table JOINs
+** Concept
+   When joining three or more tables, the query executes sequentially from left to right. The database engine joins the first two tables to create a temporary virtual result set, and then joins the third table directly to that virtual result set.
+
+** Sample Schema Extension
+   To visualize this, assume a third table =office_equipment= that maps assets directly to departments.
+
+*** Office Equipment Table
+    | asset_id | asset_name       | assigned_dept_id |
+    |---------+-----------------+----------------|
+    |     101 | Ergonomic Chair |             10 |
+    |     102 | 4K Monitor      |             20 |
+
+** Syntax
+   #+BEGIN_SRC sql
+   SELECT e.name AS employee_name, d.dept_name, eq.asset_name
+   FROM employees e
+   INNER JOIN departments d ON e.dept_id = d.dept_id
+   INNER JOIN office_equipment eq ON d.dept_id = eq.assigned_dept_id;
+   #+END_SRC
+
+** Expected Result
+   | employee_name | dept_name | asset_name       |
+   |--------------+----------+-----------------|
+   | Alice        | HR       | Ergonomic Chair |
+   | Bob          | Engine   | 4K Monitor      |
+
+** Critical Execution Rule
+   Be extremely careful when mixing =LEFT JOIN= and =INNER JOIN= in a chain. If you perform a =LEFT JOIN= to preserve unmatched records (resulting in =NULL= values), and follow it up with an strict =INNER JOIN= targeting columns from that same nullable table, you will accidentally filter out the =NULL= rows, converting your entire query logic back into a restrictive inner join.
+
+* Nuances of ON vs WHERE in Outer Joins
+** Concept
+   While =ON= and =WHERE= behave similarly during an =INNER JOIN=, they produce drastically different datasets when applied to =LEFT JOIN= or =RIGHT JOIN= operations.
+   - *The =ON= Clause:* Determines how tables match *during the assembly phase*. Rows that fail to match are still preserved, but the missing side is padded with =NULL=.
+   - *The =WHERE= Clause:* Acts as a final filter *after the tables are already joined*. It completely deletes any assembled rows that do not satisfy the criteria.
+
+** Scenario A: Filtering inside the ON Clause
+*** Goal
+    Match employees to departments, but only look up details for the 'Engine' department while keeping all other employee records intact.
+
+*** Syntax
+    #+BEGIN_SRC sql
+    SELECT e.name, d.dept_name
+    FROM employees e
+    LEFT JOIN departments d
+      ON e.dept_id = d.dept_id AND d.dept_name = 'Engine';
+    #+END_SRC
+
+*** Expected Result
+    | name    | dept_name |                                                                                      |
+    |---------+----------+--------------------------------------------------------------------------------------|
+    | Alice   | NULL     | <- Kept because it's a LEFT join, but dept details turn NULL since it isn't 'Engine' |
+    | Bob     | Engine   | <- Perfectly matches both criteria                                                   |
+    | Charlie | NULL     | <- Kept because it's a LEFT join                                                     |
+
+** Scenario B: Filtering inside the WHERE Clause
+*** Goal
+    Filter the final, combined list to isolate only the records connected to the 'Engine' department.
+
+*** Syntax
+    #+BEGIN_SRC sql
+    SELECT e.name, d.dept_name
+    FROM employees e
+    LEFT JOIN departments d ON e.dept_id = d.dept_id
+    WHERE d.dept_name = 'Engine';
+    #+END_SRC
+
+*** Expected Result
+    | name | dept_name |
+    |------+----------|
+    | Bob  | Engine   |
+
+*** Why it happens
+    The database engine initially processes the standard =LEFT JOIN= (retaining Alice, Bob, and Charlie). Afterward, the =WHERE= filter evaluates the rows. Alice's row ('HR') is dropped because it isn't 'Engine'. Charlie's row is dropped because evaluating a =NULL= against a literal string string check defaults to False.
