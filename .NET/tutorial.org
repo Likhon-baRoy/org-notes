@@ -36,24 +36,24 @@ This section replaces Visual Studio features using **dotnet CLI**.
 
 ** Check Installation
 #+begin_src sh
-dotnet --version
-dotnet --info
+  dotnet --version
+  dotnet --info
 #+end_src
 
 List installed SDKs:
 #+begin_src sh
-dotnet --list-sdks
+  dotnet --list-sdks
 #+end_src
 
 List installed runtimes:
 #+begin_src sh
-dotnet --list-runtimes
+  dotnet --list-runtimes
 #+end_src
 
 ** Create Projects
 List available templates:
 #+begin_src sh
-dotnet new list
+  dotnet new list
 #+end_src
 
 Create a console app:
