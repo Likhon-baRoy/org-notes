@@ -74,28 +74,55 @@ Folder structure:
 
 Create ASP.NET Core Web API:
 #+begin_src sh
-dotnet new webapi -n ApiApp
+  dotnet new webapi -n ApiApp
+  dotnet new webapi -controllers -n ApiApp # with controller
 #+end_src
 
 Create empty ASP.NET Core app:
 #+begin_src sh
-dotnet new web -n EmptyWeb
+  dotnet new web -n EmptyWeb
 #+end_src
 
 ** Solution & Project Structure
+*** What is a .sln file?
+A .sln (Solution) file in Microsoft .NET is basically a container for multiple projects.
+
+Think of it like:
+#+begin_example
+  Solution (HRMS.sln)
+   ├── HRMS.API (Web API)
+   ├── HRMS.Core (Business logic)
+   ├── HRMS.Infrastructure (Database)
+#+end_example
+
+👉 Why it matters
+- Groups multiple projects together
+- Used by Visual Studio
+- Helps in large/clean architecture
+
+Here how to do it correctly:
+#+begin_src bash
+  mkdir HRMS
+  cd HRMS
+
+  dotnet new sln -n HRMS # create sln with name
+  dotnet new webapi --use-controllers -n API # create webapi with controller
+  dotnet sln add API # add API to sln
+#+end_src
+
 Create a solution file:
 #+begin_src sh
-dotnet new sln -n MySolution
+  dotnet new sln -n MySolution
 #+end_src
 
 Add project to solution:
 #+begin_src sh
-dotnet sln add ApiApp/ApiApp.csproj
+  dotnet sln add ApiApp/ApiApp.csproj
 #+end_src
 
 Remove project:
 #+begin_src sh
-dotnet sln remove ApiApp/ApiApp.csproj
+  dotnet sln remove ApiApp/ApiApp.csproj
 #+end_src
 
 ** Run, Build & Publish
