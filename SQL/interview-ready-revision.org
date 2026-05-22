@@ -1,0 +1,954 @@
+#+TITLE:        SQL Interview Revision Guide (Beginner → Intermediate)
+#+AUTHOR:       Likhon Barai
+#+EMAIL:        likhonhere007@gmail.com
+#+DATE:         [2026-May-21 Thu]
+#+TAGS:         SQL
+
+:PROPERTIES:
+#+OPTIONS:
+:END:
+
+
+* Table of Content                                                      :TOC:
+- [[#section-1--basic-select-queries][Section 1 — Basic SELECT Queries]]
+  - [[#core-concepts][Core Concepts]]
+  - [[#sample-table][Sample Table]]
+  - [[#show-all-rows][Show All Rows]]
+  - [[#where-clause][WHERE Clause]]
+  - [[#multiple-conditions][Multiple Conditions]]
+  - [[#order-by][ORDER BY]]
+  - [[#limit][LIMIT]]
+  - [[#like-operator][LIKE Operator]]
+  - [[#common-interview-questions][Common Interview Questions]]
+- [[#section-2--filtering-mastery][Section 2 — Filtering Mastery]]
+  - [[#sample-table-1][Sample Table]]
+  - [[#distinct][DISTINCT]]
+  - [[#in-operator][IN Operator]]
+  - [[#between][BETWEEN]]
+  - [[#null-handling][NULL Handling]]
+  - [[#very-important--why--null-fails][VERY IMPORTANT — Why = NULL Fails]]
+- [[#section-3--aggregate-functions][Section 3 — Aggregate Functions]]
+  - [[#count][COUNT]]
+  - [[#avg][AVG]]
+  - [[#max][MAX]]
+  - [[#min][MIN]]
+  - [[#sum][SUM]]
+  - [[#group-by][GROUP BY]]
+  - [[#avg-salary-per-department][AVG Salary Per Department]]
+  - [[#total-salary-expense-per-department][Total Salary Expense Per Department]]
+  - [[#having-clause][HAVING Clause]]
+  - [[#difference-between-where-and-having][Difference Between WHERE and HAVING]]
+  - [[#very-important--sql-execution-order][VERY IMPORTANT — SQL Execution Order]]
+  - [[#real-world-reporting-query][Real-world Reporting Query]]
+- [[#section-4--joins][Section 4 — JOINs]]
+  - [[#core-concepts-1][Core Concepts]]
+  - [[#sample-tables][Sample Tables]]
+  - [[#inner-join][INNER JOIN]]
+  - [[#left-join][LEFT JOIN]]
+  - [[#finding-missing-relationships][Finding Missing Relationships]]
+  - [[#group-by-with-join][GROUP BY With JOIN]]
+  - [[#best-practice--group-by-selected-columns][Best Practice — GROUP BY Selected Columns]]
+  - [[#inner-join-vs-left-join][INNER JOIN vs LEFT JOIN]]
+- [[#section-5--subqueries][Section 5 — Subqueries]]
+  - [[#core-concepts-2][Core Concepts]]
+  - [[#sample-table-2][Sample Table]]
+  - [[#greater-than-average][Greater Than Average]]
+  - [[#highest-order][Highest Order]]
+  - [[#lowest-order][Lowest Order]]
+  - [[#in-with-subquery][IN With Subquery]]
+  - [[#correlated-subquery][Correlated Subquery]]
+  - [[#second-highest-salary--amount][Second Highest Salary / Amount]]
+- [[#section-6--multi-table-real-world-reporting][Section 6 — Multi-table Real-world Reporting]]
+  - [[#core-concepts-3][Core Concepts]]
+  - [[#sample-reporting-query][Sample Reporting Query]]
+  - [[#count-distinct][COUNT DISTINCT]]
+  - [[#real-world-dashboard-query][Real-world Dashboard Query]]
+- [[#interview-thinking-patterns][Interview Thinking Patterns]]
+  - [[#pattern-1--highest-questions][Pattern 1 — “Highest” Questions]]
+  - [[#pattern-2--per-department--per-customer][Pattern 2 — “Per Department / Per Customer”]]
+  - [[#pattern-3--more-than-average][Pattern 3 — “More Than Average”]]
+  - [[#pattern-4--missing-data][Pattern 4 — “Missing Data”]]
+  - [[#pattern-5--top-n-questions][Pattern 5 — “Top N” Questions]]
+- [[#common-beginner-mistakes][Common Beginner Mistakes]]
+  - [[#using-where-with-aggregate-functions][Using WHERE With Aggregate Functions]]
+  - [[#using--null][Using = NULL]]
+  - [[#unnecessary-select-][Unnecessary SELECT *]]
+  - [[#group-by-errors][GROUP BY Errors]]
+- [[#recommended-next-topics][Recommended Next Topics]]
+- [[#final-advice][Final Advice]]
+
+* Section 1 — Basic SELECT Queries
+
+** Core Concepts
+You must become comfortable with:
+
+- SELECT, WHERE, ORDER BY, LIMIT, LIKE, AND / OR, aliases
+
+These are the foundation of all SQL.
+
+** Sample Table
+
+#+NAME: employees_data
+| id | name   | department | salary | age | city       |
+|----+--------+------------+--------+-----+------------|
+|  1 | Rahim  | HR         |  30000 |  25 | Dhaka      |
+|  2 | Karim  | IT         |  60000 |  28 | Khulna     |
+|  3 | Jahid  | IT         |  55000 |  24 | Dhaka      |
+|  4 | Mitu   | Accounts   |  40000 |  30 | Rajshahi   |
+|  5 | Sadia  | HR         |  35000 |  27 | Dhaka      |
+|  6 | Nayeem | IT         |  70000 |  32 | Chittagong |
+|  7 | Tania  | Accounts   |  45000 |  29 | Khulna     |
+
+** Show All Rows
+
+#+begin_src sql
+SELECT * FROM employees;
+#+end_src
+
+Use only when:
+- debugging
+- quick checking
+- exploring data
+
+In production:
+Avoid SELECT * when possible.
+
+Prefer:
+#+begin_src sql
+SELECT id, name, salary FROM employees;
+#+end_src
+
+Why?
+- better performance
+- less memory
+- clearer intention
+
+** WHERE Clause
+
+Used for filtering rows.
+
+#+begin_src sql
+SELECT *
+FROM employees
+WHERE salary > 50000;
+#+end_src
+
+** Multiple Conditions
+
+#+begin_src sql
+SELECT *
+FROM employees
+WHERE department = 'IT'
+AND salary > 55000;
+#+end_src
+
+** ORDER BY
+
+#+begin_src sql
+SELECT *
+FROM employees
+ORDER BY salary DESC;
+#+end_src
+
+Ascending:
+
+#+begin_src sql
+ORDER BY salary ASC;
+#+end_src
+
+Descending:
+
+#+begin_src sql
+ORDER BY salary DESC;
+#+end_src
+
+** LIMIT
+
+Top 3 highest salary:
+
+#+begin_src sql
+SELECT *
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+#+end_src
+
+** LIKE Operator
+
+Starts with:
+
+#+begin_src sql
+WHERE name LIKE 'S%';
+#+end_src
+
+Ends with:
+
+#+begin_src sql
+WHERE name LIKE '%m';
+#+end_src
+
+Contains:
+
+#+begin_src sql
+WHERE name LIKE '%i%';
+#+end_src
+
+Single character wildcard:
+
+#+begin_src sql
+WHERE name LIKE '_a%';
+#+end_src
+
+** Common Interview Questions
+
+Difference Between: *>* & *>=*
+
+- *>* excludes boundary value
+- *>=* includes boundary value
+
+Example:
+
+#+begin_src sql
+WHERE salary > 50000
+#+end_src
+
+Does NOT include 50000.
+
+#+begin_src sql
+WHERE salary >= 50000
+#+end_src
+
+Includes 50000.
+
+* Section 2 — Filtering Mastery
+
+- Core Concepts Learn:
+   DISTINCT, IN, BETWEEN, IS NULL, IS NOT NULL, advanced filtering
+
+** Sample Table
+
+#+NAME: employees_v2_data
+| id | name   | department | salary |  bonus | city       |
+|----+--------+------------+--------+--------+------------|
+|  1 | Rahim  | HR         |  30000 |   5000 | Dhaka      |
+|  2 | Karim  | IT         |  60000 |   nil  | Khulna     |
+|  3 | Jahid  | IT         |  55000 |   7000 | Dhaka      |
+|  4 | Mitu   | Accounts   |  40000 |   nil  | Rajshahi   |
+|  5 | Sadia  | HR         |  35000 |   4000 | Dhaka      |
+|  6 | Nayeem | IT         |  70000 |  10000 | Chittagong |
+|  7 | Tania  | Accounts   |  45000 |   nil  | Khulna     |
+|  8 | Fahim  | Sales      |  38000 |   2000 | Dhaka      |
+|  9 | Rafi   | Sales      |  42000 |   3000 | Sylhet     |
+
+** DISTINCT
+
+#+begin_src sql
+SELECT DISTINCT department
+FROM employees_v2;
+#+end_src
+
+Purpose:
+Remove duplicate rows.
+
+** IN Operator
+
+#+begin_src sql
+SELECT *
+FROM employees_v2
+WHERE city IN ('Dhaka', 'Khulna');
+#+end_src
+
+Equivalent to:
+
+#+begin_src sql
+WHERE city = 'Dhaka'
+OR city = 'Khulna';
+#+end_src
+
+IN is cleaner and more readable.
+
+** BETWEEN
+
+#+begin_src sql
+SELECT *
+FROM employees_v2
+WHERE salary BETWEEN 40000 AND 60000;
+#+end_src
+
+Important:
+BETWEEN is inclusive.
+
+Equivalent to:
+
+#+begin_src sql
+WHERE salary >= 40000
+AND salary <= 60000;
+#+end_src
+
+** NULL Handling
+
+Find rows where bonus is missing:
+
+#+begin_src sql
+SELECT *
+FROM employees_v2
+WHERE bonus IS NULL;
+#+end_src
+
+Find rows where bonus exists:
+
+#+begin_src sql
+SELECT *
+FROM employees_v2
+WHERE bonus IS NOT NULL;
+#+end_src
+
+** VERY IMPORTANT — Why = NULL Fails
+
+This is WRONG:
+
+#+begin_src sql
+WHERE bonus = NULL
+#+end_src
+
+Correct:
+
+#+begin_src sql
+WHERE bonus IS NULL
+#+end_src
+
+Reason:
+SQL NULL means:
+
+- unknown
+- missing value
+
+Comparison with NULL returns:
+
+- UNKNOWN
+
+NOT true or false.
+
+So:
+
+#+begin_src sql
+NULL = NULL
+#+end_src
+
+is NOT true.
+
+This is one of the most important beginner SQL concepts.
+
+* Section 3 — Aggregate Functions
+
+- Core Concepts Learn:
+  COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING
+
+These are heavily used in:
+
+- dashboards
+- HRMS
+- ERP
+- Analytics
+- Reports
+
+** COUNT
+
+#+begin_src sql
+SELECT COUNT(*)
+FROM employees_v2;
+#+end_src
+
+Count rows.
+
+** AVG
+
+#+begin_src sql
+SELECT AVG(salary)
+FROM employees_v2;
+#+end_src
+
+** MAX
+
+#+begin_src sql
+SELECT MAX(salary)
+FROM employees_v2;
+#+end_src
+
+** MIN
+
+#+begin_src sql
+SELECT MIN(salary)
+FROM employees_v2;
+#+end_src
+
+** SUM
+
+#+begin_src sql
+SELECT SUM(salary)
+FROM employees_v2;
+#+end_src
+
+** GROUP BY
+
+Total employees per department:
+
+#+begin_src sql
+SELECT
+department,
+COUNT(*) AS total_employee
+FROM employees_v2
+GROUP BY department;
+#+end_src
+
+** AVG Salary Per Department
+
+#+begin_src sql
+SELECT
+department,
+AVG(salary) AS avg_salary
+FROM employees_v2
+GROUP BY department;
+#+end_src
+
+** Total Salary Expense Per Department
+
+#+begin_src sql
+SELECT
+department,
+SUM(salary) AS total_salary_expense
+FROM employees_v2
+GROUP BY department;
+#+end_src
+
+** HAVING Clause
+
+Departments having more than 2 employees:
+
+#+begin_src sql
+SELECT department
+FROM employees_v2
+GROUP BY department
+HAVING COUNT(id) > 2;
+#+end_src
+
+** Difference Between WHERE and HAVING
+
+| WHERE                          | HAVING                       |
+|--------------------------------+------------------------------|
+| Filters rows                   | Filters groups               |
+| Before GROUP BY                | After GROUP BY               |
+| Cannot use aggregate functions | Can use aggregate functions  |
+
+** VERY IMPORTANT — SQL Execution Order
+
+Logical execution order:
+
+1. FROM
+2. WHERE
+3. GROUP BY
+4. HAVING
+5. SELECT
+6. ORDER BY
+7. LIMIT
+
+This explains why:
+
+#+begin_src sql
+WHERE AVG(salary) > 40000
+#+end_src
+
+fails.
+
+Because AVG does not exist yet during WHERE stage.
+
+Correct:
+
+#+begin_src sql
+HAVING AVG(salary) > 40000
+#+end_src
+
+** Real-world Reporting Query
+
+#+begin_src sql
+SELECT
+department,
+COUNT(*) AS total_employees,
+AVG(salary) AS avg_salary,
+MAX(salary) AS highest_salary
+FROM employees_v2
+GROUP BY department;
+#+end_src
+
+This type of query is extremely common in:
+
+- dashboards
+- analytics
+- HR reports
+- admin panels
+
+* Section 4 — JOINs
+
+** Core Concepts
+Learn:
+
+- INNER JOIN
+- LEFT JOIN
+- relationships
+- multi-table queries
+- reporting joins
+
+This is one of the most important SQL topics.
+
+** Sample Tables
+
+#+begin_src sql
+CREATE TABLE departments (
+id SERIAL PRIMARY KEY,
+department_name VARCHAR(50)
+);
+#+end_src
+
+#+begin_src sql
+CREATE TABLE employees_join (
+id SERIAL PRIMARY KEY,
+name VARCHAR(100),
+salary INTEGER,
+department_id INTEGER
+);
+#+end_src
+
+** INNER JOIN
+
+#+begin_src sql
+SELECT
+e.name,
+d.department_name
+FROM employees_join e
+INNER JOIN departments d
+ON d.id = e.department_id;
+#+end_src
+
+Returns only matching rows.
+
+** LEFT JOIN
+
+#+begin_src sql
+SELECT
+e.name,
+d.department_name
+FROM employees_join e
+LEFT JOIN departments d
+ON d.id = e.department_id;
+#+end_src
+
+Returns:
+
+- all rows from left table
+- matched rows from right table
+
+Unmatched right-side rows become NULL.
+
+** Finding Missing Relationships
+
+Employees without department:
+
+#+begin_src sql
+SELECT
+e.name,
+d.department_name
+FROM employees_join e
+LEFT JOIN departments d
+ON d.id = e.department_id
+WHERE d.id IS NULL;
+#+end_src
+
+Very common ERP/reporting pattern.
+
+** GROUP BY With JOIN
+
+#+begin_src sql
+SELECT
+d.department_name,
+COUNT(e.id) AS total_employees
+FROM employees_join e
+INNER JOIN departments d
+ON d.id = e.department_id
+GROUP BY d.department_name;
+#+end_src
+
+** Best Practice — GROUP BY Selected Columns
+
+Bad style:
+
+#+begin_src sql
+GROUP BY e.department_id
+#+end_src
+
+Better:
+
+#+begin_src sql
+GROUP BY d.department_name
+#+end_src
+
+Or:
+
+#+begin_src sql
+GROUP BY d.id, d.department_name
+#+end_src
+
+Reason:
+
+- readability
+- portability
+- correctness
+
+** INNER JOIN vs LEFT JOIN
+
+| INNER JOIN             | LEFT JOIN            |
+|------------------------+----------------------|
+| Only matching rows     | All left rows        |
+| Removes unmatched rows | Keeps unmatched rows |
+
+Use INNER JOIN when unmatched rows are unnecessary.
+
+Use LEFT JOIN when missing relationships matter.
+
+* Section 5 — Subqueries
+
+** Core Concepts
+Learn:
+
+- nested queries
+- correlated subqueries
+- filtering with subqueries
+- reporting logic
+
+Very important for interviews.
+
+** Sample Table
+
+#+begin_src sql
+CREATE TABLE orders (
+id SERIAL PRIMARY KEY,
+customer_name VARCHAR(100),
+amount INTEGER,
+city VARCHAR(50)
+);
+#+end_src
+
+** Greater Than Average
+
+#+begin_src sql
+SELECT *
+FROM orders
+WHERE amount > (
+SELECT AVG(amount)
+FROM orders
+);
+#+end_src
+
+** Highest Order
+
+#+begin_src sql
+SELECT *
+FROM orders
+WHERE amount = (
+SELECT MAX(amount)
+FROM orders
+);
+#+end_src
+
+** Lowest Order
+
+#+begin_src sql
+SELECT *
+FROM orders
+WHERE amount = (
+SELECT MIN(amount)
+FROM orders
+);
+#+end_src
+
+** IN With Subquery
+
+#+begin_src sql
+SELECT *
+FROM orders
+WHERE city IN (
+SELECT city
+FROM orders
+GROUP BY city
+HAVING AVG(amount) > 10000
+);
+#+end_src
+
+** Correlated Subquery
+
+#+begin_src sql
+SELECT *
+FROM orders o1
+WHERE amount > (
+SELECT AVG(amount)
+FROM orders o2
+WHERE o2.city = o1.city
+);
+#+end_src
+
+Explanation:
+Inner query depends on outer query row.
+
+This is called:
+
+- correlated subquery
+
+Very important interview topic.
+
+** Second Highest Salary / Amount
+
+Classic interview question.
+
+Approach 1:
+
+#+begin_src sql
+  SELECT DISTINCT amount
+  FROM orders
+  ORDER BY amount DESC
+  LIMIT 1 OFFSET 1;
+#+end_src
+
+Approach 2:
+
+#+begin_src sql
+  SELECT MAX(amount)
+  FROM orders
+  WHERE amount < (
+  SELECT MAX(amount)
+  FROM orders
+  );
+#+end_src
+
+* Section 6 — Multi-table Real-world Reporting
+
+** Core Concepts
+Learn:
+
+- multiple joins
+- reporting calculations
+- sales summaries
+- spending reports
+- aggregation with joins
+
+These resemble real ERP/POS systems.
+
+** Sample Reporting Query
+
+#+begin_src sql
+SELECT
+c.customer_name,
+SUM(s.quantity * p.price) AS total_spending
+FROM customers c
+INNER JOIN sales s
+ON s.customer_id = c.id
+INNER JOIN products p
+ON p.id = s.product_id
+GROUP BY c.customer_name;
+#+end_src
+
+** COUNT DISTINCT
+
+#+begin_src sql
+COUNT(DISTINCT s.product_id)
+#+end_src
+
+Used when duplicate values should count once.
+
+Very common in:
+
+- analytics
+- reporting
+- dashboards
+
+** Real-world Dashboard Query
+
+#+begin_src sql
+SELECT
+c.customer_name,
+COUNT(DISTINCT s.product_id) AS total_products,
+SUM(s.quantity) AS total_quantity,
+SUM(p.price * s.quantity) AS total_spending
+FROM customers c
+INNER JOIN sales s
+ON s.customer_id = c.id
+INNER JOIN products p
+ON p.id = s.product_id
+GROUP BY c.customer_name;
+#+end_src
+
+This resembles:
+
+- admin dashboard reports
+- sales reports
+- ERP analytics
+- POS reporting
+
+* Interview Thinking Patterns
+
+** Pattern 1 — “Highest” Questions
+
+Questions:
+
+- highest salary
+- highest spending
+- highest marks
+
+Think:
+
+#+begin_src sql
+MAX()
+ORDER BY DESC LIMIT 1
+#+end_src
+
+** Pattern 2 — “Per Department / Per Customer”
+
+Questions:
+
+- average salary per department
+- total spending per customer
+
+Think:
+
+#+begin_src sql
+GROUP BY
+#+end_src
+
+** Pattern 3 — “More Than Average”
+
+Questions:
+
+- employees earning above average
+- cities with above-average sales
+
+Think:
+
+#+begin_src sql
+subquery + AVG()
+#+end_src
+
+** Pattern 4 — “Missing Data”
+
+Questions:
+
+- employees without department
+- customers without orders
+
+Think:
+
+#+begin_src sql
+LEFT JOIN + IS NULL
+#+end_src
+
+** Pattern 5 — “Top N” Questions
+
+Questions:
+
+- top 3 salaries
+- top 5 customers
+
+Think:
+
+#+begin_src sql
+ORDER BY DESC
+LIMIT N
+#+end_src
+
+* Common Beginner Mistakes
+
+** Using WHERE With Aggregate Functions
+
+Wrong:
+
+#+begin_src sql
+WHERE AVG(salary) > 50000
+#+end_src
+
+Correct:
+
+#+begin_src sql
+HAVING AVG(salary) > 50000
+#+end_src
+
+** Using = NULL
+
+Wrong:
+
+#+begin_src sql
+WHERE bonus = NULL
+#+end_src
+
+Correct:
+
+#+begin_src sql
+WHERE bonus IS NULL
+#+end_src
+
+** Unnecessary SELECT *
+
+Bad:
+
+#+begin_src sql
+SELECT *
+#+end_src
+
+Better:
+
+#+begin_src sql
+SELECT id, name
+#+end_src
+
+** GROUP BY Errors
+
+Wrong:
+Selecting columns not aggregated or grouped.
+
+Correct:
+All selected non-aggregate columns should usually appear in GROUP BY.
+
+* Recommended Next Topics
+
+Next advanced topics to learn:
+
+1. Window Functions
+2. CTEs
+3. CASE WHEN
+4. UNION / UNION ALL
+5. EXISTS
+6. Indexes
+7. Query Optimization
+8. Execution Plans
+9. Transactions
+10. Database Normalization
+
+* Final Advice
+
+SQL becomes easier when you stop memorizing queries and start recognizing patterns.
+
+When reading a question, ask:
+
+1. Do I need filtering?
+   → WHERE
+
+2. Do I need grouping?
+   → GROUP BY
+
+3. Do I need filtering after grouping?
+   → HAVING
+
+4. Do I need related data?
+   → JOIN
+
+5. Do I need calculated comparison?
+   → subquery
+
+6. Do I need ranking/top values?
+   → ORDER BY + LIMIT

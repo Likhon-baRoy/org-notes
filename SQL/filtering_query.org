@@ -1,0 +1,75 @@
+* DISTINCT
+select id, name, distinct department from employees_v2;
+are there more better way to show unique dept. with all other column? Here I had to rite every column!
+
+DISTINCT works on the entire selected row, not just one column.
+So this query is invalid SQL in most databases:
+
+select id, name, distinct department from employees_v2;
+
+If you want:
+
+unique departments only → use:
+SELECT DISTINCT department
+FROM employees_v2;
+
+But if you want:
+
+one row per department while still showing other columns, then you need a rule for which row to keep for each department.
+
+A much better approach is usually one of these:
+
+1. Use ROW_NUMBER() (best/general solution)
+SELECT id, name, department
+FROM (
+    SELECT *,
+           ROW_NUMBER() OVER (
+               PARTITION BY department
+               ORDER BY id
+           ) AS rn
+    FROM employees_v2
+) t
+WHERE rn = 1;
+
+This gives:
+
+one row per department
+keeps all columns without listing them individually inside the subquery
+picks the row with smallest id per department
+
+You can change:
+
+ORDER BY id
+
+to:
+
+ORDER BY created_at DESC
+
+or anything else.
+
+2. PostgreSQL shortcut: DISTINCT ON
+
+If you're using PostgreSQL:
+
+SELECT DISTINCT ON (department) *
+FROM employees_v2
+ORDER BY department, id;
+
+Very clean and popular in Postgres.
+
+3. Grouping approach (not ideal for full rows)
+SELECT department, MIN(id)
+FROM employees_v2
+GROUP BY department;
+
+Good for aggregates, but not for retrieving full arbitrary rows.
+
+Why SQL makes you list columns
+
+Because SQL needs to know:
+
+“When multiple employees belong to the same department, which id, name, etc. should be returned?”
+
+There is no single correct answer unless you define it.
+
+So using window functions (ROW_NUMBER) is the proper scalable solution.
