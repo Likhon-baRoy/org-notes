@@ -1,0 +1,582 @@
+#+TITLE:       Session 0: C# Foundations (Learning Handbook)
+#+AUTHOR:      Likhon Barai
+#+DATE:        [2026-05-26 Tue]
+#+TAGS:        Csharp .NET Backend Beginner
+#+OPTIONS:     toc:2 num:nil
+
+* 0.1 C# vs .NET
+
+- *C#* is a programming language.
+- *.NET* is the platform/runtime that runs C# applications.
+- *ASP.NET* Core is the framework for building web applications/APIs using .NET.
+
+* 0.2 Variables & Data Types
+
+** What is a variable?
+Variables store data.
+
+- Examples
+#+begin_src csharp
+  int n = 10;
+  string s = "hello";
+  decimal amount = 100.5m;
+  bool flag = false;
+  DateTime today = DateTime.Now;
+#+end_src
+
+** Strongly typed
+Every variable has a type.
+
+* 0.3 Comments
+
+#+begin_src csharp
+// single line
+
+/*
+multi line
+*/
+#+end_src
+
+* 0.4 Console Output
+
+#+begin_src csharp
+Console.WriteLine("Hello");
+#+end_src
+
+* 0.5 Operators
+
+| Operator Type | Syntax | Example |
+|---------------+--------+-----------------|
+| Assignment    | =      | salary = 50000; |
+| Comparison    | ==     | salary == 50000 |
+| Arithmetic    | + - * /| 5 + 10          |
+
+* 0.6 Methods
+
+Reusable block of code.
+
+Method is Reusable block of code.
+
+- Example:
+#+begin_src csharp
+  // method without parameter
+  void SayHello()
+  {
+      Console.WriteLine("Hello");
+  }
+
+  // method with parameter
+  void Greet(string name)
+  {
+      Console.WriteLine(name);
+  }
+
+  // method with return value
+  int Add(int a, int b)
+  {
+      return a + b;
+  }
+#+end_src
+
+* 0.7 Classes & Objects
+** What is a Class?
+A class is a blueprint/template that defines properties and behavior of an object.
+
+Think: Class = design/template
+
+- Example in HRMS  usually has:
+- Name
+- Salary
+- Department
+
+Instead of separate variables, we group them:
+#+begin_src csharp
+  class Employee
+  {
+      public string Name { get; set; }
+      public decimal Salary { get; set; }
+  }
+#+end_src
+
+A class itself is not real data. It only defines structure.
+
+** What is an Object?
+An object is a real instance of a class.
+
+An object is a real instance of a class. An object is an instance of a class.
+
+- Example
+#+begin_src csharp
+  Employee employee = new Employee();
+
+  employee.Name = "Rahim";
+  employee.Salary = 30000m;
+#+end_src
+
+- Read value
+#+begin_src csharp
+  Console.WriteLine(employee.Name);
+#+end_src
+
+Output:
+#+begin_example
+  Rahim
+#+end_example
+
+- Mental model
+#+begin_example
+  Class = building blueprint
+  Object = real building
+#+end_example
+
+** Why Classes Matter in ASP.NET Core
+Almost everything is a class:
+- Controller
+- Service
+- Repository
+- DTO
+- Entity
+- DbContext
+
+Almost everything is a class:
+- Controller
+- Service
+- Repository
+- DTO
+- Entity
+- DbContext
+
+Example
+#+begin_src csharp
+  public class Employee
+  {
+      public Guid Id { get; set; }
+      public string FullName { get; set; }
+      public decimal Salary { get; set; }
+  }
+#+end_src
+
+** Common Mistake
+
+| Wrong Idea          | Correct Idea                              |
+|---------------------+-------------------------------------------|
+| Class = actual data | Class = structure & Object = real data    |
+
+* 0.8 Constructor
+
+** What is a Constructor?
+A constructor is a special method that runs automatically when an object of a class is created. It is used to initialize values or perform setup operations.
+
+** When does a constructor run?
+A constructor runs automatically when an object is created from a class. It does not need to be called explicitly.
+
+Used for:
+- Default values
+- Initialization
+- Setup logic
+
+Example:
+#+begin_src csharp
+  class Student
+  {
+      public Student()
+      {
+          Console.WriteLine("Student created");
+      }
+  }
+#+end_src
+
+Object creation:
+#+begin_src csharp
+  Student student = new Student();
+#+end_src
+
+Output:
+#+begin_example
+  Student created
+#+end_example
+
+** Rule
+Constructor name must match class name.
+
+- *Correct:*
+#+begin_src csharp
+  class Employee
+  {
+      public Employee() { }
+  }
+#+end_src
+
+- *Wrong:*
+#+begin_src csharp
+  class Employee
+  {
+      public Test() { }
+  }
+#+end_src
+
+Using Default Values in Constructor:
+#+begin_src csharp
+  class Employee
+  {
+      public string Name { get; set; }
+
+      public Employee()
+      {
+          Name = "Unknown";
+      }
+  }
+#+end_src
+
+- Why Important?
+Dependency Injection in ASP.NET Core uses constructors heavily.
+
+* 0.9 Encapsulation & Access Modifiers
+
+** Access Modifiers
+Access modifiers control who can access something.
+
+Think:
+#+begin_example
+  Permission system
+#+end_example
+
+*** What is public?
+public means a member can be accessed from anywhere in the application.
+#+begin_src csharp
+  public string Name { get; set; }
+#+end_src
+
+*** What is private?
+private means a member can only be accessed inside the same class.
+#+begin_src csharp
+  private decimal salary;
+#+end_src
+
+Outside access like ~employee.salary~ will result in an error. Even reading directly is not allowed.
+
+** Encapsulation
+Encapsulation means: Hide internal data and control access through methods/properties. (Enterprise apps use this everywhere.)
+
+- Example
+#+begin_src csharp
+  class Employee
+  {
+      private decimal salary;
+
+      public void SetSalary(decimal amount)
+      {
+          if(amount > 0)
+          {
+              salary = amount;
+          }
+      }
+
+      public decimal GetSalary()
+      {
+          return salary;
+      }
+  }
+#+end_src
+
+- Why useful?
+Protect business rules.
+
+* 0.11 Loops
+
+** for
+#+begin_src csharp
+  for(int i = 1; i <= 5; i++)
+  {
+      Console.WriteLine(i);
+  }
+#+end_src
+
+** foreach
+#+begin_src csharp
+  foreach(var item in items)
+  {
+      Console.WriteLine(item);
+  }
+#+end_src
+
+Note: ~i++~ means increase by 1.
+
+* 0.12 List<T>
+** What is List<T>?
+List<T> is a dynamic collection storing multiple values of the same type.
+
+Example:
+#+begin_src csharp
+  List<string> names = new List<string>();
+  names.Add("Rahim");
+  names.Add("Karim");
+#+end_src
+
+Count:
+#+begin_src csharp
+  Console.WriteLine(names.Count);
+#+end_src
+
+Index starts at 0.
+#+begin_example
+  0 = Rahim
+  1 = Karim
+#+end_example
+
+Example:
+#+begin_src csharp
+  Console.WriteLine(names[0]);
+#+end_src
+
+** List vs Array
+Array and List are both collections, but List is dynamic while an array has a fixed size.
+
+| Collection Type | Sizing Mechanic | Structural Definition                    |
+|-----------------+-----------------+------------------------------------------|
+| **Array**         | Fixed Size      | ~string[] names = new string[2];~          |
+| **List**          | Dynamic Size    | ~List<string> names = new List<string>();~ |
+
+- Why Important?
+API responses commonly return ~List<Employee>~.
+
+* 0.13 LINQ
+** What is LINQ?
+LINQ (Language Integrated Query) is a way to query, filter, search, sort, and manipulate collections/data in C#.
+
+Used to:
+- Filter
+- Search
+- Sort
+- Query data
+
+Mental model:
+#+begin_example
+  SQL-like querying in C#
+#+end_example
+
+*Important correction:* LINQ is NOT a SQL replacement. Entity Framework converts LINQ into SQL internally.
+
+** Where()
+Filters data.
+#+begin_src csharp
+  employees.Where(x => x.Salary > 50000)
+#+end_src
+
+Equivalent SQL logic concept:
+#+begin_src sql
+  SELECT * FROM employees WHERE salary > 50000
+#+end_src
+
+** FirstOrDefault()
+Get first item.
+#+begin_src csharp
+  employees.FirstOrDefault()
+#+end_src
+
+** Count()
+#+begin_src csharp
+  employees.Count()
+#+end_src
+
+- Why Important?
+Entity Framework relies heavily on LINQ.
+
+* 0.14 Null & Nullable Types
+** What is null?
+NULL means no value exists or nothing is assigned.
+
+Example:
+#+begin_src csharp
+  string name = null;
+#+end_src
+Meaning: ~name~ has no value.
+
+** Problem with NULL
+#+begin_src csharp
+  string name = null;
+  Console.WriteLine(name.Length);
+#+end_src
+Error if ~name~ is null. Because nothing exists inside ~name~, no length property is available.
+
+** Null Check
+Correct way to handle potential nulls safely:
+#+begin_src csharp
+  if(name != null)
+  {
+      Console.WriteLine(name.Length);
+  }
+#+end_src
+
+** Nullable Types (?)
+Normally, trying to assign null to value types fails:
+#+begin_src csharp
+  int age = null; // Error! Normal value types (int, decimal, bool, DateTime) cannot hold null.
+#+end_src
+
+To allow null values, use the ~?~ operator:
+#+begin_src csharp
+  int? age = null;
+  decimal? salary;
+  DateTime? joiningDate;
+  bool? isActive;
+#+end_src
+
+** Why do we use `?`
+*?* makes a value type nullable, meaning it can store null values.
+
+** Why Important?
+Backend bugs commonly happen because of null values. Used heavily in:
+- Database fields
+- Optional API fields
+- Filtering
+- Update APIs
+
+Example: An employee may not have a resignation date yet.
+#+begin_src csharp
+  public DateTime? ResignationDate { get; set; }
+#+end_src
+
+* 0.15 Async / Await
+This is everywhere in web APIs. You will constantly see ~async~, ~await~, and ~Task~.
+
+#+begin_src csharp
+  public async Task GetEmployees() { }
+#+end_src
+
+Because backends perform many slow input/output operations:
+- Database calls
+- External API calls
+- File uploads
+- Email sending
+
+Without async:
+#+begin_example
+  Wait...
+  Wait...
+  Wait...
+#+end_example
+Everything blocks.
+
+With async:
+Do other work while waiting.
+Better performance.
+
+| Execution Strategy | Application Thread Behavior                     |
+|--------------------+-------------------------------------------------|
+| **Without Async**    | Blocks execution completely while waiting.      |
+| **With Async**       | Thread is freed to do other work while waiting. |
+
+Yields much better overall server scalability and performance.
+
+- Example
+
+Normal method (Synchronous):
+#+begin_src csharp
+  void SayHello()
+  {
+      Console.WriteLine("Hello");
+  }
+#+end_src
+
+Async version (Non-blocking):
+#+begin_src csharp
+  async Task SayHello()
+  {
+      await Task.Delay(2000);
+      Console.WriteLine("Hello");
+  }
+#+end_src
+Meaning: Wait 2 seconds without blocking, then print Hello.
+
+*Important correction:* ~await~ DOES wait logically for the result, BUT it does NOT block the thread execution.
+The difference is blocking vs non-blocking.
+
+** Mental Models of Async Processing
+
+*** Without async (blocking)
+Imagine you order tea:
+1. Go to tea shop
+2. Stand there doing nothing
+3. Wait 5 minutes
+4. Get tea
+5. Leave (You are blocked during the wait)
+
+Program example:
+#+begin_src csharp
+  var employees = _dbContext.Employees.ToList();
+  Console.WriteLine("Done");
+#+end_src
+Flow: Request database → STOP everything → Wait... → Get result → Continue. The underlying thread is blocked.
+
+*** With async/await (non-blocking)
+Same tea example:
+1. Order tea
+2. Shop says: "come back in 5 minutes"
+3. Meanwhile, you do other productive work
+4. Come back after 5 minutes
+5. Take your tea
+
+Program example:
+#+begin_src csharp
+  var employees = await _dbContext.Employees.ToListAsync();
+  Console.WriteLine("Done");
+#+end_src
+Flow: Database is processing query → Meanwhile, the server thread handles other incoming web requests → When results come back, execution resumes here.
+
+** Scalability Impact
+Imagine 1,000 users hit your API simultaneously:
+- **Without Async:** Each request ties up and blocks a server thread. The server runs out of threads and slows down.
+- **With Async:** Threads are released back to the server while the database runs. The server can handle way more users with fewer resources.
+
+** Code Comparison
+
+*** Sync (blocking)
+#+begin_src csharp
+  public List<Employee> GetEmployees()
+  {
+      return _dbContext.Employees.ToList();
+  }
+#+end_src
+Thread waits idle doing nothing.
+
+*** Async (non-blocking)
+#+begin_src csharp
+  public async Task<List<Employee>> GetEmployees()
+  {
+      return await _dbContext.Employees.ToListAsync();
+  }
+#+end_src
+Thread becomes free while database handles the query, then resumes processing here once completed.
+
+Think of:
+- Sync = Stand and wait
+- Async = Wait smartly
+
+** Real API Example
+#+begin_src csharp
+  var employees = await _dbContext.Employees.ToListAsync();
+#+end_src
+
+** Use Async For:
+- Database queries
+- External web API calls
+- File uploads / downloads
+- Email sending
+
+** Not useful for:
+- Simple math operations ❌
+- Simple variable assignments ❌
+- Quick CPU-bound operations ❌
+
+Example: ~int total = 5 + 10;~ does not require async.
+
+** Definition Review
+- **What does await mean?** ~await~ waits for an asynchronous operation to finish without blocking the thread.
+- **Why do we use async/await?** We use ~async/await~ to perform non-blocking operations so the application can handle other work while waiting for slow operations to finish.
+
+** Common Misunderstanding
+
+| Wrong Statement | Correct Statement                 |
+|-----------------+-----------------------------------|
+| async = faster  | async = non-blocking and scalable |
