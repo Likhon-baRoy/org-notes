@@ -61,11 +61,10 @@
 - *ASP.NET* Core is the framework for building web applications/APIs using .NET.
 
 * 0.2 Variables & Data Types
-
 ** What is a variable?
 Variables store data.
 
-- Examples
+Example:
 #+begin_src csharp
   int n = 10;
   string s = "hello";
@@ -95,19 +94,16 @@ Console.WriteLine("Hello");
 
 * 0.5 Operators
 
-| Operator Type | Syntax | Example |
-|---------------+--------+-----------------|
-| Assignment    | =      | salary = 50000; |
-| Comparison    | ==     | salary == 50000 |
-| Arithmetic    | + - * /| 5 + 10          |
+| Operator Type | Syntax  | Example         |
+|---------------+---------+-----------------|
+| Assignment    | =       | salary = 50000; |
+| Comparison    | ==      | salary == 50000 |
+| Arithmetic    | + - * / | 5 + 10          |
 
 * 0.6 Methods
-
-Reusable block of code.
-
 Method is Reusable block of code.
 
-- Example:
+Example:
 #+begin_src csharp
   // method without parameter
   void SayHello()
@@ -132,9 +128,9 @@ Method is Reusable block of code.
 ** What is a Class?
 A class is a blueprint/template that defines properties and behavior of an object.
 
-Think: Class = design/template
+/Think/: Class = design/template
 
-- Example in HRMS  usually has:
+HRMS type apps  usually has:
 - Name
 - Salary
 - Department
@@ -155,7 +151,7 @@ An object is a real instance of a class.
 
 An object is a real instance of a class. An object is an instance of a class.
 
-- Example
+Example:
 #+begin_src csharp
   Employee employee = new Employee();
 
@@ -163,7 +159,7 @@ An object is a real instance of a class. An object is an instance of a class.
   employee.Salary = 30000m;
 #+end_src
 
-- Read value
+Read value:
 #+begin_src csharp
   Console.WriteLine(employee.Name);
 #+end_src
@@ -173,7 +169,7 @@ Output:
   Rahim
 #+end_example
 
-- Mental model
+Mental model:
 #+begin_example
   Class = building blueprint
   Object = real building
@@ -188,15 +184,7 @@ Almost everything is a class:
 - Entity
 - DbContext
 
-Almost everything is a class:
-- Controller
-- Service
-- Repository
-- DTO
-- Entity
-- DbContext
-
-Example
+Example:
 #+begin_src csharp
   public class Employee
   {
@@ -249,7 +237,7 @@ Output:
 ** Rule
 Constructor name must match class name.
 
-- *Correct:*
+*Correct:*
 #+begin_src csharp
   class Employee
   {
@@ -257,7 +245,7 @@ Constructor name must match class name.
   }
 #+end_src
 
-- *Wrong:*
+*Wrong:*
 #+begin_src csharp
   class Employee
   {
@@ -278,8 +266,8 @@ Using Default Values in Constructor:
   }
 #+end_src
 
-- Why Important?
-Dependency Injection in ASP.NET Core uses constructors heavily.
+Why Important?
+- Dependency Injection in ASP.NET Core uses constructors heavily.
 
 * 0.9 Encapsulation & Access Modifiers
 
@@ -308,7 +296,7 @@ Outside access like ~employee.salary~ will result in an error. Even reading dire
 ** Encapsulation
 Encapsulation means: Hide internal data and control access through methods/properties. (Enterprise apps use this everywhere.)
 
-- Example
+Example:
 #+begin_src csharp
   class Employee
   {
@@ -329,8 +317,8 @@ Encapsulation means: Hide internal data and control access through methods/prope
   }
 #+end_src
 
-- Why useful?
-Protect business rules.
+Why useful?
+- Protect business rules.
 
 * 0.11 Loops
 
@@ -387,8 +375,8 @@ Array and List are both collections, but List is dynamic while an array has a fi
 | *Array*           | Fixed Size      | ~string[] names = new string[2];~          |
 | *List*            | Dynamic Size    | ~List<string> names = new List<string>();~ |
 
-- Why Important?
-API responses commonly return ~List<Employee>~.
+Why Important?
+- API responses commonly return ~List<Employee>~.
 
 * 0.13 LINQ
 ** What is LINQ?
@@ -429,8 +417,8 @@ Get first item.
   employees.Count()
 #+end_src
 
-- Why Important?
-Entity Framework relies heavily on LINQ.
+Why Important?
+- Entity Framework relies heavily on LINQ.
 
 * 0.14 Null & Nullable Types
 ** What is null?
@@ -519,8 +507,6 @@ Better performance.
 
 Yields much better overall server scalability and performance.
 
-- Example
-
 Normal method (Synchronous):
 #+begin_src csharp
   void SayHello()
@@ -580,7 +566,6 @@ Imagine 1,000 users hit your API simultaneously:
 - *With Async:* Threads are released back to the server while the database runs. The server can handle way more users with fewer resources.
 
 ** Code Comparison
-
 *** Sync (blocking)
 #+begin_src csharp
   public List<Employee> GetEmployees()
