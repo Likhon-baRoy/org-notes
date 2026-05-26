@@ -384,8 +384,8 @@ Array and List are both collections, but List is dynamic while an array has a fi
 
 | Collection Type | Sizing Mechanic | Structural Definition                    |
 |-----------------+-----------------+------------------------------------------|
-| **Array**         | Fixed Size      | ~string[] names = new string[2];~          |
-| **List**          | Dynamic Size    | ~List<string> names = new List<string>();~ |
+| *Array*           | Fixed Size      | ~string[] names = new string[2];~          |
+| *List*            | Dynamic Size    | ~List<string> names = new List<string>();~ |
 
 - Why Important?
 API responses commonly return ~List<Employee>~.
@@ -514,8 +514,8 @@ Better performance.
 
 | Execution Strategy | Application Thread Behavior                     |
 |--------------------+-------------------------------------------------|
-| **Without Async**    | Blocks execution completely while waiting.      |
-| **With Async**       | Thread is freed to do other work while waiting. |
+| *Without Async*      | Blocks execution completely while waiting.      |
+| *With Async*         | Thread is freed to do other work while waiting. |
 
 Yields much better overall server scalability and performance.
 
@@ -576,8 +576,8 @@ Flow: Database is processing query → Meanwhile, the server thread handles othe
 
 ** Scalability Impact
 Imagine 1,000 users hit your API simultaneously:
-- **Without Async:** Each request ties up and blocks a server thread. The server runs out of threads and slows down.
-- **With Async:** Threads are released back to the server while the database runs. The server can handle way more users with fewer resources.
+- *Without Async:* Each request ties up and blocks a server thread. The server runs out of threads and slows down.
+- *With Async:* Threads are released back to the server while the database runs. The server can handle way more users with fewer resources.
 
 ** Code Comparison
 
@@ -622,8 +622,8 @@ Think of:
 Example: ~int total = 5 + 10;~ does not require async.
 
 ** Definition Review
-- **What does await mean?** ~await~ waits for an asynchronous operation to finish without blocking the thread.
-- **Why do we use async/await?** We use ~async/await~ to perform non-blocking operations so the application can handle other work while waiting for slow operations to finish.
+- *What does await mean?* ~await~ waits for an asynchronous operation to finish without blocking the thread.
+- *Why do we use async/await?* We use ~async/await~ to perform non-blocking operations so the application can handle other work while waiting for slow operations to finish.
 
 ** Common Misunderstanding
 
