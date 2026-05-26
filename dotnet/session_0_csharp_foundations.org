@@ -7,44 +7,43 @@
 
 * Table of Contents                                                     :TOC:
 - [[#01-c-vs-net][0.1 C# vs .NET]]
-- [[#02-variables--data-types][0.2 Variables & Data Types]]
-  - [[#what-is-a-variable][What is a variable?]]
-  - [[#strongly-typed][Strongly typed]]
-- [[#03-comments][0.3 Comments]]
-- [[#04-console-output][0.4 Console Output]]
-- [[#05-operators][0.5 Operators]]
-- [[#06-methods][0.6 Methods]]
-- [[#07-classes--objects][0.7 Classes & Objects]]
+- [[#02-basic-syntax--types][0.2 Basic Syntax & Types]]
+  - [[#variables--data-types][Variables & Data Types]]
+  - [[#comments][Comments]]
+  - [[#console-output][Console Output]]
+  -  [[#operators][Operators]]
+- [[#03-methods][0.3 Methods]]
+- [[#04-classes--objects][0.4 Classes & Objects]]
   - [[#what-is-a-class][What is a Class?]]
   - [[#what-is-an-object][What is an Object?]]
   - [[#why-classes-matter-in-aspnet-core][Why Classes Matter in ASP.NET Core]]
   - [[#common-mistake][Common Mistake]]
-- [[#08-constructor][0.8 Constructor]]
+- [[#05-constructor][0.5 Constructor]]
   - [[#what-is-a-constructor][What is a Constructor?]]
   - [[#when-does-a-constructor-run][When does a constructor run?]]
   - [[#rule][Rule]]
-- [[#09-encapsulation--access-modifiers][0.9 Encapsulation & Access Modifiers]]
+- [[#06-encapsulation--access-modifiers][0.6 Encapsulation & Access Modifiers]]
   - [[#access-modifiers][Access Modifiers]]
   - [[#encapsulation][Encapsulation]]
-- [[#011-loops][0.11 Loops]]
+- [[#07-loops][0.7 Loops]]
   - [[#for][for]]
   - [[#foreach][foreach]]
-- [[#012-listt][0.12 List<T>]]
+- [[#08-listt][0.8 List<T>]]
   - [[#what-is-listt][What is List<T>?]]
   - [[#list-vs-array][List vs Array]]
-- [[#013-linq][0.13 LINQ]]
+- [[#09-linq][0.9 LINQ]]
   - [[#what-is-linq][What is LINQ?]]
   - [[#where][Where()]]
   - [[#firstordefault][FirstOrDefault()]]
   - [[#count][Count()]]
-- [[#014-null--nullable-types][0.14 Null & Nullable Types]]
+- [[#010-null--nullable-types][0.10 Null & Nullable Types]]
   - [[#what-is-null][What is null?]]
   - [[#problem-with-null][Problem with NULL]]
   - [[#null-check][Null Check]]
   - [[#nullable-types-][Nullable Types (?)]]
   - [[#why-do-we-use-][Why do we use `?`]]
   - [[#why-important][Why Important?]]
-- [[#015-async--await][0.15 Async / Await]]
+- [[#011-async--await][0.11 Async / Await]]
   - [[#mental-models-of-async-processing][Mental Models of Async Processing]]
   - [[#scalability-impact][Scalability Impact]]
   - [[#code-comparison][Code Comparison]]
@@ -60,8 +59,9 @@
 - *.NET* is the platform/runtime that runs C# applications.
 - *ASP.NET* Core is the framework for building web applications/APIs using .NET.
 
-* 0.2 Variables & Data Types
-** What is a variable?
+* 0.2 Basic Syntax & Types
+
+** Variables & Data Types
 Variables store data.
 
 Example:
@@ -73,26 +73,24 @@ Example:
   DateTime today = DateTime.Now;
 #+end_src
 
-** Strongly typed
+*** Strongly typed
 Every variable has a type.
 
-* 0.3 Comments
-
+** Comments
 #+begin_src csharp
-// single line
+  // single line
 
-/*
-multi line
-*/
+  /*
+  multi line
+  */
 #+end_src
 
-* 0.4 Console Output
-
+** Console Output
 #+begin_src csharp
-Console.WriteLine("Hello");
+  Console.WriteLine("Hello");
 #+end_src
 
-* 0.5 Operators
+**  Operators
 
 | Operator Type | Syntax  | Example         |
 |---------------+---------+-----------------|
@@ -100,7 +98,7 @@ Console.WriteLine("Hello");
 | Comparison    | ==      | salary == 50000 |
 | Arithmetic    | + - * / | 5 + 10          |
 
-* 0.6 Methods
+* 0.3 Methods
 Method is Reusable block of code.
 
 Example:
@@ -124,7 +122,7 @@ Example:
   }
 #+end_src
 
-* 0.7 Classes & Objects
+* 0.4 Classes & Objects
 ** What is a Class?
 A class is a blueprint/template that defines properties and behavior of an object.
 
@@ -200,7 +198,7 @@ Example:
 |---------------------+-------------------------------------------|
 | Class = actual data | Class = structure & Object = real data    |
 
-* 0.8 Constructor
+* 0.5 Constructor
 
 ** What is a Constructor?
 A constructor is a special method that runs automatically when an object of a class is created. It is used to initialize values or perform setup operations.
@@ -269,7 +267,7 @@ Using Default Values in Constructor:
 Why Important?
 - Dependency Injection in ASP.NET Core uses constructors heavily.
 
-* 0.9 Encapsulation & Access Modifiers
+* 0.6 Encapsulation & Access Modifiers
 
 ** Access Modifiers
 Access modifiers control who can access something.
@@ -320,7 +318,7 @@ Example:
 Why useful?
 - Protect business rules.
 
-* 0.11 Loops
+* 0.7 Loops
 
 ** for
 #+begin_src csharp
@@ -340,7 +338,7 @@ Why useful?
 
 Note: ~i++~ means increase by 1.
 
-* 0.12 List<T>
+* 0.8 List<T>
 ** What is List<T>?
 List<T> is a dynamic collection storing multiple values of the same type.
 
@@ -378,7 +376,7 @@ Array and List are both collections, but List is dynamic while an array has a fi
 Why Important?
 - API responses commonly return ~List<Employee>~.
 
-* 0.13 LINQ
+* 0.9 LINQ
 ** What is LINQ?
 LINQ (Language Integrated Query) is a way to query, filter, search, sort, and manipulate collections/data in C#.
 
@@ -420,7 +418,7 @@ Get first item.
 Why Important?
 - Entity Framework relies heavily on LINQ.
 
-* 0.14 Null & Nullable Types
+* 0.10 Null & Nullable Types
 ** What is null?
 NULL means no value exists or nothing is assigned.
 
@@ -475,7 +473,7 @@ Example: An employee may not have a resignation date yet.
   public DateTime? ResignationDate { get; set; }
 #+end_src
 
-* 0.15 Async / Await
+* 0.11 Async / Await
 This is everywhere in web APIs. You will constantly see ~async~, ~await~, and ~Task~.
 
 #+begin_src csharp
