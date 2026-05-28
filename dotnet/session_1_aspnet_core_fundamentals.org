@@ -29,9 +29,8 @@
   - [[#important-enterprise-rule][Important Enterprise Rule]]
   - [[#api-controller-vs-mvc-controller][API Controller vs MVC Controller]]
 - [[#15-controller-structure--anatomy][1.5 Controller Structure & Anatomy]]
-  - [[#the-apicontroller-attribute][The [ApiController] Attribute]]
-  - [[#what-apicontroller-provides-dynamically][What [ApiController] Provides Dynamically]]
-  - [[#the-routeemployees-attribute][The [Route("employees")] Attribute]]
+  - [[#the-apicontroller-attribute][The ApiController Attribute]]
+  - [[#the-route-attribute][The Route() Attribute]]
   - [[#naming-conventions--the-public-class-declaration][Naming Conventions & The public class Declaration]]
   - [[#inheritance-via--controllerbase][Inheritance via : ControllerBase]]
   - [[#controllerbase-vs-controller][ControllerBase vs Controller]]
@@ -498,12 +497,11 @@ Understanding the exact components that make up an API endpoint handler class:
 
 Let's dissect this structure line-by-line to understand how ASP.NET Core interprets these classes.
 
-** The [ApiController] Attribute
+** The ApiController Attribute
 An attribute provides extra metadata instructions to the underlying ASP.NET Core engine during compilation and execution. This specific flag instructs the framework to treat the target class strictly as an optimized API endpoint controller.
 
-- The ~[ApiController]~ attribute applies intelligent validation behaviors, whereas inheriting from *ControllerBase* is what provides response helper methods.
-
-** What [ApiController] Provides Dynamically
+- The ~[ApiController]~ attribute applies intelligent validation behaviors, whereas inheriting from *ControllerBase* is what provides response helper
+~[ApiController]~  Attribute Provides Dynamically:
 
 *** 1. Automatic Model State Validation
 If an incoming HTTP request body fails data type rules (for example, trying to pass string text like ~"abc"~ into a property that requires a number value), the framework intercepts the request before it runs your custom code. It automatically returns a *400 Bad Request* payload without requiring you to write manual validation loops.
@@ -519,17 +517,17 @@ Enforces uniform error-handling definitions, consistent multi-format body proces
 
 - *Mental Model Instruction:* This attribute says to the engine: *"Configure this specific class with strict, predictable API behavior."*
 
-** The [Route("employees")] Attribute
-This line specifies the *Base Route* or *Route Prefix* for all individual method endpoints defined within the controller class. It ensures that every endpoint URL path inside this class will automatically start with the prefix string ~/employees~.
+** The Route() Attribute
+This ~[Route("employees")]~ line specifies the *Base Route* or *Route Prefix* for all individual method endpoints defined within the controller class. It ensures that every endpoint URL path inside this class will automatically start with the prefix string ~/employees~.
 
-*** Example Structure
+Example Structure
 #+begin_src csharp
   [HttpGet]
   public IActionResult Get() { }
 #+end_src
 - *Final Resolution Path:* ~GET /employees~
 
-*** Example with Dynamic Append
+Example with Dynamic Append
 #+begin_src csharp
   [HttpGet("{id}")]
   public IActionResult GetById(int id) { }
