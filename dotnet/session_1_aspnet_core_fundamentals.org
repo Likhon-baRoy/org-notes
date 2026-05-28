@@ -847,6 +847,51 @@ Binding Result Matrix:
 - ~page~ parses from the Query parameters as *2*.
 - ~request.Name~ parses from the JSON Body payload as *"Rahim"*.
 
+*Mental model:*
+#+begin_example
+  [FromRoute] → URL path
+
+  [FromQuery] → ?page=2
+
+  [FromBody] → JSON body
+
+  [FromHeader] → HTTP headers
+#+end_example
+
+Usually:
+#+begin_example
+  GET → FromQuery / FromRoute
+
+  POST → FromBody
+
+  PUT/PATCH → FromBody
+
+  DELETE → FromRoute
+#+end_example
+Common convention.
+
+*** JSON Object mapping
+ JSON → Object mapping
+
+ASP.NET map JSON to object automatically using model binding
+
+Flow:
+#+begin_example
+  POST request arrives
+  ↓
+  Content-Type = application/json
+  ↓
+  ASP.NET reads body
+  ↓
+  JSON deserialization
+  ↓
+  Model binding
+  ↓
+  EmployeeDto object created
+  ↓
+  Pass object into action method
+#+end_example
+
 * 1.7 Data Transfer Objects (DTO)
 
 ** What is a DTO?
