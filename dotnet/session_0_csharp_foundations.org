@@ -74,7 +74,8 @@ Example:
 #+end_src
 
 *** Strongly typed
-Every variable has a type.
+~C#~ is strongly typed. Because every variable in ~C#~ must have a specific type,
+ and invalid type assignments are caught at compile time.
 
 ** Comments
 #+begin_src csharp

@@ -1,0 +1,355 @@
+#+TITLE:       Session 1: HTTP Request Lifecycle & Web Servers
+#+AUTHOR:      Likhon Barai
+#+DATE:        [2026-05-28 Thu]
+#+TAGS:        AspnetCore Infrastructure Kestrel Server
+#+OPTIONS:     toc:2 num:nil
+
+* 1.1 Request Lifecycle
+
+** What is Request Lifecycle?
+A request lifecycle means: The complete journey of an HTTP request from frontend/browser to backend and back as a response.
+
+Example request: ~GET /employees~
+
+This request does not magically go to the controller. Many things happen internally before the controller executes.
+
+*** Understanding this is important because:
+- When APIs fail, you can debug properly.
+- You understand exactly where the request breaks.
+- You see who checks authentication.
+- You understand how routing works.
+- You realize why middleware matters.
+
+Many beginners only learn: Controller → DB → Response. But professional backend developers understand the full request pipeline.
+
+** Real Request Flow
+Imagine a request comes in for: ~GET /employees~
+
+*** The Full Journey:
+1. Frontend/browser/mobile creates the HTTP request.
+2. DNS resolves the domain into a server IP address.
+3. The request travels through the internet.
+4. The reverse proxy (Nginx/IIS) receives the request.
+5. The reverse proxy performs:
+   - SSL/HTTPS handling
+   - Security filtering
+   - Rate limiting
+   - Load balancing
+   - Static file handling
+6. The reverse proxy forwards the request to Kestrel.
+7. The ASP.NET Core server (Kestrel) receives the request.
+8. The middleware pipeline starts.
+9. Routing middleware identifies the endpoint.
+10. Authentication middleware checks identity (e.g., Who is this user? Is the JWT token valid?).
+11. Authorization middleware checks permissions (e.g., Can this user access this endpoint?).
+12. The controller method executes.
+13. The service layer executes.
+14. The repository / EF Core level executes.
+15. The database query runs.
+16. The response returns back up the chain.
+
+*** Mental Model
+The request goes through checkpoints before reaching the controller. Think of *airport security checkpoints*. You do not directly enter the airplane.
+
+You must pass:
+- Security
+- Passport
+- Verification
+- Gate
+- Boarding
+
+This is the exact same concept used in backend requests.
+
+** What is a Reverse Proxy?
+A reverse proxy is a middleman server that sits directly in front of your backend application server.
+
+| Architecture Type | Pipeline Flow                                       | Production Readiness         |
+|-------------------+-----------------------------------------------------+------------------------------|
+| *Without Proxy*     | Internet → Kestrel Directly Exposed                 | *Not ideal for production*     |
+| *With Proxy*        | Internet → Nginx / IIS → Kestrel → ASP.NET Core App | *Recommended Production Setup* |
+
+*** Mental Model
+Think of a *hotel receptionist*.
+
+A customer says: "I need room 301."
+The receptionist checks the rules, validates security, and then forwards the request upstairs.
+- Receptionist = *Reverse proxy*
+- Room = *Kestrel / Core API*
+
+*** Why Use a Reverse Proxy?
+
+**** 1. HTTPS / SSL Handling
+The browser requests ~https://api.company.com~. Nginx handles the heavy SSL certificate lifting and HTTPS encryption, then forwards the request internally over standard ~HTTP → Kestrel~. This keeps Kestrel lightweight and simple.
+
+**** 2. Security
+It blocks malicious requests, bad web bots, rate-limiting abuse patterns, and DDoS attacks.
+
+Think: *A security guard standing before an office building entrance.*
+
+**** 3. Load Balancing
+It can distribute heavy operational traffic across multiple boxes.
+
+Example:
+- Request 1 → Server A
+- Request 2 → Server B
+- Request 3 → Server C
+
+This pattern is highly useful in enterprise systems.
+
+**** 4. Static File Serving
+Nginx serves static media assets like images, CSS stylesheets, and JavaScript assets significantly faster than ASP.NET Core can process them.
+
+**** Why Is It Called a "Reverse" Proxy?
+
+| Proxy Classification | Representation Target | Operational Traffic Flow   |
+|----------------------+-----------------------+----------------------------|
+| *Normal Proxy (VPN)*   | Represents the Client | You → Proxy/VPN → Internet |
+| *Reverse Proxy*        | Represents the Server | Internet → Nginx → Backend |
+
+The client assumes they are talking directly to the primary server, but the reverse proxy is secretly handling and forwarding the request to the backend server.
+
+**** Why This is Safer
+It provides a protective buffer layer: =Internet → Nginx → Kestrel=.
+Because the reverse proxy handles: the SSL certificates, encryption, security filtering, rate limits, load balancing, and static files, Kestrel remains protected and focused entirely on core application logic.
+
+
+** Step 1 Frontend Creates HTTP Request
+The frontend/browser/app creates the request.
+
+Example: ~GET /employees~
+
+Frontend environments can include:
+- Angular
+- Mobile apps
+- Browsers
+- Postman
+- Another backend service
+
+A sample request like ~GET /employees~ with an ~Authorization: Bearer token123~ header contains:
+- URL
+- HTTP method
+- Headers
+- Authentication token
+- Body data (if it exists)
+
+** Step 2 DNS Resolves Server
+Example: The frontend calls ~api.myerp.com~. A computer cannot understand a text domain directly; it needs a physical IP Address.
+
+The DNS converts: ~api.myerp.com -> 192.168.x.x~
+
+Think: *DNS = internet phonebook*
+
+** Step 3 Reverse Proxy Receives Request
+Usually, a web request does *NOT* directly hit ASP.NET Core. Instead, the layout follows this architecture:
+
+#+begin_example
+  Internet
+     ↓
+  Nginx / IIS
+     ↓
+  Kestrel
+     ↓
+  ASP.NET Core App
+#+end_example
+
+Why? Because a reverse proxy helps optimize:
+- Security
+- SSL/HTTPS configurations
+- Load balancing
+- Performance speeds
+- Rate limiting
+
+Example: Nginx receives ~GET /employees~ and then forwards it internally to Kestrel.
+
+** Step 4 Kestrel Receives Request
+Kestrel is ASP.NET Core's built-in web server.
+
+Think: *The main server engine that runs your API.* (.NET is the engine to run C#, and Kestrel runs the actual web application on top of it.)
+
+** Step 5 The Middleware Pipeline
+
+*** What is Middleware?
+Think of middleware as *request checkpoints/pipelines*. Every single request passes sequentially through the middleware pipeline before reaching the controller. Think of it like airport security.
+
+When a request arrives (~GET /employees~), it flows through a typical structure:
+
+#+begin_example
+  Request
+     ↓
+  Exception middleware (error handling)
+     ↓
+  Logging middleware (request tracking)
+     ↓
+  Routing middleware (find matching endpoint)
+     ↓
+  Authentication middleware (check identity)
+     ↓
+  Authorization middleware (check permission)
+     ↓
+  Controller Layer
+     ↓
+  Service Layer
+     ↓
+  Database Execution
+     ↓
+  Response Generation
+#+end_example
+
+*** Important Note: Pipeline Order Matters
+The order in which middleware is registered matters heavily. An incorrect order can break application behavior.
+
+**** Order Dependency Example
+- *Bad Order:* Authorization Middleware → Routing Middleware. This fails because the Authorization middleware doesn't know which endpoint the user is trying to access yet.
+- *Correct Order:* Routing Middleware → Authorization Middleware. This works because Routing identifies the destination controller, method, and required permissions first, allowing Authorization to validate them.
+
+*** Key Pipeline Mechanics
+Middleware can interact with the request in 4 distinct ways:
+1. Continue the request to the next block.
+2. Modify the request properties.
+3. Stop the request from moving forward.
+4. Return a response early (*short-circuiting*).
+
+**** Example of Short-Circuiting
+If a user passes an invalid JWT token to ~GET /employees~, the Authentication middleware flags the token as invalid. It directly returns a ~401 Unauthorized~ response.
+
+The request loop terminates immediately, meaning the controller *never executes*. This approach saves CPU cycles, database performance, system resources, and removes security risks.
+
+*** Common Middleware
+
+**** Logging Middleware
+Logs core request telemetry: ~GET /employees | Status: 200 | Time: 150ms~.
+This is highly useful for debugging, performance tracking, and error logging.
+
+**** Authentication Middleware
+Asks the question: *Who are you?* It checks incoming JWT tokens, session cookies, or identity signatures.
+
+Example: Request ~GET /employees~ with header ~Authorization: Bearer ey123...~.
+The middleware checks if the token is valid, expired, or tampered with. If it is invalid, it returns a ~401 Unauthorized~ and stops the request from reaching the controller.
+
+**** Authorization Middleware
+Asks the question: *What are you allowed to do?* Example: An endpoint has the rule ~[Authorize(Roles = "Admin")]~.
+If an authenticated user with the role of "Employee" attempts to access it, the middleware returns a ~403 Forbidden~ response. The controller never executes.
+
+**** Exception Middleware
+If the application crashes, instead of exposing a raw runtime error break, this middleware catches the failure and wraps it into a clean, human-readable response object:
+#+begin_src js
+  {
+    "message": "Something went wrong"
+  }
+#+end_src
+
+**** CORS Middleware
+Checks cross-origin access rules (e.g., Is an Angular app running on ~frontend.com~ allowed to call this API?).
+
+*** Why Middleware Runs Before the Controller
+Running middleware first ensures security, input validation, and resource protection. A bad or unauthenticated request should always stop as early as possible.
+
+- *Without Middleware:* A ~DELETE /employees/5~ request would execute the controller method first, delete the employee, and check permissions afterward—which is too late.
+- *Correct Flow:* Authentication and Authorization run first; the controller executes later.
+
+** Step 6 Routing
+
+After the middleware pipeline finishes processing, Routing runs. Routing means *finding a matching controller method* for the incoming URL.
+
+Example request: ~GET /employees~
+
+The application matches it against a controller defined like this:
+#+begin_src csharp
+  [Route("employees")]
+  public class EmployeeController : ControllerBase
+  {
+      [HttpGet]
+      public IActionResult Get()
+      {
+          return Ok();
+      }
+  }
+#+end_src
+
+Internally, ASP.NET Core builds a map: ~GET /employees~ → ~EmployeeController.Get()~. Think of it like a standard *dictionary lookup* where the request method and path act as the key. If a match is found, it executes that specific method.
+
+*** Diagnostic Status Codes
+
+| Target Route Status    | Root Cause                                                                                                                                              | Generated Response     |
+|------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------|
+| *404 Not Found*          | The requested path does not match any route key in the system lookup dictionary.                                                                        | ~404 Not Found~          |
+| *405 Method Not Allowed* | The route path exists (e.g., ~/employees~), but it does not support the requested HTTP Verb (e.g., a ~POST~ request sent to a path that only supports ~GET~). | ~405 Method Not Allowed~ |
+
+*Important Correction:* A ~404 Not Found~ and a ~405 Method Not Allowed~ indicate two completely different routing problems.
+
+*** Section Structural Summary
+#+begin_example
+  Request → Internet → Nginx → Kestrel → Middleware Starts → Routing Matches Route → Authentication Check → Authorization Check → Controller → Database → Response
+#+end_example
+
+*** Interview Note
+*Question:* What happens when a request reaches ASP.NET Core?
+*Good Answer:*
+#+begin_example
+  The request passes through the configured middleware pipeline first.
+  Routing identifies the matching endpoint,
+  authentication and authorization check identities and permissions,
+  the controller executes,
+  and finally, the service/database layer runs and returns a response.
+#+end_example
+
+* 1.2 HTTP Methods & REST Semantics
+
+** Why Different HTTP Methods Exist
+Different actions require distinct structural meanings. Instead of bloating URLs with query parameters like ~/employee?action=create~, REST APIs use *HTTP verbs* to define intent. The method itself clearly states the operation's goal.
+
+Professional APIs care about:
+#+begin_example
+  Correct meaning
+  Correct status codes
+  Predictable behavior
+#+end_example
+
+** REST Verb Definitions
+
+| HTTP Method | Core Functional Purpose                                             | Safe Operation? | Typical Success Response   |
+|-------------+---------------------------------------------------------------------+-----------------+----------------------------|
+| *GET*         | Read or fetch data instances. Should never modify underlying state. | *Yes* (Safe)      | ~200 OK()~                   |
+| *POST*        | Create brand new database records.                                  | *No* (Unsafe)     | ~201 Created()~              |
+| *PUT / PATCH* | Completely update or replace an existing database record.           | *No* (Unsafe)     | ~200 OK()~ / ~204 NoContent()~ |
+| *DELETE*      | Remove a specified data record from the system.                     | *No* (Unsafe)     | ~204 NoContent()~            |
+
+*Note on Safety:* Because ~GET~ is a safe, read-only operation, refreshing a page 10 times will never delete or alter employee data.
+
+*** Clean Design Rule
+- *Bad API Design:* ~GET /deleteEmployee/5~
+- *Correct API Design:* ~DELETE /employees/5~
+
+* 1.3 Authentication vs Authorization
+This is one of the most common points of confusion for beginners.
+
+** Operational Definitions
+
+| Feature Criteria    | Authentication                                                  | Authorization                                               |
+|---------------------+-----------------------------------------------------------------+-------------------------------------------------------------|
+| *Core Question*       | Who are you?                                                    | What are you allowed to do?                                 |
+| *Validation Target* | Validates credentials like usernames, passwords, or JWT tokens. | Validates access rights, system roles, or specific claims.  |
+| *Failure Result*      | ~401 Unauthorized~ (Indicates identity is missing or invalid).    | ~403 Forbidden~ (Identity is verified, but lacks permission). |
+
+*** Real-World ERP Example
+Consider three users logging into the same application:
+- *Employee Role:* Can log in successfully and view their personal profile page.
+- *Manager Role:* Can log in successfully and approve team leave requests.
+- *Admin Role:* Can log in successfully and delete employee records.
+
+All three users successfully pass *Authentication* (the app knows exactly who they are), but they have entirely different *Authorization* limits.
+
+*** Core Correction
+- *Wrong Assumption:* ~401 Unauthorized~ means you don't have permission to do an action.
+- *Correct Understanding:* ~401~ means you are not logged in or identified. ~403~ means you are logged in, but you explicitly lack permission for that resource.
+
+* Revision Summary Session 1
+
+- *Request Lifecycle:* The total end-to-end journey of an HTTP request.
+- *Middleware:* Sequential application checkpoints that process requests before they reach the controller.
+- *Routing:* The process of matching an incoming request path to a specific controller method.
+- *404 Not Found:* The requested route path does not exist.
+- *405 Method Not Allowed:* The route path exists, but it does not support that specific HTTP verb.
+- *GET / POST / PUT / DELETE:* HTTP verbs used to define read, create, update, and delete actions.
+- *Authentication:* Verifying *who* a user is (~401~ if invalid).
+- *Authorization:* Verifying *what* a user can access (~403~ if forbidden).
