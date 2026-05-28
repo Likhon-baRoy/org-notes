@@ -48,7 +48,9 @@
   - [[#request-vs-response-dto][Request vs. Response DTO]]
 - [[#18-default-values-vs-nullable-types][1.8 Default Values vs. Nullable Types]]
   - [[#implementing-nullable-modifiers-][Implementing Nullable Modifiers (?)]]
-- [[#19-architectural-misconceptions-reviewed][1.9 Architectural Misconceptions Reviewed]]
+- [[#19-iactionresult--api-responses][1.9 IActionResult & API Responses]]
+  - [[#professional-resource-creation-implementation][Professional Resource Creation Implementation]]
+- [[#110-architectural-misconceptions-reviewed][1.10 Architectural Misconceptions Reviewed]]
 - [[#revision-summary-session-1][Revision Summary Session 1]]
   - [[#part-1][Part-1]]
   - [[#part-2][Part-2]]
@@ -375,11 +377,11 @@ This is one of the most common points of confusion for beginners.
 
 ** Operational Definitions
 
-| Feature Criteria    | Authentication                                                  | Authorization                                               |
-|---------------------+-----------------------------------------------------------------+-------------------------------------------------------------|
-| *Core Question*       | Who are you?                                                    | What are you allowed to do?                                 |
+| Feature Criteria  | Authentication                                                  | Authorization                                               |
+|-------------------+-----------------------------------------------------------------+-------------------------------------------------------------|
+| *Core Question*     | Who are you?                                                    | What are you allowed to do?                                 |
 | *Validation Target* | Validates credentials like usernames, passwords, or JWT tokens. | Validates access rights, system roles, or specific claims.  |
-| *Failure Result*      | ~401 Unauthorized~ (Indicates identity is missing or invalid).    | ~403 Forbidden~ (Identity is verified, but lacks permission). |
+| *Failure Result*    | ~401 Unauthorized~ (Indicates identity is missing or invalid).    | ~403 Forbidden~ (Identity is verified, but lacks permission). |
 
 *** Real-World ERP Example
 Consider three users logging into the same application:
@@ -395,6 +397,8 @@ All three users successfully pass *Authentication* (the app knows exactly who th
 
 * 1.4 What is a Controller?
 A controller is a class responsible for handling HTTP requests and returning responses.
+Controller handles HTTP request and returns response.
+Should stay thin and delegate business logic.
 
 ** Mental Model
 Think of a controller as a *Request handler*.
@@ -572,7 +576,7 @@ By suffixing your class with ~: ControllerBase~, you inherit core framework func
 - ~Created()~ → Returns a ~201 Created~ confirmation resource path.
 - ~NoContent()~ → Returns a ~204 No Content~ confirmation completion code.
 - ~Conflict()~ → Returns a ~409 Conflict~ response when the request conflicts with existing data or state.
-- ~Forbid()~ → Returns a ~403 Forbid~ response indicating the user is authenticated but lacks permission.
+- ~Forbidden()~ → Returns a ~403 Forbidden~ response indicating the user is authenticated but lacks permission.
 - ~Problem()~ → Returns a ~500 Problem~ Returns a standardized Problem Details response.
 - ~ValidationProblem()~ → Returns validation errors formatted using RFC 7807 Problem Details conventions.
 
@@ -632,6 +636,8 @@ Controller method parameters can receive values from completely different archit
 
 ** What is Model Binding?
 The underlying automation engine within ASP.NET Core that automatically parses, maps, and binds incoming HTTP network data fields directly into your strongly typed C# action method parameter variables.
+
+ASP.NET automatically maps request data to controller parameters.
 
 ** 1.6.1 Route Parameters
 Route parameters allow you to map data segments directly from the URL path into your C# method variables.
@@ -844,7 +850,7 @@ Binding Result Matrix:
 * 1.7 Data Transfer Objects (DTO)
 
 ** What is a DTO?
-DTO stands for *Data Transfer Object*.
+DTO stands for *Data Transfer Object*. Used to transfer request/response data without business logic.
 
 - *Mental Model:* Think of a DTO as a pure *Transportation Object* or a standard delivery package. It exists solely to carry structured data fields back and forth across the network between your frontend applications and backend APIs.
 
@@ -927,7 +933,65 @@ If your API design requires tracking whether a field was truly omitted by the fr
 
 If the ~isActive~ field is missing from the incoming JSON payload, the property will successfully bind as *null* instead of defaulting to false.
 
-* 1.9 Architectural Misconceptions Reviewed
+* 1.9 IActionResult & API Responses
+A standardized way to return HTTP responses from controller actions.
+
+Mental model: *Standardized API response system*
+
+Instead of returning random values: /(Bad, Ambiguous)/
+#+begin_src csharp
+  return true;
+
+  return "success";
+#+end_src
+we return: /(Clear status code Clear intention Standardized response)/
+#+begin_src csharp
+  return Ok();
+
+  return BadRequest();
+
+  return NotFound();
+#+end_src
+
+*Why?*
+Because APIs should communicate: /(HTTP meaning is clear)/
+#+begin_example
+  Status code
+  Meaning
+  Optional response body
+#+end_example
+
+The Helper Method Source: ~Ok()~, ~NotFound()~ or ~BadRequest()~  etc. helpers are inherited from *ControllerBase*.
+
+Why Use IActionResult?
+Standardized API response system.
+Allows proper status code and response meaning.
+
+** Professional Resource Creation Implementation
+While returning a generic ~Created()~ status works, professional API contracts require returning a location header pointing to the newly generated resource using ~CreatedAtAction~:
+
+#+begin_src csharp
+  [HttpPost]
+  public IActionResult Create([FromBody] CreateEmployeeDto request)
+  {
+      var employee = _employeeService.Create(request);
+
+      // Returns HTTP 201 Created with Location header: /employees/{id}
+      return CreatedAtAction(
+          nameof(GetById),
+          new { id = employee.Id },
+          employee
+      );
+  }
+#+end_src
+
+This implementation satisfies strict REST architecture rules by explicitly returning:
+
+- Status Code: ~201 Created~
+- Location Header: The absolute path where the frontend can look to re-fetch this new object (~/employees/5~)
+- Response Body: The fully materialized resource object containing its newly assigned database primary key ID.
+
+* 1.10 Architectural Misconceptions Reviewed
 
 | Identified Anti-Pattern / Misconception                                | Correct Architectural Reality                                                                    |
 |------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------|
