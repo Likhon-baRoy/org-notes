@@ -477,6 +477,49 @@ The controller essentially tells the application pipeline: *"Service layer, you 
 The manager coordinates traffic, while the worker executes specific business actions.
 
 ** API Controller vs MVC Controller
+*What is MVC?*
+- MVC is an architectural pattern that separates application code into three main components: ~Models~, ~Views~ & ~Controllers~.
+
+*Web MVC Pattern*
+Below is the execution flow for a standard Server-Side Rendered (SSR) MVC request:
+
+#+begin_example
+  User
+    |
+    | HTTP Request
+    v
+  +------------+
+  | Controller |
+  +------------+
+        |
+        | Get / Save Data
+        v
+  +------------+
+  |   Model    |
+  +------------+
+        |
+        | Return Data
+        v
+  +------------+
+  |    View    |
+  +------------+
+        |
+        | HTML Response
+        v
+      User
+#+end_example
+
+To see exactly who plays what role when a request executes:
+
+1. The User/Frontend: Sends raw JSON input to an endpoint.
+2. The Controller: Acts as the Traffic Cop. It accepts a Request DTO (acting as the incoming Model role) and hands it down.
+3. The Service Layer: Processes the business rules, fetches a Database Entity (the true core Model role), maps the database data into an outgoing Response DTO (the output Model role), and hands it back to the Controller.
+4. The Controller / View: Sends that final response object back to the user.
+
+In short, Classes that contain only data properties and no network/routing logic play the role of the Model!
+
+*What is API Controller*
+- API Controller is a component that handles HTTP requests and responses in an application. It acts as an intermediary between the client and the business logic by receiving requests, processing data through services or models, and returning responses (usually in JSON or XML format).
 
 | Controller Architecture | Core Return Purpose              | Primary Output Format | Downstream Consumers / Target Stack                    |
 |-------------------------+----------------------------------+-----------------------+--------------------------------------------------------|
