@@ -292,6 +292,52 @@ private means a member can only be accessed inside the same class.
 
 Outside access like ~employee.salary~ will result in an error. Even reading directly is not allowed.
 
+*** What is protected?
+protected means a member can be accessed:
+- inside the same class
+- and inside child (derived) classes
+
+But it cannot be accessed directly from outside objects.
+
+Example:
+#+begin_src csharp
+  class User
+  {
+      protected string Password;
+  }
+
+  class Employee : User
+  {
+      public void ShowPassword()
+      {
+          Console.WriteLine(Password);
+      }
+  }
+#+end_src
+
+This works because ~Employee~ inherits from ~User~.
+
+But this is NOT allowed:
+#+begin_src csharp
+  Employee e = new Employee();
+  Console.WriteLine(e.Password);
+#+end_src
+
+Because ~protected~ is not public.
+
+Think:
+#+begin_example
+  public -> everyone
+  private -> only this class
+  protected -> this class + child classes
+#+end_example
+
+When useful?
+- Base classes
+- Inheritance
+- Reusable frameworks
+- Shared logic for derived classes
+
 ** Encapsulation
 Encapsulation means: Hide internal data and control access through methods/properties. (Enterprise apps use this everywhere.)
 
@@ -318,6 +364,9 @@ Example:
 
 Why useful?
 - Protect business rules.
+- Prevent invalid data.
+- Hide internal implementation.
+- Safer and easier to maintain.
 
 * 0.7 Loops
 
