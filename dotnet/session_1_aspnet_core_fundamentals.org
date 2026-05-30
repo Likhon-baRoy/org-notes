@@ -29,8 +29,8 @@
   - [[#important-enterprise-rule][Important Enterprise Rule]]
   - [[#api-controller-vs-mvc-controller][API Controller vs MVC Controller]]
 - [[#15-controller-structure--anatomy][1.5 Controller Structure & Anatomy]]
-  - [[#the-apicontroller-attribute][The ApiController Attribute]]
-  - [[#the-route-attribute][The Route() Attribute]]
+  - [[#what-is-attribute-in-net][What is Attribute in .NET?]]
+  - [[#why-attributes-are-used][Why Attributes Are Used?]]
   - [[#naming-conventions--the-public-class-declaration][Naming Conventions & The public class Declaration]]
   - [[#inheritance-via--controllerbase][Inheritance via : ControllerBase]]
   - [[#controllerbase-vs-controller][ControllerBase vs Controller]]
@@ -555,27 +555,67 @@ Understanding the exact components that make up an API endpoint handler class:
 
 Let's dissect this structure line-by-line to understand how ASP.NET Core interprets these classes.
 
-** The ApiController Attribute
-An attribute provides extra metadata instructions to the underlying ASP.NET Core engine during compilation and execution. This specific flag instructs the framework to treat the target class strictly as an optimized API endpoint controller.
+** What is Attribute in .NET?
+In .NET, an **attribute** is a special kind of metadata you attach to code elements like classes, methods, properties, parameters, or assemblies. Attributes provide extra information that the compiler, runtime, or other tools can read and use.
 
-- The ~[ApiController]~ attribute applies intelligent validation behaviors, whereas inheriting from *ControllerBase* is what provides response helper
-~[ApiController]~  Attribute Provides Dynamically:
+Attributes are written inside square ~[]~.
 
-*** 1. Automatic Model State Validation
-If an incoming HTTP request body fails data type rules (for example, trying to pass string text like ~"abc"~ into a property that requires a number value), the framework intercepts the request before it runs your custom code. It automatically returns a *400 Bad Request* payload without requiring you to write manual validation loops.
+Basic Example
+#+begin_src csharp
+  [Obsolete("Use NewMethod instead")]
+  public void OldMethod()
+  {
+  }
+#+end_src
 
-*** 2. Enhanced Model Binding
-Intelligently matches incoming parameters across disparate HTTP input vectors such as:
-- Route URL values
-- Query string search parameters
-- Form parameters or raw JSON request bodies
+Here:
+- ~Obsolete~ is an attribute.
+- It tells developers and the compiler that ~OldMethod~ should no longer be used.
 
-*** 3. Cleaner Standardized API Responses
-Enforces uniform error-handling definitions, consistent multi-format body processing, and standard problem details structures for validation tracking.
+** Why Attributes Are Used?
+Attributes are commonly used for:
+- Validation
+- Serialization
+- Dependency injection
+- Configuration
+- ORM mapping
+- Unit testing
+- ASP.NET routing
+- Security settings
+- Reflection-based frameworks
 
-- *Mental Model Instruction:* This attribute says to the engine: *"Configure this specific class with strict, predictable API behavior."*
+*** Common Built-in Attributes
 
-** The Route() Attribute
+1. *Obsolete* Attribute
+#+begin_src csharp
+  [Obsolete]
+  public class OldClass
+  {
+  }
+#+end_src
+/Marks code as outdated./
+
+2. *Serializable* Attribute
+#+begin_src csharp
+  [Serializable]
+  public class User
+  {
+      public string Name { get; set; }
+  }
+#+end_src
+/Indicates the object can be serialized./
+
+3. *Required* Attribute /(ASP.NET / Validation)/
+#+begin_src csharp
+  public class User
+  {
+      [Required]
+      public string Name { get; set; }
+  }
+#+end_src
+/Used for form validation./
+
+**** The Route() Attribute
 This ~[Route("employees")]~ line specifies the *Base Route* or *Route Prefix* for all individual method endpoints defined within the controller class. It ensures that every endpoint URL path inside this class will automatically start with the prefix string ~/employees~.
 
 Example Structure
@@ -593,6 +633,84 @@ Example with Dynamic Append
 - *Final Resolution Path:* ~GET /employees/5~
 
 - *Mental Model Definition:* Think of this as defining the controller's root *routing prefix* directory.
+
+*** How Attributes Work?
+Attributes are actually classes that inherit from: ~System.Attribute~.
+
+Example custom attribute:
+#+begin_src csharp
+  public class MyCustomAttribute : Attribute
+  {
+      public string Description { get; }
+
+      public MyCustomAttribute(string description)
+      {
+          Description = description;
+      }
+  }
+#+end_src
+
+Usage:
+#+begin_src csharp
+  [MyCustom("Test class")]
+  public class Test
+  {
+  }
+#+end_src
+
+*** Reading Attributes with Reflection
+You can inspect attributes at runtime using *reflection*:
+
+#+begin_src csharp
+  var attrs = typeof(Test).GetCustomAttributes(false);
+
+  foreach (var attr in attrs)
+  {
+      Console.WriteLine(attr);
+  }
+#+end_src
+
+*** What does Attribute provide?
+~[ApiController]~  Attribute Provides Dynamically:
+
+**** 1. Automatic Model State Validation
+If an incoming HTTP request body fails data type rules (for example, trying to pass string text like ~"abc"~ into a property that requires a number value), the framework intercepts the request before it runs your custom code. It automatically returns a *400 Bad Request* payload without requiring you to write manual validation loops.
+
+**** 2. Enhanced Model Binding
+Intelligently matches incoming parameters across disparate HTTP input vectors such as:
+- Route URL values
+- Query string search parameters
+- Form parameters or raw JSON request bodies
+
+**** 3. Cleaner Standardized API Responses
+Enforces uniform error-handling definitions, consistent multi-format body processing, and standard problem details structures for validation tracking.
+
+- *Mental Model Instruction:* This attribute says to the engine: *"Configure this specific class with strict, predictable API behavior."*
+
+*Important Points*
+- Attributes add metadata to code.
+- They do not usually change behavior by themselves.
+- Frameworks and runtime tools read attributes and act accordingly.
+- Custom attributes are heavily used in modern .NET frameworks like:
+  - ASP.NET Core
+  - Entity Framework
+  - xUnit/NUnit
+  - Minimal APIs
+
+*Simple Analogy*
+Think of an attribute like a *label or annotation* attached to your code.
+
+Example:
+#+begin_src csharp
+  [Important]
+  public class PaymentService
+  {
+  }
+#+end_src
+
+The attribute says: “This class has special meaning.”
+
+Other parts of the application can later check for that label and behave differently.
 
 ** Naming Conventions & The public class Declaration
 The class declaration specifies a public handler type that uses the uniform naming pattern *SomethingController*.
