@@ -1032,9 +1032,18 @@ Usually:
 Common convention.
 
 *** JSON Object mapping
- JSON → Object mapping
+When the framework sees:
+#+begin_src js
+  HTTP Method → POST
+  Content-Type → application/json
+#+end_src
 
-ASP.NET map JSON to object automatically using model binding
+So it knows: “The request body contains JSON.”
+ASP.NET map JSON to object, this is done automatically using model binding;
+
+And when Routing Finds the Controller Action, it create an EmployeeDto object
+from the incoming request through [[#dto-section][DTO]]. And here model
+binding start; Then object is passed to the Action.
 
 Flow:
 #+begin_example
@@ -1054,6 +1063,9 @@ Flow:
 #+end_example
 
 * 1.7 Data Transfer Objects (DTO)
+:PROPERTIES:
+:CUSTOM_ID: dto-section
+:END:
 
 ** What is a DTO?
 DTO stands for *Data Transfer Object*. Used to transfer request/response data without business logic.
