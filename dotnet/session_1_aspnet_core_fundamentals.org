@@ -1069,6 +1069,8 @@ Flow:
 
 ** What is a DTO?
 DTO stands for *Data Transfer Object*. Used to transfer request/response data without business logic.
+DTOs define: what fields are allowed, expected data types, validation rules.
+So if there's any invalid request it throw exception error;
 
 - *Mental Model:* Think of a DTO as a pure *Transportation Object* or a standard delivery package. It exists solely to carry structured data fields back and forth across the network between your frontend applications and backend APIs.
 
@@ -1154,6 +1156,8 @@ If the ~isActive~ field is missing from the incoming JSON payload, the property 
 * 1.9 IActionResult & API Responses
 A standardized way to return HTTP responses from controller actions.
 
+In ASP .NET Core it is required to mention the return type of all the action methods as ~IActionResult~.
+
 Mental model: *Standardized API response system*
 
 Instead of returning random values: /(Bad, Ambiguous)/
@@ -1162,6 +1166,7 @@ Instead of returning random values: /(Bad, Ambiguous)/
 
   return "success";
 #+end_src
+
 we return: /(Clear status code Clear intention Standardized response)/
 #+begin_src csharp
   return Ok();
