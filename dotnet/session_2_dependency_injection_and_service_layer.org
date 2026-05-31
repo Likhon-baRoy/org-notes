@@ -1,0 +1,213 @@
+#+TITLE:       Session 2 : Dependency Injection & Service Layer
+#+AUTHOR:      Likhon Barai
+#+DATE:        [2026-05-31 Sun]
+#+TAGS:        AspnetCore Architecture DependencyInjection OOP
+#+OPTIONS:     toc:2 num:nil
+
+
+* Table of Contents                                                     :TOC:
+- [[#21-why-dependency-injection-exists][2.1 Why Dependency Injection Exists?]]
+  - [[#what-problem-are-we-trying-to-solve][What Problem Are We Trying To Solve?]]
+  - [[#the-problem-creating-dependencies-manually][The Problem: Creating Dependencies Manually]]
+  - [[#why-this-hardcoded-instantiation-breaks-down][Why This Hardcoded Instantiation Breaks Down]]
+  - [[#analyzing-the-architecture-tight-coupling-vs-loose-coupling][Analyzing the Architecture: Tight Coupling vs. Loose Coupling]]
+  - [[#system-processing-comparison][System Processing Comparison]]
+  - [[#the-inversion-of-control-principle-ioc][The Inversion of Control Principle (IoC)]]
+  - [[#dependency-injection-clean-code-pattern][Dependency Injection: Clean Code Pattern]]
+  - [[#why-this-architecture-is-significantly-superior][Why This Architecture Is Significantly Superior]]
+- [[#22-core-misconceptions-reviewed][2.2 Core Misconceptions Reviewed]]
+- [[#23-di-technical-interview-strategy-note][2.3 DI Technical Interview Strategy Note]]
+  - [[#why-use-dependency-injection][Why use Dependency Injection?]]
+  - [[#what-is-the-difference-between-tight-coupling-and-loose-coupling][What is the difference between Tight Coupling and Loose Coupling?]]
+- [[#24-revision-summary][2.4 Revision Summary]]
+
+* 2.1 Why Dependency Injection Exists?
+
+** What Problem Are We Trying To Solve?
+Before learning how to register or configure dependencies using syntax patterns like ~builder.Services.AddScoped<IEmployeeService, EmployeeService>();~, you must first deeply understand the structural problem this design pattern solves.
+
+Dependency Injection (DI) was not invented because framework developers wanted to introduce unnecessary complexity. It exists because large applications become completely impossible to maintain, scale, or test when individual software classes take on the responsibility of manually creating their own dependencies.
+
+** The Problem: Creating Dependencies Manually
+
+*** Bad Practical Code Pattern (Anti-Pattern)
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private EmployeeService _employeeService = new EmployeeService();
+
+      [HttpPost]
+      public IActionResult Create()
+      {
+          _employeeService.Create();
+          return Ok();
+      }
+  }
+#+end_src
+
+At first glance, this implementation looks simple and straightforward:
+- The controller requires an instance of ~EmployeeService~ to perform work.
+- The controller instantiates ~EmployeeService~ internally via the ~new~ keyword.
+- The action method executes the operation.
+
+** Why This Hardcoded Instantiation Breaks Down
+Suppose the application grows over time and the internal requirements of the ~EmployeeService~ expand to interact with data streams and messaging architectures.
+
+*** The Evolution of the Service Complexity
+#+begin_src csharp
+  public class EmployeeService
+  {
+      private readonly AppDbContext _context;
+      private readonly EmailService _emailService;
+
+      public EmployeeService()
+      {
+          _context = new AppDbContext();
+          _emailService = new EmailService();
+      }
+  }
+#+end_src
+
+Now, ~EmployeeService~ directly depends on two separate external subsystems:
+1. *A Database Connection Context* (~AppDbContext~)
+2. *A Message Notification System* (~EmailService~)
+
+As corporate features multiply, the service requirements continue to scale out further:
+- *Logging Mechanisms* (~ILogger~)
+- *SMS Providers* (~ISmsService~)
+- *Audit Tracking Engines* (~IAuditService~)
+
+*** The Chain-Reaction Failure
+Because your ~EmployeeController~ hardcodes the initialization of ~EmployeeService~ via the ~new~ keyword, changing the constructor signature of the service instantly breaks the controller.
+
+If the service constructor changes to require configuration details, *every single class across your entire codebase that manually called ~new EmployeeService()~ instantly breaks and refuses to compile.*
+
+- *Mental Model Breakdown:* The controller should only care about *using* the service to handle incoming web client traffic. It should absolutely never have to know or care how to assemble the internal database components, connection parameters, or messaging credentials of that service.
+
+Controller should only care about:
+#+begin_example
+  Receive Request
+  Call Service
+  Return Response
+#+end_example
+
+A useful mental model:
+Controller = Traffic Police
+Service = Worker
+
+Traffic police does not build roads.
+Traffic police directs traffic.
+
+Similarly:
+- Controller receives request
+- Controller sends work to service
+- Controller returns response
+- Real work happens elsewhere.
+
+** Analyzing the Architecture: Tight Coupling vs. Loose Coupling
+
+*** 1. The Nightmare of Tight Coupling
+When class ~A~ manually instantiates class ~B~ inside its own scope using the ~new~ keyword, class ~A~ is *tightly coupled* to class ~B~.
+
+- *Real-World Analogy:* Imagine buying a television where the remote control is physically soldered directly into the main chassis via copper wires. If the remote control runs out of battery or its internal chips fail, you are forced to throw away the entire television because the components are permanently fused together. This is exactly what happens to your code blocks when you use the ~new~ keyword to instantiate business services inside your controllers.
+
+*** 2. The Solution of Loose Coupling
+Instead of a class hardcoding its downstream dependencies internally, the dependencies are supplied to the class from an external source. The class is provided with an abstraction or a contract, decoupling it completely from the underlying concrete implementation details.
+
+** System Processing Comparison
+
+| Evaluation Metric | Manual Creation Pattern (~new~)                            | Dependency Injection Pattern (DI)                         |
+|-------------------+----------------------------------------------------------+-----------------------------------------------------------|
+| *Object Creation*   | Instantiated internally by the calling class itself.     | Provided by an external framework factory container.      |
+| *Coupling Level*    | *Tightly Coupled* (Fragile, prone to breaking changes).    | *Loosely Coupled* (Flexible, independent boundaries).       |
+| *Code Fragility*    | High. Changing a service constructor breaks all callers. | Low. Constructor signature changes are managed centrally. |
+| *Testing Vector*    | Near impossible to isolate without active databases.     | Exceptionally easy using mock interfaces or fake inputs.  |
+
+** The Inversion of Control Principle (IoC)
+- *Old Approach (Control belongs to the Caller):* The controller commands the environment: *"I am going to instantiate a concrete instance of EmployeeService right now."*
+- *Inversion of Control (IoC Approach):* The controller relinquishes control over life-cycle instantiation and simply announces its requirements via its constructor: *"I need an implementation of IEmployeeService to do my job. I don't care who builds it or how it is configured; just provide it to me when this controller is created."*
+
+** Dependency Injection: Clean Code Pattern
+Dependency Injection means: Instead of creating dependencies yourself, someone else provides them.
+
+*Without DI:*
+#+begin_src csharp
+  new EmployeeService()
+#+end_src
+
+*With DI:*
+Instead of the ~new~ keyword, we invert the management flow using *Constructor Injection*:
+
+#+begin_src csharp
+  // The framework DI Container provides the dependency from the outside
+  public class EmployeeController(IEmployeeService employeeService) : ControllerBase
+  {
+      [HttpPost]
+      public IActionResult Create(CreateEmployeeDto request)
+      {
+          employeeService.Create(request);
+          return Ok();
+      }
+  }
+#+end_src
+
+/Controller receives dependency instead of creating it./
+The controller now depends purely on an abstract contract (~IEmployeeService~). It has zero awareness or dependency on concrete database classes, external text messaging APIs, or audit engines.
+
+** Why This Architecture Is Significantly Superior
+
+*** 1. Loose Coupling
+The controller is bounded strictly to an abstraction (the interface contract) instead of a volatile, concrete implementation.
+
+*** 2. Streamlined Code Maintenance
+If you need to change your underlying persistence engine from MySQL to SQL Server, you only swap the implementation mapping inside your central application startup registry. The `EmployeeController` remains completely untouched and unaffected.
+
+*** 3. Seamless Unit Testing
+During unit testing, you no longer need an active, live database server running in the background. You can instantly inject a lightweight, fake, or mocked version of the service (~FakeEmployeeService~) directly into the controller's constructor to evaluate behavior cleanly in isolated memory spaces.
+
+*** 4. Architectural Separation of Concerns
+Responsibilities are strictly stratified across distinct logical tiers:
+#+begin_example
+  Controller (Web Layer Boundaries)
+         ↓
+  Service (Core Business Rule Layer)
+         ↓
+  Repository / Database (Persistence Storage Layer)
+#+end_example
+
+* 2.2 Core Misconceptions Reviewed
+
+| Identified Anti-Pattern / Misconception                                                       | Correct Architectural Reality                                                                                                                                                         |
+|-----------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dependency Injection exists solely to automate the creation of new object instances.          | DI exists primarily to resolve tight coupling bugs, untangle architecture dependencies, and ensure code maintainability. Object instantiation is merely the mechanic to achieve this. |
+| Using the ~new~ keyword inside a controller to construct a service is safe if the app is small. | Hardcoded instantiation immediately introduces high fragility, prevents automated isolation testing, and creates cascading compilation errors as features scale.                      |
+
+* 2.3 DI Technical Interview Strategy Note
+
+*Question:* Why should we prioritize using Dependency Injection over manual instantiation via the ~new~ keyword in ASP.NET Core?
+
+*Answer:* Dependency Injection fundamentally reduces tight coupling between classes by shifting lifecycle management to an external IoC container. It allows components to depend directly on loose abstractions rather than fragile concrete implementations. This separation dramatically improves application testability by permitting mock injection, simplifies code maintenance across the lifespan of the software, and enforces a clean Separation of Concerns across system layers.
+
+** Why use Dependency Injection?
+
+- *Reduces tight coupling:* Decouples components by ensuring classes depend strictly on abstract contracts (interfaces) instead of fragile concrete implementations.
+
+- *Improves testability:* Allows developers to pass lightweight mock objects into constructors, completely removing the need for active database connections during unit tests.
+
+- *Improves maintainability:* Centralizes object lifetime configuration, ensuring constructor signature modifications do not cause cascading compilation failures across callers.
+
+- *Enforces Separation of Concerns:* Keeps controllers cleanly separated from business workflows, and business workflows separated from raw data storage drivers.
+
+** What is the difference between Tight Coupling and Loose Coupling?
+
+- *Tight Coupling:* An architectural vulnerability where one class directly instantiates its dependencies using the new keyword, rendering it highly fragile to downstream signature changes.
+
+- *Loose Coupling:* An optimized design state where components interact exclusively through abstract interfaces, allowing underlying concrete code blocks to be swapped out safely without impacting external callers.
+
+* 2.4 Revision Summary
+
+- *Tight Coupling:* A highly fragile architectural state where one class directly instantiates and depends explicitly on the specific code implementations of another.
+- *Loose Coupling:* An optimized design state where components interact exclusively through abstract contracts (interfaces), keeping structural boundaries completely isolated.
+- *Dependency Injection (DI):* The architectural pattern where an application's dependencies are supplied directly from an outside registry rather than being created internally by the calling component.
+- *Constructor Injection:* The standard methodology of declaring an object's required dependencies explicitly within its constructor arguments so the framework can automatically resolve and supply them at runtime.
+- *Inversion of Control (IoC):* Shifting the structural authority of object instantiation and lifecycle management away from the individual execution classes and into a centralized framework container.
