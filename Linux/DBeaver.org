@@ -1,0 +1,68 @@
+#+TITLE:        DBeaver Linux Key Bindings Manual
+#+AUTHOR:       Likhon Barai
+#+EMAIL:        likhonhere007@gmail.com
+#+DATE:         [2026-Jun-01 Mon]
+#+TAGS:         manual keybindings shortcuts apps
+
+
+
+* Table of Contents                                                     :TOC:
+- [[#dbeaver-linux-key-bindings-manual][DBeaver Linux Key Bindings Manual]]
+  - [[#general--connection-management][General & Connection Management]]
+  - [[#navigation--workspace][Navigation & Workspace]]
+  - [[#sql-editor--execution][SQL Editor & Execution]]
+  - [[#data-grid--results-viewer][Data Grid / Results Viewer]]
+- [[#pro-tips-for-total-mouse-independence][Pro-Tips for Total Mouse Independence:]]
+
+* DBeaver Linux Key Bindings Manual
+
+** General & Connection Management
+| Key-binding  | Description                      |
+|--------------+----------------------------------|
+| ~Ctrl-Shift-N~ | New Database Connection          |
+| ~Ctrl-W~       | Close active tab                 |
+| ~F5~           | Refresh selected item / database |
+| ~F2~           | Rename selected database object  |
+
+** Navigation & Workspace
+| Key-binding | Description                                          |
+|-------------+------------------------------------------------------|
+| ~Ctrl-E~      | Toggle / quick-search open tabs                      |
+| ~Ctrl-F~      | Search table in database                             |
+| ~F4~          | Open Object Editor (properties window) for selection |
+| ~Ctrl-H~      | Open Global Search dialog                            |
+
+** SQL Editor & Execution
+| Key-binding  | Description                                           |
+|--------------+-------------------------------------------------------|
+| ~Ctrl-Space~   | Auto-complete code / IntelliSense                     |
+| ~Ctrl-Shift-F~ | Format SQL code                                       |
+| ~Ctrl-Enter~   | Execute current statement (under cursor)              |
+| ~Alt-X~        | Execute entire script (all statements separated by ~;~) |
+| ~Ctrl-]~       | Create a completely new SQL script tab                |
+| ~F3~           | Open an existing SQL script file                      |
+| ~Ctrl-/~       | Toggle line comment / uncomment                       |
+| ~Ctrl-Shift-E~ | Explain Execution Plan (for optimizing queries)       |
+| ~Ctrl-T~       | Toggle/Maximize Results panel size                    |
+
+** Data Grid / Results Viewer
+| Key-binding     | Description                                                |
+|-----------------+------------------------------------------------------------|
+| ~Alt-Insert~      | Add a blank new row to the table                           |
+| ~Alt-Delete~      | Delete selected row                                        |
+| ~Ctrl-Alt-Insert~ | Duplicate current row                                      |
+| ~Enter~           | Edit cell value inline                                     |
+| ~Shift-Enter~     | Open cell value in a dedicated multi-line editor dialog    |
+| ~Ctrl-D~          | Copy value from cell directly above                        |
+| ~Tab~             | Switch layout between Grid view and Record view (vertical) |
+| ~Ctrl-S~          | Save / Commit data grid modifications to the live database |
+| ~Ctrl-R~          | Reject / Revert uncommitted changes in data grid           |
+
+
+* Pro-Tips for Total Mouse Independence:
+
+- =Alt-Insert= vs =Ctrl-S= *Workflow*: When editing tables directly via the data grid, you can press =Alt-Insert= to append rows, type your data, hit =Tab= to jump columns, and instantly commit it to the database with =Ctrl-S= without clicking the *Save* icon at the bottom.
+
+- *The Cursor Execution Trick (Ctrl-Enter):* You don't need to highlight a query to run it. As long as your cursor is sitting anywhere inside the statement, `Ctrl-Enter` executes just that block (isolated by semicolons or blank lines).
+
+- *Bonus Tip:* If you want to customize any of these or if they clash with your Linux window manager shortcuts, open the command palette using **`Ctrl-3`** (the ultimate Quick Access shortcut), type "Keys", and it will take you right to the key-binding configuration page.
