@@ -29,6 +29,16 @@
   - [[#226-common-architecture-misconceptions-reviewed][2.2.6 Common Architecture Misconceptions Reviewed]]
   - [[#227-high-yield-technical-interview-engine][2.2.7 High-Yield Technical Interview Engine]]
   - [[#228-rapid-revision-summary][2.2.8 Rapid Revision Summary]]
+- [[#23-constructor-injection--dependency-injection-container][2.3 Constructor Injection & Dependency Injection Container]]
+  - [[#231-the-missing-link-how-do-we-get-the-service][2.3.1 The Missing Link: How Do We Get The Service?]]
+  - [[#232-constructor-injection][2.3.2 Constructor Injection]]
+  - [[#233-traditional-vs-primary-constructor-syntax][2.3.3 Traditional vs. Primary Constructor Syntax]]
+  - [[#234-the-dependency-injection-di-container][2.3.4 The Dependency Injection (DI) Container]]
+  - [[#235-service-registration--the-dictionary-model][2.3.5 Service Registration & The Dictionary Model]]
+  - [[#236-the-internal-resolution-flow-dependency-trees][2.3.6 The Internal Resolution Flow (Dependency Trees)]]
+  - [[#237-common-architecture-misconceptions-reviewed][2.3.7 Common Architecture Misconceptions Reviewed]]
+  - [[#238-high-yield-technical-interview-engine][2.3.8 High-Yield Technical Interview Engine]]
+  - [[#239-rapid-revision-summary][2.3.9 Rapid Revision Summary]]
 
 * 2.1 Why Dependency Injection Exists?
 
@@ -435,3 +445,207 @@ Consuming layers interact solely with immutable contracts, ignoring how data ope
 - *Loose Coupling:* An optimized software design where layers communicate through shared contracts, keeping them safely independent.
 - *Test Isolations:* The practice of substituting heavy, real-world services with lightweight fakes (like `FakeEmployeeService`) to verify application flow instantly in memory.
 - *Swappability:* The capability to exchange underlying data access drivers at startup without breaking your application's public web endpoints.
+
+* 2.3 Constructor Injection & Dependency Injection Container
+
+** 2.3.1 The Missing Link: How Do We Get The Service?
+In Part 2, we established the clean separation between an interface and its implementation.
+
+#+begin_src csharp
+  public interface IEmployeeService
+  {
+      Task<EmployeeDto> GetByIdAsync(int id);
+  }
+
+  public class EmployeeService : IEmployeeService
+  {
+      // Implementation logic
+  }
+#+end_src
+
+But a massive architectural question remains: *How does the EmployeeController actually get the EmployeeService?*
+We strictly stated that we can no longer use: ~new EmployeeService()~.
+
+This gap is solved by *Constructor Injection* and the *Dependency Injection (DI) Container*.
+
+** 2.3.2 Constructor Injection
+Instead of a class building its own tools, the tools arrive from the outside.
+
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private readonly IEmployeeService _service;
+
+      // The dependency is INJECTED through the constructor
+      public EmployeeController(IEmployeeService service)
+      {
+          _service = service;
+      }
+  }
+#+end_src
+
+*** Why is it called "Constructor Injection"?
+Because the required dependency (~IEmployeeService~) strictly enters the class through the ~public EmployeeController(...)~ method, which is the class constructor.
+
+*** What exactly is being injected?
+The controller explicitly says: *"I need an IEmployeeService."*
+The controller does *NOT* say: *"I need an EmployeeService."*
+You are injecting the abstract contract, leaving the implementation choice completely open.
+
+** 2.3.3 Traditional vs. Primary Constructor Syntax
+Modern C# (version 12+) introduces a cleaner syntax called *Primary Constructors*.
+
+Traditional Constructor Syntax:
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private readonly IEmployeeService _service;
+
+      public EmployeeController(IEmployeeService service)
+      {
+          _service = service;
+      }
+  }
+#+end_src
+
+Primary Constructor Syntax (HRMS Example):
+#+begin_src csharp
+  [Authorize(Roles = "Admin,Hr,Manager")]
+  public class EmployeeController(IEmployeeService service) : BaseApiController
+  {
+      // 'service' is instantly available throughout this class
+  }
+#+end_src
+
+Both examples do the exact same thing under the hood. The Primary Constructor just removes boilerplate code.
+
+** 2.3.4 The Dependency Injection (DI) Container
+If the controller doesn't use the ~new~ keyword, who actually creates the service?
+The answer is the *Dependency Injection Container*.
+
+Think of the DI Container as a *Smart Object Factory* or *Central Object Manager*.
+Its core jobs are to:
+1. Create objects
+2. Manage object lifetimes in memory
+3. Resolve deep dependency trees
+4. Inject dependencies automatically
+
+** 2.3.5 Service Registration & The Dictionary Model
+Before the DI Container can create anything, it must be taught which implementation belongs to which interface.
+
+#+begin_src csharp
+  // Program.cs
+  builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+#+end_src
+
+Think of the DI registry as a giant system dictionary.
+- ~IEmployeeService~ → Maps to → ~EmployeeService~
+- ~IEmailService~ → Maps to → ~EmailService~
+
+Whenever a controller asks for the dictionary key (~IEmployeeService~), the factory automatically manufactures and provides the dictionary value (~EmployeeService~).
+
+** 2.3.6 The Internal Resolution Flow (Dependency Trees)
+A class rarely requires just one dependency. Look at a real HRMS service layer:
+
+#+begin_src csharp
+  public class EmployeeService : IEmployeeService
+  {
+      private readonly AppDbContext _context;
+      private readonly IEmailService _emailService;
+      private readonly ILogger<EmployeeService> _logger;
+
+      public EmployeeService(
+          AppDbContext context,
+          IEmailService emailService,
+          ILogger<EmployeeService> logger)
+      {
+          _context = context;
+          _emailService = emailService;
+          _logger = logger;
+      }
+  }
+#+end_src
+
+*** How the DI Container Walks the Tree
+When an HTTP Request hits the ~EmployeeController~:
+#+begin_example
+  1. EmployeeController asks for IEmployeeService
+          ↓
+  2. DI Container sees IEmployeeService maps to EmployeeService
+          ↓
+  3. But EmployeeService needs AppDbContext, IEmailService, and ILogger!
+          ↓
+  4. DI Container automatically creates DbContext, EmailService, and Logger.
+          ↓
+  5. DI Container injects them into EmployeeService.
+          ↓
+  6. DI Container finally injects the ready EmployeeService into the Controller.
+#+end_example
+The container recursively resolves everything automatically.
+
+** 2.3.7 Common Architecture Misconceptions Reviewed
+
+| Identified Anti-Pattern / Misconception                                | Correct Architectural Reality                                                                                                                                 |
+|------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Constructor Injection *creates* the objects.                             | Constructor Injection merely *receives* the objects. The DI Container is what actually creates them.                                                            |
+| The Controller magically gets the service directly from the Interface. | Interfaces cannot instantiate code. The DI Container reads the interface request, checks the startup registry, builds the concrete service, and passes it in. |
+
+#+begin_quote
+*Deep-Dive Card:* Why avoid ~new AppDbContext()~?
+If you manually type ~_context = new AppDbContext();~ inside your service, you instantly trigger the Tight Coupling trap. Your service is now permanently fused to a hardcoded database path. It becomes untestable in memory, a nightmare to maintain, and requires you to manually manage database connection lifespans. Let the DI Container handle the creation.
+#+end_quote
+
+** 2.3.8 High-Yield Technical Interview Engine
+
+*** What is Constructor Injection?
+- Constructor Injection is a form of Dependency Injection where required dependencies are supplied through the class constructor rather than being manually created inside the class.
+
+*** Explain the full Architecture Flow of a resolved dependency.
+- *Program.cs:* Maps the Interface to the Implementation.
+- *Controller:* Requests the Interface via its constructor.
+- *DI Container:* Sees the request, looks up the mapping, resolves the implementation, and creates the object in memory.
+- *Injection:* The Container injects the fully built dependency into the controller.
+
+*** Architecture Flow
+
+#+begin_example
+  Program.cs
+  ↓
+  Service Registration
+  ↓
+  DI Container
+  ↓
+  Controller Requests Interface
+  ↓
+  Container Resolves Implementation
+  ↓
+  Injects Dependency
+  ↓
+  Controller Uses Service
+#+end_example
+
+*** Key Takeaways
+
+#+begin_example
+  Constructor Injection = Dependency enters through constructor
+
+  DI Container = Creates and manages objects
+
+  Interfaces = Contract
+
+  Service Registration = Mapping between contract and implementation
+
+  Controller requests dependency
+
+  DI Container provides dependency
+
+  Controller never uses: new EmployeeService()
+#+end_example
+
+** 2.3.9 Rapid Revision Summary
+
+- *Constructor Injection:* The structural pathway where dependencies enter a class.
+- *Primary Constructors:* C# 12 shorthand syntax (~class MyClass(IService service)~) that eliminates boilerplate private readonly field assignments.
+- *DI Container:* The framework's smart object factory that manages the creation, lifetime, and disposal of application dependencies.
+- *Service Registration:* The act of mapping an abstract contract (~IEmployeeService~) to a concrete worker (~EmployeeService~) inside the application registry.
+- *Dependency Tree:* The cascading hierarchy of dependencies that the DI Container recursively resolves from the bottom up to build complex services.
