@@ -6,20 +6,17 @@
 
 
 * Table of Contents                                                     :TOC:
-- [[#21-why-dependency-injection-exists][2.1 Why Dependency Injection Exists?]]
-  - [[#what-problem-are-we-trying-to-solve][What Problem Are We Trying To Solve?]]
-  - [[#the-problem-creating-dependencies-manually][The Problem: Creating Dependencies Manually]]
-  - [[#why-this-hardcoded-instantiation-breaks-down][Why This Hardcoded Instantiation Breaks Down]]
-  - [[#analyzing-the-architecture-tight-coupling-vs-loose-coupling][Analyzing the Architecture: Tight Coupling vs. Loose Coupling]]
-  - [[#system-processing-comparison][System Processing Comparison]]
-  - [[#the-inversion-of-control-principle-ioc][The Inversion of Control Principle (IoC)]]
-  - [[#dependency-injection-clean-code-pattern][Dependency Injection: Clean Code Pattern]]
-  - [[#why-this-architecture-is-significantly-superior][Why This Architecture Is Significantly Superior]]
-- [[#212-core-misconceptions-reviewed][2.1.2 Core Misconceptions Reviewed]]
-- [[#213-di-technical-interview-strategy-note][2.1..3 DI Technical Interview Strategy Note]]
-  - [[#why-use-dependency-injection][Why use Dependency Injection?]]
-  - [[#what-is-the-difference-between-tight-coupling-and-loose-coupling][What is the difference between Tight Coupling and Loose Coupling?]]
-- [[#214-revision-summary][2.1.4 Revision Summary]]
+- [[#21-dependency-injection][2.1 Dependency Injection]]
+  - [[#211-why-dependency-injection-exists][2.1.1 Why Dependency Injection Exists?]]
+  - [[#212-the-problem-creating-dependencies-manually][2.1.2 The Problem: Creating Dependencies Manually]]
+  - [[#213-tight-coupling-vs-loose-coupling][2.1.3 Tight Coupling vs. Loose Coupling]]
+  - [[#214-system-processing-comparison][2.1.4 System Processing Comparison]]
+  - [[#215-the-inversion-of-control-principle-ioc][2.1.5 The Inversion of Control Principle (IoC)]]
+  - [[#216-dependency-injection-clean-code-pattern][2.1.6 Dependency Injection: Clean Code Pattern]]
+  - [[#217-why-this-architecture-is-significantly-superior][2.1.7 Why This Architecture Is Significantly Superior]]
+  - [[#218-core-misconceptions-reviewed][2.1.8 Core Misconceptions Reviewed]]
+  - [[#219-interview-note][2.1.9 Interview Note]]
+  - [[#2110-revision-summary][2.1.10 Revision Summary]]
 - [[#22-interfaces-contracts--loose-coupling][2.2 Interfaces, Contracts & Loose Coupling]]
   - [[#221-the-core-purpose-of-interfaces][2.2.1 The Core Purpose of Interfaces]]
   - [[#222-the-architectural-danger-of-omitting-interfaces][2.2.2 The Architectural Danger of Omitting Interfaces]]
@@ -27,7 +24,7 @@
   - [[#224-the-loosely-coupled-architecture-solution][2.2.4 The Loosely Coupled Architecture Solution]]
   - [[#225-interface--di-relationship][2.2.5 Interface + DI Relationship]]
   - [[#226-common-architecture-misconceptions-reviewed][2.2.6 Common Architecture Misconceptions Reviewed]]
-  - [[#227-high-yield-technical-interview-engine][2.2.7 High-Yield Technical Interview Engine]]
+  - [[#227-interview-note][2.2.7 Interview Note]]
   - [[#228-rapid-revision-summary][2.2.8 Rapid Revision Summary]]
 - [[#23-constructor-injection--dependency-injection-container][2.3 Constructor Injection & Dependency Injection Container]]
   - [[#231-the-missing-link-how-do-we-get-the-service][2.3.1 The Missing Link: How Do We Get The Service?]]
@@ -37,19 +34,33 @@
   - [[#235-service-registration--the-dictionary-model][2.3.5 Service Registration & The Dictionary Model]]
   - [[#236-the-internal-resolution-flow-dependency-trees][2.3.6 The Internal Resolution Flow (Dependency Trees)]]
   - [[#237-common-architecture-misconceptions-reviewed][2.3.7 Common Architecture Misconceptions Reviewed]]
-  - [[#238-high-yield-technical-interview-engine][2.3.8 High-Yield Technical Interview Engine]]
+  - [[#238-interview-note][2.3.8 Interview Note]]
   - [[#239-rapid-revision-summary][2.3.9 Rapid Revision Summary]]
+- [[#24-service-lifetimes][2.4 Service Lifetimes]]
+  - [[#241-why-service-lifetimes-exist][2.4.1 Why Service Lifetimes Exist]]
+  - [[#242-the-three-lifetimes-cheat-sheet][2.4.2 The Three Lifetimes Cheat Sheet]]
+  - [[#243-deep-dive-transient-lifetime][2.4.3 Deep Dive: Transient Lifetime]]
+  - [[#244-scoped-lifetime][2.4.4 Scoped Lifetime]]
+  - [[#245-singleton-lifetime][2.4.5 Singleton Lifetime]]
+  - [[#246-the-golden-rule-of-lifetimes-captive-dependencies][2.4.6 The Golden Rule of Lifetimes: Captive Dependencies]]
+  - [[#247-interview-note][2.4.7 Interview Note]]
+  - [[#248-architectural-lifetime-matrix][2.4.8 Architectural Lifetime Matrix]]
+  - [[#249-rapid-revision-summary][2.4.9 Rapid Revision Summary]]
 
-* 2.1 Why Dependency Injection Exists?
+* 2.1 Dependency Injection
+** 2.1.1 Why Dependency Injection Exists?
+Before learning how to register or configure dependencies using syntax patterns like:
+#+begin_src csharp
+  builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+#+end_src
+you must first deeply understand the structural problem this design pattern solves.
 
-** What Problem Are We Trying To Solve?
-Before learning how to register or configure dependencies using syntax patterns like ~builder.Services.AddScoped<IEmployeeService, EmployeeService>();~, you must first deeply understand the structural problem this design pattern solves.
+Dependency Injection (DI) was not invented because framework developers wanted to introduce unnecessary complexity.
+It exists because large applications become completely impossible to: *maintain*, *scale*, or *test*
+when individual software classes take on the responsibility of manually creating their own dependencies.
 
-Dependency Injection (DI) was not invented because framework developers wanted to introduce unnecessary complexity. It exists because large applications become completely impossible to maintain, scale, or test when individual software classes take on the responsibility of manually creating their own dependencies.
-
-** The Problem: Creating Dependencies Manually
-
-*** Bad Practical Code Pattern (Anti-Pattern)
+** 2.1.2 The Problem: Creating Dependencies Manually
+/Bad Practical Code Pattern (Anti-Pattern):/
 #+begin_src csharp
   public class EmployeeController : ControllerBase
   {
@@ -69,10 +80,10 @@ At first glance, this implementation looks simple and straightforward:
 - The controller instantiates ~EmployeeService~ internally via the ~new~ keyword.
 - The action method executes the operation.
 
-** Why This Hardcoded Instantiation Breaks Down
+*** Why This Hardcoded Instantiation Breaks Down
 Suppose the application grows over time and the internal requirements of the ~EmployeeService~ expand to interact with data streams and messaging architectures.
 
-*** The Evolution of the Service Complexity
+**** The Evolution of the Service Complexity
 #+begin_src csharp
   public class EmployeeService
   {
@@ -96,7 +107,7 @@ As corporate features multiply, the service requirements continue to scale out f
 - *SMS Providers* (~ISmsService~)
 - *Audit Tracking Engines* (~IAuditService~)
 
-*** The Chain-Reaction Failure
+**** The Chain-Reaction Failure
 Because your ~EmployeeController~ hardcodes the initialization of ~EmployeeService~ via the ~new~ keyword, changing the constructor signature of the service instantly breaks the controller.
 
 If the service constructor changes to require configuration details, *every single class across your entire codebase that manually called ~new EmployeeService()~ instantly breaks and refuses to compile.*
@@ -123,7 +134,7 @@ Similarly:
 - Controller returns response
 - Real work happens elsewhere.
 
-** Analyzing the Architecture: Tight Coupling vs. Loose Coupling
+** 2.1.3 Tight Coupling vs. Loose Coupling
 
 *** 1. The Nightmare of Tight Coupling
 When class ~A~ manually instantiates class ~B~ inside its own scope using the ~new~ keyword, class ~A~ is *tightly coupled* to class ~B~.
@@ -133,7 +144,7 @@ When class ~A~ manually instantiates class ~B~ inside its own scope using the ~n
 *** 2. The Solution of Loose Coupling
 Instead of a class hardcoding its downstream dependencies internally, the dependencies are supplied to the class from an external source. The class is provided with an abstraction or a contract, decoupling it completely from the underlying concrete implementation details.
 
-** System Processing Comparison
+** 2.1.4 System Processing Comparison
 
 | Evaluation Metric | Manual Creation Pattern (~new~)                            | Dependency Injection Pattern (DI)                         |
 |-------------------+----------------------------------------------------------+-----------------------------------------------------------|
@@ -142,11 +153,11 @@ Instead of a class hardcoding its downstream dependencies internally, the depend
 | *Code Fragility*    | High. Changing a service constructor breaks all callers. | Low. Constructor signature changes are managed centrally. |
 | *Testing Vector*    | Near impossible to isolate without active databases.     | Exceptionally easy using mock interfaces or fake inputs.  |
 
-** The Inversion of Control Principle (IoC)
+** 2.1.5 The Inversion of Control Principle (IoC)
 - *Old Approach (Control belongs to the Caller):* The controller commands the environment: *"I am going to instantiate a concrete instance of EmployeeService right now."*
 - *Inversion of Control (IoC Approach):* The controller relinquishes control over life-cycle instantiation and simply announces its requirements via its constructor: *"I need an implementation of IEmployeeService to do my job. I don't care who builds it or how it is configured; just provide it to me when this controller is created."*
 
-** Dependency Injection: Clean Code Pattern
+** 2.1.6 Dependency Injection: Clean Code Pattern
 Dependency Injection means: Instead of creating dependencies yourself, someone else provides them.
 
 *Without DI:*
@@ -155,8 +166,6 @@ Dependency Injection means: Instead of creating dependencies yourself, someone e
 #+end_src
 
 *With DI:*
-Instead of the ~new~ keyword, we invert the management flow using *Constructor Injection*:
-
 #+begin_src csharp
   // The framework DI Container provides the dependency from the outside
   public class EmployeeController(IEmployeeService employeeService) : ControllerBase
@@ -169,11 +178,12 @@ Instead of the ~new~ keyword, we invert the management flow using *Constructor I
       }
   }
 #+end_src
+Instead of the ~new~ keyword, we invert the management flow using *Constructor Injection*:
 
 /Controller receives dependency instead of creating it./
 The controller now depends purely on an abstract contract (~IEmployeeService~). It has zero awareness or dependency on concrete database classes, external text messaging APIs, or audit engines.
 
-** Why This Architecture Is Significantly Superior
+** 2.1.7 Why This Architecture Is Significantly Superior
 
 *** 1. Loose Coupling
 The controller is bounded strictly to an abstraction (the interface contract) instead of a volatile, concrete implementation.
@@ -194,20 +204,20 @@ Responsibilities are strictly stratified across distinct logical tiers:
   Repository / Database (Persistence Storage Layer)
 #+end_example
 
-* 2.1.2 Core Misconceptions Reviewed
+** 2.1.8 Core Misconceptions Reviewed
 
 | Identified Anti-Pattern / Misconception                                                       | Correct Architectural Reality                                                                                                                                                         |
 |-----------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Dependency Injection exists solely to automate the creation of new object instances.          | DI exists primarily to resolve tight coupling bugs, untangle architecture dependencies, and ensure code maintainability. Object instantiation is merely the mechanic to achieve this. |
 | Using the ~new~ keyword inside a controller to construct a service is safe if the app is small. | Hardcoded instantiation immediately introduces high fragility, prevents automated isolation testing, and creates cascading compilation errors as features scale.                      |
 
-* 2.1..3 DI Technical Interview Strategy Note
+** 2.1.9 Interview Note
 
 *Question:* Why should we prioritize using Dependency Injection over manual instantiation via the ~new~ keyword in ASP.NET Core?
 
 *Answer:* Dependency Injection fundamentally reduces tight coupling between classes by shifting lifecycle management to an external IoC container. It allows components to depend directly on loose abstractions rather than fragile concrete implementations. This separation dramatically improves application testability by permitting mock injection, simplifies code maintenance across the lifespan of the software, and enforces a clean Separation of Concerns across system layers.
 
-** Why use Dependency Injection?
+*** Why use Dependency Injection?
 
 - *Reduces tight coupling:* Decouples components by ensuring classes depend strictly on abstract contracts (interfaces) instead of fragile concrete implementations.
 
@@ -217,13 +227,13 @@ Responsibilities are strictly stratified across distinct logical tiers:
 
 - *Enforces Separation of Concerns:* Keeps controllers cleanly separated from business workflows, and business workflows separated from raw data storage drivers.
 
-** What is the difference between Tight Coupling and Loose Coupling?
+*** Tight Coupling and Loose Coupling?
 
 - *Tight Coupling:* An architectural vulnerability where one class directly instantiates its dependencies using the new keyword, rendering it highly fragile to downstream signature changes.
 
 - *Loose Coupling:* An optimized design state where components interact exclusively through abstract interfaces, allowing underlying concrete code blocks to be swapped out safely without impacting external callers.
 
-* 2.1.4 Revision Summary
+** 2.1.10 Revision Summary
 
 - *Tight Coupling:* A highly fragile architectural state where one class directly instantiates and depends explicitly on the specific code implementations of another.
 - *Loose Coupling:* An optimized design state where components interact exclusively through abstract contracts (interfaces), keeping structural boundaries completely isolated.
@@ -408,7 +418,7 @@ The DI Container manages the entire instantiation lifecycle, leaving your contro
 *Wrong Thinking:* The Interface Validates Operational Rules
 *The Reality:* This is completely False. The interface has no capability to evaluate data or process checks. It only defines What parameters must cross the boundary. The concrete Service implementation class is where validation rules, database mutations, and intense business workflows are executed.
 
-** 2.2.7 High-Yield Technical Interview Engine
+** 2.2.7 Interview Note
 
 *** Why use interfaces over concrete classes?
 - *Defines clean boundaries:* Separates high-level business definitions from low-level implementation choices.
@@ -595,7 +605,7 @@ The container recursively resolves everything automatically.
 If you manually type ~_context = new AppDbContext();~ inside your service, you instantly trigger the Tight Coupling trap. Your service is now permanently fused to a hardcoded database path. It becomes untestable in memory, a nightmare to maintain, and requires you to manually manage database connection lifespans. Let the DI Container handle the creation.
 #+end_quote
 
-** 2.3.8 High-Yield Technical Interview Engine
+** 2.3.8 Interview Note
 
 *** What is Constructor Injection?
 - Constructor Injection is a form of Dependency Injection where required dependencies are supplied through the class constructor rather than being manually created inside the class.
@@ -649,3 +659,201 @@ If you manually type ~_context = new AppDbContext();~ inside your service, you i
 - *DI Container:* The framework's smart object factory that manages the creation, lifetime, and disposal of application dependencies.
 - *Service Registration:* The act of mapping an abstract contract (~IEmployeeService~) to a concrete worker (~EmployeeService~) inside the application registry.
 - *Dependency Tree:* The cascading hierarchy of dependencies that the DI Container recursively resolves from the bottom up to build complex services.
+
+* 2.4 Service Lifetimes
+
+** 2.4.1 Why Service Lifetimes Exist
+When the Dependency Injection (DI) Container receives a constructor request for an interface contract, it faces an execution decision.
+
+#+begin_src csharp
+  public class EmployeeController(IEmployeeService service) : BaseApiController
+  {
+      // How often should the DI container construct the worker behind 'service'?
+  }
+#+end_src
+
+- *The Lifespan Question:* Should the DI container execute ~new EmployeeService()~ fresh every single time a class requests it, or should it capture and reuse a single instance across multiple web requests?
+- *The Architectural Impact:* Different system operations require entirely different object life cycles to manage state, thread safety, and resource utilization.
+- *The Framework Methods:* ASP.NET Core provides three lifecycle configuration entry points: ~AddTransient()~, ~AddScoped()~, and ~AddSingleton()~.
+
+** 2.4.2 The Three Lifetimes Cheat Sheet
+To make rapid mental recall easier during architectural design or a technical interview, use this direct definition matrix:
+
+- *Transient:* A brand new object instance is created every single time it is requested by a constructor.
+- *Scoped:* Exactly one instance is created per incoming HTTP request; it is shared system-wide within that single web thread.
+- *Singleton:* A single instance is created exactly once when the application boots up and is reused universally until shutdown.
+
+** 2.4.3 Deep Dive: Transient Lifetime
+Transient services are fully stateless, short-lived, and disconnected from the web request pipeline context.
+
+/Framework Registration:/
+#+begin_src csharp
+  // Program.cs
+  builder.Services.AddTransient<IEmailFormatter, EmailFormatter>();
+#+end_src
+
+Think of a Transient service as a *Disposable Worker* hired on-demand. Every single time a task arises, you hire a brand-new worker, they execute a brief utility job, and you immediately discard them.
+
+*** Real-World Code Execution Sample
+Imagine a scenario where a single web request needs to format an email signature in two separate application layers.
+#+begin_src csharp
+  public class HRManagementService(IEmailFormatter formatter) : IHRManagementService
+  {
+      // Receives EmailFormatter Instance #1
+  }
+
+  public class PayrollProcessingService(IEmailFormatter formatter) : IPayrollProcessingService
+  {
+      // Receives EmailFormatter Instance #2 (Completely independent object)
+  }
+#+end_src
+Even though both services were called within the exact same HTTP request, the DI container invokes ~new EmailFormatter()~ twice, creating two distinct object references in memory.
+
+*** When to Use Transient
+- *Stateless Utilities:* Perfect for small helper classes, text string formatters, mathematical calculators, and PDF generators.
+- *Memory Optimization:* Minimizes long-term memory allocation since these instances are quickly reclaimed by the garbage collector.
+
+** 2.4.4 Scoped Lifetime
+Scoped is the foundational, default lifetime for building transactional web APIs. It bounds object lifespans strictly to the execution window of an active HTTP web request.
+
+/Framework Registration:/
+#+begin_src csharp
+  // Program.cs
+  builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+#+end_src
+
+*Mental Model:* =One Request = One Working Table=
+Think of a Scoped service as a *Shared Working Table* allocated exclusively to a single client request. Every architectural component handling that specific request (Controller, Service, Repository) sits around the exact same table and interacts with the same data state. The moment the browser connection terminates, the entire table is cleared out.
+
+*** Why DbContext is Registered Scoped by Default
+Entity Framework Core forces your database context layer (~AppDbContext~) to run as a Scoped service. This ensures that every worker class handling a web action shares a single connection string context.
+#+begin_src csharp
+  public class EmployeeService(AppDbContext context) : IEmployeeService
+  {
+      public void StageChanges(Employee emp) => context.Employees.Add(emp);
+  }
+
+  public class AuditLogService(AppDbContext context) : IAuditLogService
+  {
+      public async Task CompleteTransactionAsync() => await context.SaveChangesAsync();
+  }
+#+end_src
+Because both services receive the *exact same instance* of ~AppDbContext~, Entity Framework's central *Change Tracking* feature operates correctly across boundaries, ensuring database transactional integrity. If separate database context instances existed within the same request, tracking states would become inconsistent, resulting in data synchronization bugs.
+
+** 2.4.5 Singleton Lifetime
+Singleton services represent persistent global state engines that remain locked in memory across all users, concurrent requests, and server operations.
+
+/Framework Registration:/
+#+begin_src csharp
+  // Program.cs
+  builder.Services.AddSingleton<ICacheService, CacheService>();
+#+end_src
+
+*Mental Model:* =The Permanent Employee=
+Think of a Singleton service as a *Permanent Corporate Employee*. They are hired once at startup, they stay at their desk indefinitely, and every client request from user 1 to user 1,000,000 must consult that exact same person.
+
+/Real-World Code Execution Sample:/
+#+begin_src csharp
+  public class AssetController(ICacheService cache) : ControllerBase
+  {
+      [HttpGet("lookup")]
+      public IActionResult GetSharedMetadata()
+      {
+          // Hits the same global data cache reference, regardless of which user calls it
+          var data = cache.Get("GlobalEnterpriseRoles");
+          return Ok(data);
+      }
+  }
+#+end_src
+
+*** When to Use Singleton
+- *Global Configuration Models:* Reading system app settings or immutable configuration files.
+- *In-Memory Caching:* Maintaining system lookups or data dictionary keys to avoid redundant database calls.
+
+** 2.4.6 The Golden Rule of Lifetimes: Captive Dependencies
+When nesting dependencies within your application architecture, you must strictly respect this immutable system rule:
+*Longer lifetime cannot depend on shorter lifetime.* /(A service with a longer lifetime can never capture a dependency with a shorter lifetime.)/
+
+*The Captive Dependency Anti-Pattern (Dangerous Code):*
+#+begin_src csharp
+  // Program.cs Configuration
+  builder.Services.AddSingleton<IEmployeeService, EmployeeService>(); // Long-lived Singleton
+  builder.Services.AddScoped<AppDbContext>();                        // Short-lived Scoped
+
+  public class EmployeeService(AppDbContext context) : IEmployeeService
+  {
+      // Architectural Crash Trap: Singleton captures a Scoped DbContext
+  }
+#+end_src
+
+Meaning: *Singleton* depends on *Scoped*, *BAD*!
+
+*Why?*
+- Singleton lives: Entire application.
+- Scoped lives: One request.
+
+- Request ends: DbContext destroyed.
+- But singleton still exists.
+
+Now singleton holds: *Dead dependency*.
+
+This creates:
+- Disposed object errors
+- Thread safety issues
+- Wrong request state
+
+*The Code Execution Breakdown:*
+1. ~EmployeeService~ is a Singleton. It is constructed once at application boot and never dies.
+2. During its single creation, it permanently locks in the ~AppDbContext~ instance tied to that specific startup moment.
+3. When the initial web request terminates, the framework attempts to destroy and dispose of that ~AppDbContext~ instance.
+4. The next time a user invokes an endpoint, the Singleton service attempts to reuse that captured database context, immediately triggering a fatal =ObjectDisposedException= or severe multi-threaded race conditions.
+
+/The Clean Architecture Solution:/
+#+begin_src csharp
+  // Align lifetimes down to the shortest denominator
+  builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+  builder.Services.AddScoped<AppDbContext>();
+#+end_src
+
+** 2.4.7 Interview Note
+
+*** Difference between Service Lifetimes
+- *Transient:* Creates a brand new object instance every single time the container receives an injection request.
+- *Scoped:* Creates a single instance per unique HTTP request pipeline, reusing it safely across multiple internal class boundaries.
+- *Singleton:* Creates one single instance for the entire lifecycle of the application host, sharing it universally across all users.
+
+*** What is a Captive Dependency, and why is it dangerous?
+- *Definition:* A structural bug where a service with a long lifetime (like a Singleton) receives a shorter-lived service (like a Scoped DbContext) inside its constructor.
+- *Danger:* It locks the short-lived resource in memory indefinitely, causing runtime =ObjectDisposedException= crashes or thread-safety errors the moment that resource is accessed by a subsequent web request.
+
+*** Rule for Service Lifetime Usage
+- *Entity Framework DbContext:* Must always be registered as *Scoped* to preserve transactional tracking states.
+- *Business Workflows & Repositories:* Registered as *Scoped* to ensure alignment with database lifespans.
+- *Application Configuration Engines:* Registered as *Singleton* because settings are read once and do not store user-specific states.
+- *Stateless Mathematical Helpers:* Registered as *Transient* to minimize memory retention footprints.
+
+** 2.4.8 Architectural Lifetime Matrix
+
+| Registration Vector | Transient Lifetime                   | Scoped Lifetime                          | Singleton Lifetime                      |
+|---------------------+--------------------------------------+------------------------------------------+-----------------------------------------|
+| *Creation Strategy*   | Every single injection request.      | Once per unique HTTP Request pipeline.   | Exactly once during system startup.     |
+| *Destruction Phase*   | Immediately after instantiation use. | At the absolute end of the HTTP request. | Upon complete application shutdown.     |
+| *Primary Use Case*    | Stateless utility formatters.        | Core Business Services & DB Contexts.    | Global configuration and lookup caches. |
+
+#+begin_quote
+*Deep-Dive Card: The Peril of Universal Singletons*
+A common beginner mistake is registering every service as a Singleton in an effort to maximize performance. This practice introduces massive concurrency vulnerabilities into web architectures. Because multiple HTTP requests hit a Singleton simultaneously, any local variables or internal state trackers will experience race conditions, corrupting data entries across completely different user accounts.
+#+end_quote
+
+#+begin_quote
+*Deep-Dive Card: The Myth of Universal Transients*
+While registering every service as Transient completely bypasses concurrency or state corruption issues, it introduces an allocation bottleneck. In high-traffic enterprise systems, generating dozens of deep dependency instances per individual database query puts high pressure on the .NET Garbage Collector, increasing CPU overhead and lowering throughput.
+#+end_quote
+
+** 2.4.9 Rapid Revision Summary
+
+- *Service Lifetime:* The runtime configuration that controls exactly when an object is instantiated, how long it remains active in memory, and when it is collected.
+- *Change Tracking Boundary:* The architectural reason why your database context must stay Scoped, ensuring all working classes share a single state tracker.
+- *Dependency Lifespan Hierarchy:* The strict rule stating that shorter-lived components can safely request longer-lived components, but longer-lived components can never capture shorter-lived components.
+- *State Corruption Guard:* Choosing Scoped lifetimes for operations containing unique user or database variables to prevent cross-request leakage.
+- *Memory Footprint Balancing:* Intentionally utilizing Transient registrations for high-frequency, stateless operations to ensure instant cleanup.
