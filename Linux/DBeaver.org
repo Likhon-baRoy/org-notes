@@ -5,24 +5,31 @@
 #+TAGS:         manual keybindings shortcuts apps
 
 
-
 * Table of Contents                                                     :TOC:
 - [[#dbeaver-linux-key-bindings-manual][DBeaver Linux Key Bindings Manual]]
   - [[#general--connection-management][General & Connection Management]]
   - [[#navigation--workspace][Navigation & Workspace]]
   - [[#sql-editor--execution][SQL Editor & Execution]]
+  - [[#on-the-fly-connection-switchers][On-The-Fly Connection Switchers]]
   - [[#data-grid--results-viewer][Data Grid / Results Viewer]]
-- [[#pro-tips-for-total-mouse-independence][Pro-Tips for Total Mouse Independence:]]
+- [[#pro-tips-for-total-mouse-independence][Pro-Tips for Total Mouse Independence]]
+  - [[#the-grid-editing-speedrun][The Grid Editing Speedrun]]
+  - [[#the-cursor-execution-trick][The Cursor Execution Trick]]
+  - [[#customizing--fixing-linux-window-manager-clashes][Customizing & Fixing Linux Window Manager Clashes]]
+- [[#workspace-presentation-guide][Workspace Presentation Guide]]
+  - [[#record-view-vs-data-grid][Record View vs. Data Grid]]
+  - [[#plain-text-presentation][Plain Text Presentation]]
 
 * DBeaver Linux Key Bindings Manual
 
 ** General & Connection Management
-| Key-binding  | Description                      |
-|--------------+----------------------------------|
-| ~Ctrl-Shift-N~ | New Database Connection          |
-| ~Ctrl-W~       | Close active tab                 |
-| ~F5~           | Refresh selected item / database |
-| ~F2~           | Rename selected database object  |
+| Key-binding  | Description                         |
+|--------------+-------------------------------------|
+| ~Ctrl-Shift-N~ | New Database Connection             |
+| ~Ctrl-3~       | Open Command Palette (Quick Access) |
+| ~Ctrl-W~       | Close active tab                    |
+| ~F5~           | Refresh selected item / database    |
+| ~F2~           | Rename selected database object     |
 
 ** Navigation & Workspace
 | Key-binding | Description                                          |
@@ -33,36 +40,62 @@
 | ~Ctrl-H~      | Open Global Search dialog                            |
 
 ** SQL Editor & Execution
-| Key-binding  | Description                                           |
-|--------------+-------------------------------------------------------|
-| ~Ctrl-Space~   | Auto-complete code / IntelliSense                     |
-| ~Ctrl-Shift-F~ | Format SQL code                                       |
-| ~Ctrl-Enter~   | Execute current statement (under cursor)              |
-| ~Alt-X~        | Execute entire script (all statements separated by ~;~) |
-| ~Ctrl-]~       | Create a completely new SQL script tab                |
-| ~F3~           | Open an existing SQL script file                      |
-| ~Ctrl-/~       | Toggle line comment / uncomment                       |
-| ~Ctrl-Shift-E~ | Explain Execution Plan (for optimizing queries)       |
-| ~Ctrl-T~       | Toggle/Maximize Results panel size                    |
+| Key-binding      | Description                                           |
+|------------------+-------------------------------------------------------|
+| ~Ctrl-F3~          | Force open a brand NEW SQL script bound to current DB |
+| ~F3~               | Open an existing SQL script file                      |
+| ~Ctrl-]~           | Create a generic new SQL script tab                   |
+| ~Ctrl-Space~       | Auto-complete code / IntelliSense                     |
+| ~Ctrl-Alt-Space~   | Show available SQL templates / snippets menu          |
+| ~Ctrl-Shift-F~     | Format SQL code                                       |
+| ~Ctrl-Enter~       | Execute current statement (under cursor)              |
+| ~Alt-X~            | Execute entire script (all statements separated by ~;~) |
+| ~Alt-Left~         | Cycle backward to previously executed query history   |
+| ~Alt-Right~        | Cycle forward to next executed query history          |
+| ~Ctrl-/~           | Toggle line comment / uncomment                       |
+| ~Ctrl-Shift-E~     | Explain Execution Plan (for optimizing queries)       |
+| ~Ctrl-T~           | Toggle/Maximize Results panel size                    |
+| ~Ctrl-Alt-Shift-O~ | Import/Upload script file into local workspace        |
+
+** On-The-Fly Connection Switchers
+| Key-binding | Description                                                                  |
+|-------------+------------------------------------------------------------------------------|
+| ~Ctrl-9~      | Switch active Connection (instantly binds open SQL script to a different DB) |
+| ~Ctrl-0~      | Switch active Schema/Catalog inside current database                         |
 
 ** Data Grid / Results Viewer
-| Key-binding     | Description                                                |
-|-----------------+------------------------------------------------------------|
-| ~Alt-Insert~      | Add a blank new row to the table                           |
-| ~Alt-Delete~      | Delete selected row                                        |
-| ~Ctrl-Alt-Insert~ | Duplicate current row                                      |
-| ~Enter~           | Edit cell value inline                                     |
-| ~Shift-Enter~     | Open cell value in a dedicated multi-line editor dialog    |
-| ~Ctrl-D~          | Copy value from cell directly above                        |
-| ~Tab~             | Switch layout between Grid view and Record view (vertical) |
-| ~Ctrl-S~          | Save / Commit data grid modifications to the live database |
-| ~Ctrl-R~          | Reject / Revert uncommitted changes in data grid           |
+| Key-binding     | Description                                                   |
+|-----------------+---------------------------------------------------------------|
+| ~Alt-Insert~      | Add a blank new row to the table                              |
+| ~Alt-Delete~      | Delete selected row                                           |
+| ~Ctrl-Alt-Insert~ | Duplicate current row                                         |
+| ~Enter~           | Edit cell value inline                                        |
+| ~Shift-Enter~     | Edit cell/column value in a separate multi-line dialog        |
+| ~Ctrl-D~          | Copy value from cell directly above                           |
+| ~Tab~             | Switch layout between Grid view and Record view (vertical)    |
+| ~Ctrl-`~          | Switch presentation mode between standard Grid and Plain Text |
+| ~Ctrl-S~          | Save / Apply changes to the database                          |
+| ~Ctrl-R~          | Undo / Revert all changes before saving (~Ctrl-S~)              |
 
+* Pro-Tips for Total Mouse Independence
 
-* Pro-Tips for Total Mouse Independence:
+** The Grid Editing Speedrun
+When editing tables directly via the data grid, you can press ~Alt-Insert~ to append rows, type your data, hit ~Tab~ to jump columns, and instantly commit it to the database with ~Ctrl-S~ without ever reaching for your mouse to click toolbars.
 
-- =Alt-Insert= vs =Ctrl-S= *Workflow*: When editing tables directly via the data grid, you can press =Alt-Insert= to append rows, type your data, hit =Tab= to jump columns, and instantly commit it to the database with =Ctrl-S= without clicking the *Save* icon at the bottom.
+** The Cursor Execution Trick
+You do not need to manually highlight a query block to run it. As long as your cursor is sitting anywhere inside the statement, ~Ctrl-Enter~ executes just that specific block (isolated by semicolons or blank lines).
 
-- *The Cursor Execution Trick (Ctrl-Enter):* You don't need to highlight a query to run it. As long as your cursor is sitting anywhere inside the statement, `Ctrl-Enter` executes just that block (isolated by semicolons or blank lines).
+** Customizing & Fixing Linux Window Manager Clashes
+Because Linux window managers often intercept keys like ~Alt-F4~ or ~Ctrl-Alt-Space~, you might hit a collision. Press =Ctrl-3=, type "Keys", and press ~Enter~ to jump straight to the key-binding settings panel to remap them on the fly.
 
-- *Bonus Tip:* If you want to customize any of these or if they clash with your Linux window manager shortcuts, open the command palette using **`Ctrl-3`** (the ultimate Quick Access shortcut), type "Keys", and it will take you right to the key-binding configuration page.
+* Workspace Presentation Guide
+
+** Record View vs. Data Grid
+The Record view is incredibly useful if your table contains dozens of columns. By switching to it, DBeaver flips the orientation vertically, allowing you to view a single row's attributes as a clean list. This makes it convenient to copy data from one record to another without horizontal scrolling fatigue.
+
+To open this view, simply select one or several rows and press ~Tab~ on your keyboard. Press ~Tab~ again to instantly jump back to the standard horizontal Data Grid.
+
+** Plain Text Presentation
+Besides the structured table view, you can view your Data Grid output in a raw, plain text format styled with a clean monospace font. This is useful when table cells contain extra-long strings or JSON payloads, allowing you to see the text limits clearly or copy structured output segments precisely.
+
+To cycle into this view, simply press =Ctrl-`=. Press it again to return to the interactive table cells.
