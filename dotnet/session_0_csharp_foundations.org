@@ -16,6 +16,7 @@
 - [[#04-classes--objects][0.4 Classes & Objects]]
   - [[#what-is-a-class][What is a Class?]]
   - [[#what-is-an-object][What is an Object?]]
+  - [[#properties][Properties]]
   - [[#why-classes-matter-in-aspnet-core][Why Classes Matter in ASP.NET Core]]
   - [[#common-mistake][Common Mistake]]
 - [[#05-constructor][0.5 Constructor]]
@@ -173,6 +174,87 @@ Mental model:
   Class = building blueprint
   Object = real building
 #+end_example
+
+** Properties
+A *property* is a member of a class that provides a way to read or write data.
+
+#+begin_src csharp
+  public class Employee
+  {
+      public string Name { get; set; }
+  }
+#+end_src
+
+Here, =Name= is a property.
+
+Properties help protect data and support encapsulation.
+
+A class can store data using *fields* or *properties*.
+
+Field:
+#+begin_src csharp
+  public class Employee
+  {
+      public string Name; // Field
+  }
+#+end_src
+
+Property:
+#+begin_src csharp
+  public class Employee
+  {
+      public string Name { get; set; } // Property
+  }
+#+end_src
+
+Both store data, but properties are preferred because they provide controlled access to that data.
+
+In modern C#, most class data is exposed through properties rather than public fields.
+
+A property contains *accessor's*:
+- *get* → returns the value
+- *set* → assigns a value
+
+Example:
+#+begin_src csharp
+  emp.Salary = new Salary();   // set
+  var s = emp.Salary;          // get
+#+end_src
+
+The most common type of property is an *auto-property*:
+#+begin_src csharp
+  public Salary Salary { get; set; }
+#+end_src
+
+The compiler automatically creates a hidden backing field behind the scenes.
+
+The above code is roughly equivalent to:
+#+begin_src csharp
+  private Salary _salary;
+
+  public Salary Salary
+  {
+      get { return _salary; }
+      set { _salary = value; }
+  }
+#+end_src
+
+Most properties in ASP.NET Core applications use auto-properties because they are concise and easy to maintain.
+
+*Why Use Properties?*
+Properties provide several advantages:
+- Support encapsulation
+- Allow validation logic later
+- Hide implementation details
+- Work naturally with ASP.NET Core models and Entity Framework
+
+Example:
+#+begin_src csharp
+  public string Name { get; private set; }
+#+end_src
+
+Here anyone can read =Name=, but only the class itself can modify it.
+This helps protect the object's state from unintended changes.
 
 ** Why Classes Matter in ASP.NET Core
 Almost everything is a class:
