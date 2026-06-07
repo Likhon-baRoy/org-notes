@@ -1,0 +1,1142 @@
+#+TITLE: OOP Handbook
+#+OPTIONS: toc:2 num:nil
+
+* Table of Contents                                                     :TOC:
+- [[#1-pillars-of-oop][1 Pillars of OOP]]
+  - [[#11-classes-objects-and-instantiation-the-heap--stack][1.1 Classes, Objects, and Instantiation (The Heap & Stack)]]
+  - [[#12-encapsulation--access-modifiers-data-shielding][1.2 Encapsulation & Access Modifiers (Data Shielding)]]
+  - [[#13-basic-class-inheritance][1.3 Basic Class Inheritance]]
+- [[#21-interfaces-contracts--loose-coupling][2.1 Interfaces, Contracts & Loose Coupling]]
+  - [[#211-why-do-interfaces-exist][2.1.1 Why Do Interfaces Exist?]]
+  - [[#212-the-problem-without-interfaces-tight-coupling][2.1.2 The Problem Without Interfaces: Tight Coupling]]
+  - [[#213-real-world-scenario-the-multi-database-migration-vulnerability][2.1.3 Real-World Scenario: The Multi-Database Migration Vulnerability]]
+  - [[#214-enter-interfaces-establishing-the-abstraction-contract][2.1.4 Enter Interfaces: Establishing the Abstraction Contract]]
+  - [[#215-the-universal-interface-analogy-the-usb-c-standard][2.1.5 The Universal Interface Analogy: The USB-C Standard]]
+  - [[#216-coupling-insulation-in-the-presentation-layer][2.1.6 Coupling Insulation in the Presentation Layer]]
+  - [[#217-the-mapping-catalyst-dependency-injection-registration][2.1.7 The Mapping Catalyst: Dependency Injection Registration]]
+- [[#22-constructor-injection--the-dependency-injection-container][2.2 Constructor Injection & The Dependency Injection Container]]
+- [[#23-abstract-classes-vs-interfaces][2.3 Abstract Classes vs. Interfaces]]
+  - [[#231-why-learn-abstract-classes][2.3.1 Why Learn Abstract Classes?]]
+  - [[#232-what-is-an-abstract-class][2.3.2 What Is An Abstract Class?]]
+  - [[#233-the-core-inheritance-blueprint][2.3.3 The Core Inheritance Blueprint]]
+  - [[#234-enforcing-specialization-via-abstract-methods][2.3.4 Enforcing Specialization via Abstract Methods]]
+  - [[#235-mixing-concrete-operations-and-abstract-contracts][2.3.5 Mixing Concrete Operations and Abstract Contracts]]
+  - [[#236-structural-differences-quick-matrix][2.3.6 Structural Differences: Quick Matrix]]
+  - [[#237-real-aspnet-core-framework-application][2.3.7 Real ASP.NET Core Framework Application]]
+- [[#24-service-lifetimes-transient-scoped-singleton][2.4 Service Lifetimes (Transient, Scoped, Singleton)]]
+  - [[#241-why-do-service-lifetimes-exist][2.4.1 Why Do Service Lifetimes Exist?]]
+  - [[#242-the-transient-lifetime-new-every-time][2.4.2 The Transient Lifetime: New Every Time]]
+  - [[#243-the-scoped-lifetime-one-per-request][2.4.3 The Scoped Lifetime: One Per Request]]
+  - [[#244-the-singleton-lifetime-one-for-the-entire-application-lifecycle][2.4.4 The Singleton Lifetime: One For The Entire Application Lifecycle]]
+  - [[#245-the-captive-dependency-anti-pattern-a-critical-lifetime-violation][2.4.5 The Captive Dependency Anti-Pattern: A Critical Lifetime Violation]]
+- [[#25-interview-note][2.5 Interview Note]]
+- [[#31-polymorphism--abstraction-contracts][3.1 Polymorphism & Abstraction Contracts]]
+  - [[#311-why-learn-polymorphism][3.1.1 Why Learn Polymorphism?]]
+  - [[#312-what-does-polymorphism-mean][3.1.2 What Does Polymorphism Mean?]]
+  - [[#313-interface-based-polymorphism-the-core-of-backend-services][3.1.3 Interface-Based Polymorphism: The Core of Backend Services]]
+  - [[#314-how-aspnet-core-uses-polymorphism-everywhere][3.1.4 How ASP.NET Core Uses Polymorphism Everywhere]]
+  - [[#315-multi-tenant-data-variant][3.1.5 Multi-Tenant Data Variant]]
+  - [[#316-the-fintech-application-polymorphic-payment-processing][3.1.6 The FinTech Application: Polymorphic Payment Processing]]
+  - [[#317-inheritance-based-polymorphism-method-overriding][3.1.7 Inheritance-Based Polymorphism: Method Overriding]]
+  - [[#318-the-professional-restaurant-analogy][3.1.8 The Professional Restaurant Analogy]]
+  - [[#319-deconstructing-common-misconceptions][3.1.9 Deconstructing Common Misconceptions]]
+  - [[#3110-high-yield-technical-interview-engine][3.1.10 High-Yield Technical Interview Engine]]
+  - [[#3111-rapid-revision-summary][3.1.11 Rapid Revision Summary]]
+- [[#4-solid-principles][4 SOLID Principles]]
+  - [[#what--why-is-solid][What & Why Is SOLID?]]
+  - [[#s--single-responsibility-principle-srp][S — Single Responsibility Principle (SRP)]]
+  - [[#d--dependency-inversion-principle-dip][D — Dependency Inversion Principle (DIP)]]
+  - [[#o--openclosed-principle-ocp][O — Open/Closed Principle (OCP)]]
+  - [[#l--liskov-substitution-principle-lsp][L — Liskov Substitution Principle (LSP)]]
+  - [[#i--interface-segregation-principle-isp][I — Interface Segregation Principle (ISP)]]
+  - [[#deep-dive-architectural-correlations][Deep Dive: Architectural Correlations]]
+  - [[#interview-notes][Interview Notes]]
+
+* 1 Pillars of OOP
+
+** 1.1 Classes, Objects, and Instantiation (The Heap & Stack)
+*** 1.1.1 Blueprints vs. Active Realities
+Before entering high-level web design patterns, engineers must master execution memory mechanics. A *Class* is an entirely static runtime blueprint residing in the application's metadata space. An *Object* is an active, stateful instance allocated inside dynamic execution memory.
+
+*** 1.1.2 Memory Allocation Mechanics
+When executing code in C#, runtime variables are split across two core memory segments:
+- *The Stack:* A fast, sequential memory stream managed automatically by CPU execution frames. It stores value types and reference pointers.
+- *The Heap:* A large, non-sequential memory space managed by the Garbage Collector (GC). It holds active reference-type objects.
+
+#+begin_src csharp
+  // 1. Reference pointer created on the Stack
+  // 2. 'new' keyword allocates raw byte structures inside the managed Heap
+  Employee employee = new Employee();
+#+end_src
+
+*** 1.1.3 Execution Trace Diagram
+#+begin_example
+      STACK FRAME (Fast)                   MANAGED HEAP (GC Managed)
+  ┌─────────────────────────┐               ┌─────────────────────────┐
+  │ [Method Context Frame]  │               │  Concrete Instance      │
+  │                         │               │  Type: Employee         │
+  │ Pointer: 'employee'     │──────────────>│  Name: "John Doe"       │
+  └─────────────────────────┘               │  Email: "john@corp.com" │
+                                            └─────────────────────────┘
+#+end_example
+
+** 1.2 Encapsulation & Access Modifiers (Data Shielding)
+*** 1.2.1 Core Purpose
+Encapsulation shields an object's internal state data from unvalidated, external corruption. It draws a definitive boundary between public capabilities and hidden state mechanics.
+
+*** 1.2.2 The Access Modifiers Matrix
+- ~public~: Unrestricted global access.
+- ~private~: Accessible exclusively inside the declaring class structure.
+- ~protected~: Accessible inside the declaring class and derived children.
+- ~internal~: Accessible exclusively inside the compiled assembly (.dll).
+
+*** 1.2.3 Enforcing Invariants via Properties
+#+begin_src csharp
+  public class Account
+  {
+      private decimal _balance; // Fully protected private backing field
+
+      public decimal Balance
+      {
+          get => _balance;
+          private set // Restricts unauthorized external modification
+          {
+              if (value < 0) throw new ArgumentException("Balance cannot be negative.");
+              _balance = value;
+          }
+      }
+
+      public void Deposit(decimal amount)
+      {
+          if (amount <= 0) throw new ArgumentException("Deposit must be positive.");
+          Balance += amount; // Internal modification follows validation invariants
+      }
+  }
+#+end_src
+
+** 1.3 Basic Class Inheritance
+*** 1.3.1 Eliminating Structural Duplication
+Inheritance defines a parent-child relationship enabling specialized classes to reuse, expand, and modify properties or workflows declared by a foundational base type.
+
+*** 1.3.2 Polymorphic Customization via Virtual Methods
+#+begin_src csharp
+  public class BaseUser
+  {
+      public string Username { get; set; }
+
+      // 'virtual' opens the door for derived specialization
+      public virtual void Authenticate()
+      {
+          Console.WriteLine("Executing standard password verification.");
+      }
+  }
+
+  public class AdminUser : BaseUser
+  {
+      public string MfaToken { get; set; }
+
+      // 'override' changes runtime behavior dynamically
+      public override void Authenticate()
+      {
+          base.Authenticate(); // Reuses parent baseline logic
+          Console.WriteLine("Executing secondary Multi-Factor validation.");
+      }
+  }
+#+end_src
+
+* 2.1 Interfaces, Contracts & Loose Coupling
+
+** 2.1.1 Why Do Interfaces Exist?
+When engineers first encounter interface definitions in an enterprise application:
+~public interface IEmployeeService~
+a common, immediate question arises: "Why go through the overhead of declaring an interface when we could just instantiate and use the concrete implementation class directly?".
+
+This question represents one of the most critical foundational cross-roads in professional system design. The answer dictates whether an architecture remains flexible under shifting production constraints or collapses into unmaintainable, rigid code. Interfaces exist primarily to enforce a strict boundary separation between two concepts:
+
+- *What* the application must execute (the contract).
+- *How* the application executes that operation (the technical implementation).
+
+** 2.1.2 The Problem Without Interfaces: Tight Coupling
+To evaluate the absolute necessity of interfaces, we must first look at the architectural liability created by their absence. Consider an API controller that directly binds itself to a concrete service instance:
+
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private readonly EmployeeService _service;
+
+      public EmployeeController(EmployeeService service)
+      {
+          _service = service;
+      }
+  }
+#+end_src
+
+At first glance, this code is straightforward and functional. However, it introduces the critical flaw of *Tight Coupling*. Tight coupling means one software class possesses detailed, internal awareness about the exact type and downstream requirements of another class.
+
+By structuring the constructor this way, the `EmployeeController` explicitly states: /"I can exclusively work with the exact class named EmployeeService."/. The controller becomes completely vulnerable to any changes made inside that downstream class.
+
+** 2.1.3 Real-World Scenario: The Multi-Database Migration Vulnerability
+Imagine a Human Resource Management System (HRMS) project where the concrete =EmployeeService= is initially configured to write records to an open-source MySQL engine.
+
+#+begin_example
+  [Controller Layer]
+           │
+           │ (Directly Bound)
+           │
+           ▼
+  [EmployeeService] ──> [MySQL Database Engine]
+#+end_example
+
+Months later, corporate requirements shift, and the client mandates a complete migration to a highly secure, enterprise-tier Microsoft SQL Server cluster.
+
+Without an interface boundary, the concrete *EmployeeService* must be fundamentally rewritten or swapped out entirely. Because the *EmployeeController* depends directly on that specific concrete class, any modification, re-indexing, or replacement of the service immediately breaks the presentation layer. You are forced to alter multiple architectural tiers simultaneously, driving up engineering timelines, increasing maintenance costs, and creating regressions.
+
+** 2.1.4 Enter Interfaces: Establishing the Abstraction Contract
+We resolve this structural fragility by inserting an immutable abstraction layer between the consumer and the worker:
+
+#+begin_src csharp
+  public interface IEmployeeService
+  {
+      Task CreateAsync(CreateEmployeeDto request);
+  }
+#+end_src
+
+An interface contains absolutely zero executable logic, database connection parameters, or internal variables. It defines pure method signatures, operating as a formalized, binding *Contract*. The contract declares: /"Any class wishing to act as an Employee Service must guarantee it can handle a CreateAsync request."/. It does not dictate how that computation is performed.
+
+#+begin_src csharp
+  public class EmployeeService : IEmployeeService
+  {
+      public async Task CreateAsync(CreateEmployeeDto request)
+      {
+          // Concrete database context modifications, validations, and mapping live safely here
+      }
+  }
+#+end_src
+
+** 2.1.5 The Universal Interface Analogy: The USB-C Standard
+To lock down this mental model, consider the ubiquitous real-world standard of a *USB-C Port*.
+
+A smartphone features a standardized USB-C interface slot. The phone states a strict contract: /"As long as a cable matches the physical and electrical dimensions of USB-C, I will accept electrical current."/. The phone does not care about the internal manufacturing brand of the accessory:
+
+#+begin_example
+                     [Smartphone (Controller)]
+                                │
+                 (Requires Standard USB-C Interface)
+                                │
+                                ▼
+         ┌──────────────────────┼──────────────────────┐
+         ▼                      ▼                      ▼
+  [Anker Charger]         [Apple Charger]         [Power Bank]
+#+end_example
+
+Whether you plug the phone into a Samsung wall adapter, an Anker high-wattage braided cable, an Apple MacBook port, or a generic portable battery pack, the power transfer succeeds seamlessly. The phone remains decoupled from the infrastructure details of the power supply.
+
+In modern web development, this translates perfectly:
+- *The Phone* is your HTTP API Controller.
+- *The USB-C Standard* is your Interface Abstraction Contract (~IEmployeeService~).
+- *The Individual Chargers* are your individual concrete backend implementations (/EmployeeService/, /SqlServerEmployeeService/, /FakeEmployeeService/).
+
+** 2.1.6 Coupling Insulation in the Presentation Layer
+By configuring our API controllers to depend strictly on contracts, the presentation tier achieves absolute loose coupling:
+
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private readonly IEmployeeService _service;
+
+      public EmployeeController(IEmployeeService service)
+      {
+          _service = service;
+      }
+  }
+#+end_src
+
+The controller now states: /"Provide me with any object instance in memory that honors the IEmployeeService contract boundary."/.
+The controller remains completely insulated from downstream complexity. It has no awareness of whether data operations execute against a local JSON file, an on-premise Oracle database, an external cloud API, or a temporary memory array.
+
+** 2.1.7 The Mapping Catalyst: Dependency Injection Registration
+An interface contract cannot instantiate itself into an active memory object directly. To connect the presentation layer with the business layer, we register the explicit relationship inside the application pipeline setup file (`Program.cs`):
+
+#+begin_src csharp
+  builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+#+end_src
+
+This directive informs the central Dependency Injection framework: /"Whenever an active architectural class requests an IEmployeeService contract handle, instantiate and supply a concrete EmployeeService instance automatically."/. If the business engine requires an architectural pivot later, you change *one single line* inside this registration mapping, leaving the entire controller tier completely untouched.
+
+* 2.2 Constructor Injection & The Dependency Injection Container
+*** 2.2.1 Resolving Inversion Mechanics
+Once an application layer depends purely on contracts (~IEmployeeService~), it can no longer safely build objects directly via ~new~ expressions. The service contract must instead arrive externally:
+
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private readonly IEmployeeService _service;
+
+      // The dependency is injected at runtime through this constructor boundary
+      public EmployeeController(IEmployeeService service)
+      {
+          _service = service; // Assigned smoothly to our immutable handle
+      }
+  }
+#+end_src
+
+*** 2.2.2 The Core Mechanism of the DI Container
+When a client sends an HTTP request, the ASP.NET Core runtime framework interceptor executes an automatic multi-step object initialization chain:
+
+#+begin_example
+  Client HTTP Request Arrives
+  │
+  ▼
+  Framework instantiates Controller
+  │
+  ├──> Scans Constructor Metadata signatures
+  ├──> Finds dependency requirement: IEmployeeService
+  ▼
+  DI Container queries Service Mapping Metadata
+  │
+  ├──> Locates mapping: IEmployeeService -> EmployeeService
+  ├──> Allocates concrete 'EmployeeService' instance on the heap
+  │
+  ▼
+  Container Injects Implementation Object directly into Controller Constructor
+#+end_example
+
+* 2.3 Abstract Classes vs. Interfaces
+
+** 2.3.1 Why Learn Abstract Classes?
+Interface boundaries are the premier vehicle for establishing pure, stateless architectural contracts. However, enterprise systems frequently demand a structure that enforces a clear operational contract *combined with* a baseline of shared, reusable business implementation.
+
+Without abstract classes, developers working across large domains inevitably fall victim to severe code duplication. They find themselves copy-pasting identical properties, baseline variable state updates, logging configurations, and tracking signatures into dozens of separate child classes. Abstract classes elegantly solve this challenge by providing a unified base structure designed to:
+- Drastically eliminate cross-class structural duplication.
+- Deliver ready-to-use, default behavioral logic to downstream modules.
+- Force child classes to implement specialized missing functional behaviors.
+
+** 2.3.2 What Is An Abstract Class?
+An abstract class represents an incomplete, high-level conceptual base class. It occupies a structural space directly between a pure interface contract and a fully operational concrete class:
+- It *cannot* be instantiated directly using the `new` keyword.
+- It can declare fully concrete, executable methods and fields.
+- It can host incomplete *Abstract Methods* that contain no execution body whatsoever.
+- It acts exclusively as an foundational parent lineage for child classes to inherit from and finalize.
+
+** 2.3.3 The Core Inheritance Blueprint
+Consider an enterprise domain model for representing employees inside an HRMS engine:
+
+#+begin_src csharp
+  public abstract class Employee
+  {
+      public string Name { get; set; }
+      public string Email { get; set; }
+
+      public virtual string GetInfo()
+      {
+          return $"{Name} - {Email}";
+      }
+  }
+#+end_src
+
+Attempting to instantiate this class directly is strictly blocked by the compiler:
+#+begin_src csharp
+  // CRITICAL COMPILER ERROR: Cannot create an instance of the abstract class 'Employee'
+  Employee employee = new Employee();
+#+end_src
+
+Instead, derived concrete classes inherit this baseline structure, immediately gaining all shared state models without a single line of duplicated code:
+
+#+begin_src csharp
+  public class PermanentEmployee : Employee
+  {
+      // Automatically possesses Name, Email, and GetInfo()
+      public decimal MonthlySalary { get; set; }
+  }
+
+  public class ContractEmployee : Employee
+  {
+      // Automatically possesses Name, Email, and GetInfo()
+      public decimal HourlyRate { get; set; }
+  }
+#+end_src
+
+** 2.3.4 Enforcing Specialization via Abstract Methods
+When a parent class knows *what* a child must do, but cannot possibly predict *how* that specific child class must calculate its result, it defines an *Abstract Method*. Abstract methods declare a name and signature, feature no brace brackets or body logic, and use a terminating semicolon. They can only exist within an explicitly declared abstract class.
+
+Consider a corporate automated report generation module:
+
+#+begin_src csharp
+  public abstract class ReportGenerator
+  {
+      // Enforces that every child MUST provide a custom engineering execution path
+      public abstract void Generate();
+  }
+#+end_src
+
+Derived children are physically forced by the compiler to override this signature, ensuring the structural integrity of the application:
+
+#+begin_src csharp
+  public class PdfReportGenerator : ReportGenerator
+  {
+      public override void Generate()
+      {
+          // Executes specialized binary PDF cell positioning and page stream compilation
+          Console.WriteLine("Generate PDF");
+      }
+  }
+
+  public class ExcelReportGenerator : ReportGenerator
+  {
+      public override void Generate()
+      {
+          // Compiles XML open-spreadsheet rows and workbook matrix sheets
+          Console.WriteLine("Generate Excel");
+      }
+  }
+#+end_src
+
+** 2.3.5 Mixing Concrete Operations and Abstract Contracts
+The true architectural utility of an abstract class is highlighted when combining ready-made logic alongside specialized behaviors. Consider a payment gateway manager:
+
+#+begin_src csharp
+  public abstract class PaymentService
+  {
+      // Concrete Shared Behavior: Every payment channel tracks actions identically
+      public void LogTransaction(string status)
+      {
+          Console.WriteLine($"[AUDIT LOG] Transaction recorded state: {status}");
+      }
+
+      // Abstract Contract: Every channel must process clear operations uniquely
+      public abstract void Pay(decimal amount);
+  }
+#+end_src
+
+Downstream workers inherit the fully functioning audit log method automatically, while maintaining total flexibility over their processing protocols:
+
+#+begin_src csharp
+  public class BkashPaymentService : PaymentService
+  {
+      public override void Pay(decimal amount)
+      {
+          LogTransaction("Initiated"); // Inherited shared code runs perfectly
+          // Executes customized MFS API wallet handshakes
+          Console.WriteLine("Bkash payment finalized.");
+      }
+  }
+#+end_src
+
+** 2.3.6 Structural Differences: Quick Matrix
+The distinction between interfaces and abstract classes can be categorized across several core implementation capabilities:
+
+| Capability / Feature | Interface Boundary Contract                        | Abstract Base Class                                           |
+|----------------------+----------------------------------------------------+---------------------------------------------------------------|
+| *Primary Focus*        | Pure Contract Definition (~WHAT~)                    | Shared State & Behavior (~WHAT + HOW~)                          |
+| *Implementation*       | Historically limited or none                       | Full support for fully written concrete methods               |
+| *State Fields*         | Strictly prohibited from containing fields         | Allowed to declare private or protected state tracking fields |
+| *Constructors*         | Prohibited from defining initialization blocks     | Can declare constructors for base state setup                 |
+| *Inheritance Model*    | A concrete class can implement multiple interfaces | Restricted to a single class inheritance line                 |
+
+*** The Architectural Mental Model
+- *An Interface* operates as a conceptual *Blueprint*. It defines dimensions and demands properties, but contributes zero physical materials.
+- *An Abstract Class* operates as a *Partially Built House*. The foundation is poured, the framing is complete, and the shared plumbing is wired. Derived children simply move in and finish the individual rooms to their precise requirements.
+
+** 2.3.7 Real ASP.NET Core Framework Application
+You leverage abstract architectures constantly when building production web APIs via custom controllers:
+
+#+begin_src csharp
+  [ApiController]
+  [Route("api/[controller]")]
+  public abstract class BaseApiController : ControllerBase
+  {
+      // Shared operational helpers or global validation hooks live here safely
+  }
+#+end_src
+
+By placing routing templates and endpoint flags onto a unified abstract base controller, every feature-focused class inherits those parameters seamlessly without manual restatement:
+
+#+begin_src csharp
+  public class EmployeeController : BaseApiController
+  {
+      // Automatically exposed at "api/employee" with [ApiController] routing behaviors active
+  }
+
+  public class LeaveController : BaseApiController
+  {
+      // Automatically exposed at "api/leave" with [ApiController] routing behaviors active
+  }
+#+end_src
+
+* 2.4 Service Lifetimes (Transient, Scoped, Singleton)
+
+** 2.4.1 Why Do Service Lifetimes Exist?
+Once an application maps an interface contract to a concrete implementation inside the Dependency Injection framework, a critical operational decision must be made regarding memory allocation and data isolation:
+
+Should the central DI container initialize a brand-new instance of the service class every single time it is requested? Should it instantiate an object once and share that specific instance across the entire duration of an individual browser request? Or should it construct a single permanent object at startup and reuse that exact instance for every single user until the web server is powered down?
+
+Managing these behaviors correctly is vital. Selecting an inappropriate lifetime configuration is one of the leading causes of critical data corruption, thread-safety violations, memory leaks, and broken application state logic in enterprise systems. ASP.NET Core provides three distinct service lifetime controls to manage these exact concerns.
+
+** 2.4.2 The Transient Lifetime: New Every Time
+The Transient lifetime is configured using the =AddTransient()= registration method:
+
+#+begin_src csharp
+  builder.Services.AddTransient<IEmailFormatter, EmailFormatter>();
+#+end_src
+
+When a dependency is registered as Transient, the DI container guarantees that *every single injection point* receives a unique, newly instantiated memory object.
+
+#+begin_example
+  [Incoming HTTP Request]
+  │
+  ├──> Resolves Service A ──> Requests IEmailFormatter ──> Instantiates Instance #1
+  │
+  └──> Resolves Service B ──> Requests IEmailFormatter ──> Instantiates Instance #2
+#+end_example
+
+If a single HTTP request passes through three separate layers (e.g., a Controller, a Business Service, and an Audit Tracker), and each layer requests an *IEmailFormatter*, the DI container executes the constructor three separate times.
+
+- *Best Used For:* Lightweight, completely stateless utility helpers, math calculators, or string formatting engines.
+- *Mental Model:* The *Disposable Contractor*. You hire a worker for one specific task, they complete the action, and you immediately discharge them from memory.
+
+** 2.4.3 The Scoped Lifetime: One Per Request
+The Scoped lifetime is configured using the *AddScoped()* registration method:
+
+#+begin_src csharp
+  builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+#+end_src
+
+Under the Scoped model, the DI container instantiates an object exactly *once per individual HTTP request pipeline lifecycle*. Every component that requests this dependency within the context of that specific request receives the exact same instance in memory.
+
+#+begin_example
+  [Active HTTP Request #1 Context]
+  │
+  ├──> Resolves EmployeeController ──> Receives Scoped EmployeeService Instance #1
+  │
+  └──> Resolves Internal Repository  ──> Receives Scoped EmployeeService Instance #1 (Shared)
+
+  [Distinct HTTP Request #2 Context]
+  │
+  └──> Resolves EmployeeController ──> Receives Fresh Scoped EmployeeService Instance #2
+#+end_example
+
+When a web browser hits the =/employees= endpoint, a dedicated Request Scope container is initialized. If the controller requests =IEmployeeService=, Instance #1 is created. If an underlying validator or repository asks for =IEmployeeService= later in that same execution chain, the container reuses Instance #1. When the request terminates and the response is dispatched to the client, Instance #1 is officially disposed of and collected by memory.
+
+- *Best Used For:* Core operational business services, data processing repositories, and database transaction units.
+
+*** Why Entity Framework Core's DbContext Default Lifetime is Scoped
+By default, the =AppDbContext= is registered with a Scoped lifetime within the ASP.NET Core framework. This choice is highly intentional and crucial for data integrity.
+
+The DbContext manages an internal feature known as the *Change Tracker*. The Change Tracker acts as an active ledger, keeping an explicit record of every database record read, modified, added, or deleted throughout the execution of a business workflow.
+
+If an application used a Transient database context, Service A would append a record to its context instance, but calling =SaveChangesAsync()= on a separate context instance inside Service B would fail to capture that change, resulting in missing updates or corrupted relational states. By scoping the DbContext, every collaborating service within that request shares a single, consistent tracking table.
+
+** 2.4.4 The Singleton Lifetime: One For The Entire Application Lifecycle
+The Singleton lifetime is configured using the =AddSingleton()= registration method:
+
+#+begin_src csharp
+  builder.Services.AddSingleton<ICacheService, CacheService>();
+#+end_src
+
+A Singleton dependency is instantiated exactly *once across the entire operational lifespan of the hosting application*. That single, permanent instance remains resident in system memory forever, servicing every single user request until the process is restarted.
+
+#+begin_example
+  [Application Runtime Startup initialization]
+  │
+  ▼ Instantiates Global CacheService Instance #1
+  [Request 1]  ──> [Shares CacheService Instance #1]
+  [Request 2]  ──> [Shares CacheService Instance #1]
+  [Request 99] ──> [Shares CacheService Instance #1]
+#+end_example
+
+- *Best Used For:* Shared application configurations, active global memory caching layers, or static dictionary data lookup modules.
+- *Mental Model:* The *Permanent Corporate Executive*. Brought on board at the launch of the firm, they occupy the same desk forever, and every department consults them for global information.
+
+** 2.4.5 The Captive Dependency Anti-Pattern: A Critical Lifetime Violation
+When arranging dependency relationships, developers must memorize a non-negotiable rule: *A service with a longer lifetime cannot capture a dependency registered with a shorter lifetime.*. Violating this rule introduces a severe architectural bug known as a *Captive Dependency*.
+
+Consider this invalid registration pattern:
+#+begin_src csharp
+  // SEVERE ARCHITECTURAL LIABILITY ENGINE: DO NOT WRITE THIS
+  builder.Services.AddSingleton<EmployeeService>();
+  builder.Services.AddScoped<AppDbContext>();
+#+end_src
+
+In this scenario, =EmployeeService= is configured to live forever as a Singleton. However, its constructor requests an =AppDbContext=, which is Scoped to live for just a single request.
+
+When the application boots, the Singleton =EmployeeService= is instantiated once. It captures the active =AppDbContext= instance initialized during that initial request. When that first request finishes, the framework attempts to destroy the scoped DbContext, closing its network connections.
+
+However, because the Singleton service lives forever, it holds onto the context instance, keeping it trapped in memory. Every subsequent user request calling the =EmployeeService= is now forced to use a dead, locked, or corrupted database context, throwing immediate =ObjectDisposedException= runtime crashes or leaking sensitive data across unrelated concurrent user sessions.
+
+* 2.5 Interview Note
+
+*** Why can a class implement multiple interfaces but inherit from only a single abstract class?
+This restriction is rooted in the prevention of the Diamond Problem in object-oriented compilation. If an application allowed a class to inherit from multiple abstract classes, and both parents implemented a concrete method with the exact same name and parameter signature, the compiler would have no deterministic way to resolve which parent's implementation should execute. Interfaces avoid this ambiguity because they define pure method contracts without standard state fields or concrete bodies. Implementing multiple interfaces simply requires a class to fulfill multiple independent feature contracts, posing zero ambiguity risks to the compilation engine.
+
+*** What happens to a Scoped service if it is injected into a background job or worker thread that executes outside the standard HTTP request lifecycle?
+If a scoped service is requested outside an active HTTP request pipeline without a manually defined wrapper, the Dependency Injection container will throw a runtime resolution exception. Because background workers operate on isolated, persistent threads independent of Kestrel's web scope, no automatic request scope is available. To safely utilize a scoped resource like an `AppDbContext` inside a background worker, you must inject the global `IServiceScopeFactory`, invoke `.CreateScope()` manually to initialize an ephemeral boundary, resolve the dependency safely from that explicit container wrapper, and ensure it is disposed of cleanly via a C# `using` block once the background task concludes.
+
+*** Why is it considered an architectural anti-pattern to use the Singleton lifetime for micro-optimization purposes?
+Relying on the Singleton lifetime purely to bypass the minor processing overhead of object allocation is a dangerous anti-pattern. While reusing an instance prevents garbage collection overhead, it completely exposes your class to intense multi-threaded concurrency challenges. ASP.NET Core processes requests concurrently across separate threads. If a singleton service manages any class-level collections or state variables, concurrent requests will conflict, resulting in race conditions and memory corruption. Correct architectural boundaries and thread safety should always take precedence over negligible micro-performance optimization gains.
+
+* 3.1 Polymorphism & Abstraction Contracts
+
+** 3.1.1 Why Learn Polymorphism?
+Polymorphism is universally recognized as one of the fundamental pillars of Object-Oriented Programming (OOP). However, many enterprise backend developers write polymorphic code every single day inside framework configurations without fully realizing it. Whenever a constructor declares an abstraction handle:
+#+begin_src csharp
+  public EmployeeController(IEmployeeService service)
+#+end_src
+polymorphism is actively working behind the scenes to decouple the framework architecture.
+
+Understanding polymorphism helps explain:
+- *Interface-Based Design Patterns:* Decoupling API specifications from their technical implementation layers.
+- *Dependency Injection Mechanics:* Allowing external containers to seamlessly swap service brains at runtime.
+- *Loose Coupling Principles:* Ensuring modifications to data access engines do not disrupt user interfaces.
+- *Enterprise Testability:* Substituting live infrastructural systems with controlled diagnostic mock data.
+- *The Strategy Pattern & Clean Architecture:* Building pluggable corporate modules that adapt safely to shifting business constraints.
+
+** 3.1.2 What Does Polymorphism Mean?
+The word originates from Greek etymology:
+#+begin_example
+  Poly = Many
+  Morph = Forms
+#+end_example
+
+In the context of clean software engineering, it translates directly to *One Thing, Many Forms* or, more accurately, *One Abstract Contract, Many Concrete Implementations*.
+
+*** The Real-Life Analogy: The Universal Remote Control
+Consider a standard consumer electronics remote control equipped with a formalized ~Power()~ command button. The remote control itself does not contain the operational mechanisms to display images, cool a room, or emit light. It simply projects a uniform interface token.
+
+#+begin_example
+  [Universal Remote Interface: Power()]
+                 │
+  ┌──────────────┼──────────────┐
+  ▼              ▼              ▼
+  [Television] [Air Conditioner] [Projector]
+  (Turns On)   (Starts Cooling)  (Lens Lights Up)
+#+end_example
+
+When a user aims the remote and invokes ~Power()~, different connected devices react differently: This is polymorphism.
+
+** 3.1.3 Interface-Based Polymorphism: The Core of Backend Services
+The most prevalent application of polymorphism in modern cross-platform development occurs through interface contracts. Consider an enterprise messaging scenario requiring a system to distribute system notifications across multiple distinct corporate communication networks:
+
+#+begin_src csharp
+  public interface INotificationService
+  {
+      void Send(string message);
+  }
+#+end_src
+
+This abstraction defines the absolute requirement of what a notification service must do, without enforcing any rule on how it should be achieved. Multiple concrete teams can now write independent execution classes that implement this exact contract:
+
+#+begin_src csharp
+  // Concrete Implementation 1: Electronic Mail Engine
+  public class EmailNotificationService : INotificationService
+  {
+      public void Send(string message)
+      {
+          Console.WriteLine($"Email Dispatched: {message}");
+      }
+  }
+
+  // Concrete Implementation 2: Short Message Service Engine
+  public class SmsNotificationService : INotificationService
+  {
+      public void Send(string message)
+      {
+          Console.WriteLine($"SMS Dispatched: {message}");
+      }
+  }
+#+end_src
+
+Both follow: =INotificationService=, but produce different behaviors.
+
+*** Where Does the Runtime Polymorphism Manifest?
+Polymorphism demonstrates its real power when a single abstraction reference pointer changes its underlying behavior dynamically during program execution:
+
+#+begin_src csharp
+  INotificationService service;
+
+  // The polymorphic handle points to the Email Engine
+  service = new EmailNotificationService();
+  service.Send("System Onboarding Complete");
+  // Output: Email Dispatched: System Onboarding Complete
+
+  // The EXACT SAME reference pointer is repurposed to the SMS Engine
+  service = new SmsNotificationService();
+  service.Send("System Onboarding Complete");
+  // Output: SMS Dispatched: System Onboarding Complete
+#+end_src
+
+At compile time, the variable ~service~ is bound purely to the abstract rules of *INotificationService*. At runtime, it adapts automatically to deliver the specialized execution logic of whichever concrete object instance is currently mapped to that memory address.
+
+** 3.1.4 How ASP.NET Core Uses Polymorphism Everywhere
+Modern web frameworks are designed entirely around polymorphic mechanics. When an API Controller declares dependencies inside its constructor initialization block, it never requests a final concrete class directly:
+
+#+begin_src csharp
+  public class EmployeeController : ControllerBase
+  {
+      private readonly IEmployeeService _service;
+
+      public EmployeeController(IEmployeeService service)
+      {
+          _service = service;
+      }
+  }
+#+end_src
+
+The =EmployeeController= is compiled with an exclusive awareness of the =IEmployeeService= contract boundary. It remains completely oblivious to the underlying mechanics of how data is stored or computed downstream.
+
+Depending on the operational runtime environment, the Dependency Injection (DI) container can feed the controller completely different operational brains without altering a single line of API code:
+
+#+begin_example
+  At Runtime, IEmployeeService polymorphic variable resolves to:
+  ├── EmployeeService (Standard Corporate Business Engine)
+  ├── SqlServerEmployeeService (Legacy Relational Storage Driver)
+  ├── FakeEmployeeService (Ultra-Fast Automated Unit Testing Mock)
+  └── CachedEmployeeService (High-Performance Redis Interceptor)
+#+end_example
+
+The controller layer cannot distinguish between these instances, nor does it need to. It calls the contract methods, and runtime polymorphism guarantees that the correct environmental execution path is completed smoothly.
+
+** 3.1.5 Multi-Tenant Data Variant
+Consider an enterprise HRMS platform designed to deploy across multiple corporate database ecosystems depending on client preferences. By wrapping storage variations behind a polymorphic contract interface, the core application code remains pristine:
+
+#+begin_src csharp
+  public interface IEmployeeService
+  {
+      Task CreateAsync(CreateEmployeeDto model);
+  }
+
+  public class SqlServerEmployeeService : IEmployeeService
+  {
+      public async Task CreateAsync(CreateEmployeeDto model)
+      {
+          // Executes optimized T-SQL Stored Procedures for Microsoft Enterprise Clusters
+      }
+  }
+
+  public class MySqlEmployeeService : IEmployeeService
+  {
+      public async Task CreateAsync(CreateEmployeeDto model)
+      {
+          // Executes standard open-source MySQL connection command streams
+      }
+  }
+#+end_src
+
+** 3.1.6 The FinTech Application: Polymorphic Payment Processing
+Polymorphic architectures are heavily utilized within modern transactional systems. In an ecosystem supporting various digital financial channels (such as bKash, Nagad, Rocket, and Visa Credit Cards), writing individual *if/else* statements for every method would produce highly fragile controllers.
+
+Instead, the system encapsulates payment behaviors behind a clear abstraction contract:
+#+begin_src csharp
+  public interface IPaymentService
+  {
+      void Pay(decimal amount);
+  }
+#+end_src
+
+Every single payment provider implements this contract independently:
+- `BkashPaymentService` manages secured MFS mobile wallet validation checkouts.
+- `NagadPaymentService` processes government-backed state ledger digital routing.
+- `CardPaymentService` establishes bank connections to clear international credit lines.
+
+The application code simply handles an *IPaymentService* pointer and instructs it to execute =.Pay(amount)=. The execution engine remains detached from downstream updates, ensuring adding a new provider requires zero modifications to existing controllers.
+
+** 3.1.7 Inheritance-Based Polymorphism: Method Overriding
+While modern application design favors interface contracts, polymorphism can also be established using class inheritance lines via *Method Overriding*.
+
+In this model, a base parent class provides an initial implementation explicitly marked with the ~virtual~ modifier, signaling that child classes are permitted to alter this behavior:
+
+#+begin_src csharp
+  public class Animal
+  {
+      public virtual void Speak()
+      {
+          Console.WriteLine("Generic animal vocalization.");
+      }
+  }
+#+end_src
+
+Child subclasses inherit this structure, but use the ~override~ keyword to substitute the base implementation with their own specialized behavior:
+
+#+begin_src csharp
+  public class Dog : Animal
+  {
+      public override void Speak()
+      {
+          Console.WriteLine("Woof! Woof!");
+      }
+  }
+
+  public class Cat : Animal
+  {
+      public override void Speak()
+      {
+          Console.WriteLine("Meow!");
+      }
+  }
+#+end_src
+
+Just like interface abstractions, an inheritance-bound base pointer variable can hold any derivative child object, displaying unique behaviors dynamically at runtime:
+
+#+begin_src csharp
+  Animal currentAnimal;
+
+  currentAnimal = new Dog();
+  currentAnimal.Speak(); // Output: Woof! Woof!
+
+  currentAnimal = new Cat();
+  currentAnimal.Speak(); // Output: Meow!
+#+end_src
+
+** 3.1.8 The Professional Restaurant Analogy
+To establish an intuitive understanding of polymorphic software design, adopt this mental model based on a professional culinary environment:
+
+- *The Customer (The API Controller):* Desires a specific meal and views the options available on the menu.
+- *The Menu (The Interface Contract):* Outlines exactly what dishes can be requested (e.g., ~BringChickenCurry()~), serving as an abstract agreement.
+- *The Chef (The Concrete Service Implementation):* The actual kitchen worker who transforms raw ingredients into the requested dish.
+
+When a customer orders "Chicken Curry," they read the request directly from the menu. They do not know, nor do they care, which specific chef is on shift, how the kitchen stoves are fueled, or what precise brand of knives are used to prepare the meal.
+
+The kitchen staff can swap the Head Chef for a Sous Chef mid-shift. Because both chefs follow the exact same menu contract, the customer receives their meal without ever needing to change how they place their order.
+
+** 3.1.9 Deconstructing Common Misconceptions
+
+*** Misconception 1: "Polymorphism means a single concrete class can transform into multiple shapes internally."
+*Correction:* This is structurally incorrect. A single compiled concrete class possesses rigid, deterministic logic. True polymorphism means that an abstract base contract variable type can seamlessly represent *completely different object classes* at runtime, allowing the same entry command to invoke unique behavioral paths.
+
+*** Misconception 2: "Polymorphism cannot exist without using standard object inheritance lines."
+*Correction:* False. While class inheritance (~virtual~ / ~override~) provides one implementation path, modern design patterns heavily prioritize *Interface-Based Polymorphism*. Interfaces allow totally unrelated classes to implement the same contract without forcing them to share a rigid, hierarchical family lineage. This approach forms the foundation of modern decoupled architectures like ASP.NET Core.
+
+** 3.1.10 High-Yield Technical Interview Engine
+
+*** What is the primary difference between runtime polymorphism and compile-time polymorphism?
+- *Compile-time polymorphism:* (often called =Method Overloading=) occurs when multiple methods within the same class share the exact same name but declare different input parameter signatures. The compiler selects the correct method overload during compilation based on the arguments provided.
+
+#+begin_src csharp
+  public class Calculator
+  {
+      public int Add(int a, int b)
+      {
+          Console.WriteLine("Using int overload");
+          return a + b;
+      }
+
+      public double Add(double a, double b)
+      {
+          Console.WriteLine("Using double overload");
+          return a + b;
+      }
+
+      public int Add(int a, int b, int c)
+      {
+          Console.WriteLine("Using three-parameter overload");
+          return a + b + c;
+      }
+  }
+#+end_src
+
+- *Runtime polymorphism:* (=Method Overriding= or =Interface Implementation=) occurs when an abstract base type or interface reference invokes a method. The target execution path cannot be determined at compile time; instead, the application evaluates the actual concrete object instance currently held in memory at runtime to execute its specific overridden method.
+
+*** Why is polymorphic architecture considered a prerequisite for writing effective Unit Tests?
+Without polymorphism, high-level components are tightly coupled to concrete implementation classes, meaning they directly instantiate low-level infrastructure like live SQL databases or third-party web services. Testing these components in isolation becomes impossible because running a test triggers real-world side effects. By introducing a polymorphic abstraction contract (e.g., `IEmployeeRepository`), the code under test interacts only with the interface boundary. During a test suite run, developers can easily swap out the heavy SQL production database service for an ultra-fast, in-memory mock repository stub, allowing true isolation and deterministic test results without requiring external infrastructure.
+
+*** How does polymorphism support the Open/Closed Principle (OCP) in Clean Architecture?
+The Open/Closed Principle states that software entities should be open for extension but closed for modification. Polymorphism acts as the core engine for this principle. By coding high-level systems against stable interface abstractions rather than unstable concrete implementations, you can introduce new application features or connect alternative infrastructure providers without altering a single line of existing code. For example, you can add a new payment provider (`RocketPaymentService`) simply by implementing the base `IPaymentService` contract. The main transaction engine remains untouched, perfectly satisfying the requirement of being closed to modification while open to extension.
+
+** 3.1.11 Rapid Revision Summary
+- *Polymorphism Definition:* The architectural ability for a single uniform interface reference variable to represent multiple distinct concrete object implementations at runtime.
+- *The Core Concept:* High-level consumers write code against abstract contracts, leaving individual concrete classes to manage the exact details of how operations are executed.
+- *Decoupled Design Benefits:* Using interfaces creates systems characterized by loose coupling, high flexibility, simple maintainability, and clean test isolation boundaries.
+- *Ubiquitous Framework Presence:* ASP.NET Core depends entirely on polymorphism to run its internal systems, including diagnostic logging tools (~ILogger~), configuration management systems (~IConfiguration~), and dependency injection mechanisms.
+- *The Architectural Rule:* Always build client applications to depend on clean, abstract contracts rather than specific concrete implementations.
+
+* 4 SOLID Principles
+
+** What & Why Is SOLID?
+SOLID stands for:
+#+begin_example
+  S  ───────────>  Single Responsibility Principle
+  O  ───────────>  Open Closed Principle
+  L  ───────────>  Liskov Substitution Principle
+  I  ───────────>  Interface Segregation Principle
+  D  ───────────>  Dependency Inversion Principle
+#+end_example
+
+In the context of ASP.NET Core, *SRP* and *DIP* are the heavy hitters because they appear everywhere:
+- Controllers & Services
+- Repositories & Middleware
+- Dependency Injection & Clean Architecture
+
+SOLID principles are among the most important concepts in Object-Oriented Programming. Many developers try to memorize the acronym without understanding the core drivers:
+- Why do these principles exist?
+- What problems do they solve?
+- How are they used in ASP.NET Core?
+
+** S — Single Responsibility Principle (SRP)
+*Definition*: A class should have only one reason to change.
+
+This means: every class should own *one responsibility* and therefore have *one reason to change*.
+
+/Bad Example (The "God" Controller):/
+#+BEGIN_SRC csharp
+  public class EmployeeController
+  {
+      public void Create()
+      {
+          // Issues:
+          // 1. Validate email
+          // 2. Save employee
+          // 3. Send email
+          // 4. Write log
+          // 5. Generate PDF
+          // 6. Return response
+      }
+  }
+#+END_SRC
+
+*Question:* How many reasons can this class change?
+- HTTP changes, Validation changes, Database changes, Email changes, Logging changes, PDF changes. *Too many.*
+
+/Good Design (The Separation):/
+Instead of one class doing everything, we delegate:
+- *Controller*: Owns HTTP concerns (Receive request -> Call service -> Return response).
+- *Service*: Owns Business logic (Rules, Workflow, Coordination).
+- *DbContext*: Owns Database concerns (Queries, SQL generation).
+
+Mental Models:
+- *Traffic Police*: Controls traffic (Controller).
+- *Chef*: Cooks food (Service).
+- *Doctor*: Treats patients (Specialist).
+
+** D — Dependency Inversion Principle (DIP)
+*Definition:* High-level modules should not depend on low-level modules. Both should depend on abstractions.
+
+In a bad design, the Controller says: /"I only work with EmployeeService."/
+
+#+BEGIN_SRC csharp
+  // Bad: Tight Coupling
+  public class EmployeeController
+  {
+      private readonly EmployeeService _service;
+  }
+#+END_SRC
+
+In a good design (DIP), the Controller says: /"Give me anything that follows the IEmployeeService contract."/
+
+#+BEGIN_SRC csharp
+  // Good: Abstraction
+  public class EmployeeController(IEmployeeService service)
+  {
+      private readonly IEmployeeService _service = service;
+  }
+#+END_SRC
+
+*Mental Model:* The USB-C Standard
+Think of your phone. It depends on the *USB-C standard* (the abstraction), not a specific *Samsung charger* or *Apple charger* (the implementation). You can swap the brick, and the phone still charges.
+
+*** The Architectural Dependency Inversion Diagram
+
+To fully appreciate why this is called Dependency "Inversion", compare the two structural dependency paths below. Notice how the arrows change directions:
+
+#+BEGIN_EXAMPLE
+  1. TIGHTLY COUPLED SYSTEM (Violates DIP)
+     The high-level controller points directly down to the volatile concrete worker.
+
+     ┌────────────────────┐              ┌─────────────────────┐
+     │ EmployeeController │ ───────────> │   EmployeeService   │
+     └────────────────────┘              └─────────────────────┘
+       (High-Level Module)                 (Low-Level Module)
+
+
+  2. DEPENDENCY INVERSION (Fulfills DIP)
+     Both modules point toward the stable, independent abstraction contract in the middle.
+     The dependency arrow from the implementation layer has been INVERTED.
+
+     ┌────────────────────┐              ┌─────────────────────┐
+     │ EmployeeController │ ───────────> │  IEmployeeService   │
+     └────────────────────┘              └─────────────────────┘
+       (High-Level Module)                 (Abstraction/Contract)
+                                                      ▲
+                                                      │ (Implements/Fulfills)
+                                                      │
+                                         ┌─────────────────────┐
+                                         │   EmployeeService   │
+                                         └─────────────────────┘
+                                           (Low-Level Module)
+#+END_EXAMPLE
+
+** O — Open/Closed Principle (OCP)
+*Definition:* Software entities should be open for extension, but closed for modification.
+
+Means, we should be able to add new behavior without changing existing code.
+
+/Bad Example (Violates OCP):/
+#+BEGIN_SRC csharp
+  public class PaymentService
+  {
+      public void Pay(string type)
+      {
+          if (type == "Bkash")
+          {
+              // Bkash payment
+          }
+          else if (type == "Nagad")
+          {
+              // Nagad payment
+          }
+          else if (type == "Card")
+          {
+              // Card payment
+          }
+      }
+  }
+#+END_SRC
+
+If the company requests adding a *Rocket* payment gateway, you are forced to modify ~PaymentService~ directly. If they ask for *PayPal* tomorrow, you must modify it again. This constantly introduces regression risks into old code.
+
+_Better Design (Fulfills OCP)_:
+/Establish a shared contract:/
+#+BEGIN_SRC csharp
+  public interface IPaymentService
+  {
+      void Pay(decimal amount);
+  }
+#+END_SRC
+
+/Create standalone implementations:/
+#+BEGIN_SRC csharp
+  public class BkashPaymentService : IPaymentService { }
+  public class NagadPaymentService : IPaymentService { }
+  public class CardPaymentService : IPaymentService { }
+#+END_SRC
+
+Need Rocket payment tomorrow? Just add a new class:
+#+BEGIN_SRC csharp
+  public class RocketPaymentService : IPaymentService { }
+#+END_SRC
+No existing code changes. The architecture is open for extension but closed for modification.
+
+*Benefits of OCP:*
+- Provides flexibility
+- Enhances maintainability
+- Facilitates extensibility
+- Lowers risk of breaking existing features
+
+*Mental Model*
+Think of a *USB-C port*. You can plug in a new charger, mouse, or flash drive (extension). The phone or laptop hardware remains completely unchanged (closed for modification).
+
+** L — Liskov Substitution Principle (LSP)
+*Definition:* Child classes should be replaceable with parent classes without breaking program behavior.
+
+/Good Example:/
+#+BEGIN_SRC csharp
+  public class Animal { public virtual void Speak() {} }
+  public class Dog : Animal { }
+  public class Cat : Animal { }
+#+END_SRC
+
+/You can safely substitute the instances seamlessly:/
+#+BEGIN_SRC csharp
+  Animal animal = new Dog();
+  animal = new Cat(); // Everything still behaves correctly.
+#+END_SRC
+
+*Bad Example:*
+/Consider a hierarchical relationship where ~Penguin~ inherits from ~Bird~:/
+#+BEGIN_SRC csharp
+  public class Bird { public virtual void Fly() {} }
+  public class Penguin : Bird { }
+#+END_SRC
+
+/This creates a behavioral problem because penguins cannot fly:/
+#+BEGIN_SRC csharp
+  Bird bird = new Penguin();
+  bird.Fly(); // Invalid, breaking runtime expectation!
+#+END_SRC
+This violates the Liskov Substitution Principle.
+
+*Rule of Thumb:* If a child class forces you to say: /"But this specific child cannot do that..."/, your inheritance abstraction is likely wrong.
+
+_Relationship with IS-A:_
+- *Good:* Dog IS-A Animal
+- *Bad:* Penguin IS-A FlyingBird
+In cases where real-world behavior diverges, *Composition* is often a better choice than inheritance.
+
+** I — Interface Segregation Principle (ISP)
+*Definition:* Clients should not depend on methods they don't use.
+
+_Meaning_: Small, focused interfaces are far better than massive, bloated interfaces.
+
+/Bad Example:/
+#+BEGIN_SRC csharp
+  public interface IAnimal
+  {
+      void Eat();
+      void Sleep();
+      void Fly();
+  }
+#+END_SRC
+If a ~Dog~ implements ~IAnimal~, it is forced to implement a ~Fly()~ method it cannot use.
+
+/Ugly Solution (Warning Sign):/
+#+BEGIN_SRC csharp
+  public void Fly()
+  {
+      throw new NotImplementedException(); // Warning flag!
+  }
+#+END_SRC
+
+_Better Design_:
+/Segregate the interfaces cleanly:/
+#+BEGIN_SRC csharp
+  public interface IAnimal { void Eat(); void Sleep(); }
+  public interface IFly { void Fly(); }
+
+  public class Dog : IAnimal { }
+  public class Bird : IAnimal, IFly { }
+#+END_SRC
+
+*Why ISP Matters?*
+- Avoids unused methods and fake implementations
+- Eliminates large, unmanageable interfaces and unnecessary coupling
+- Delivers flexibility, clarity, and system maintainability
+
+** Deep Dive: Architectural Correlations
+
+*** Relationship Between ISP and LSP
+An ISP violation often triggers a downstream LSP violation. For example, forcing a ~Dog~ to implement ~Fly()~ (ISP Violation) leads to code where an ~IAnimal~ variable assigned to a ~Dog~ crashes at runtime if ~.Fly()~ is invoked (LSP Violation). SOLID principles are deeply interconnected and support each other.
+
+_Real ASP.NET Core Example_:
+Instead of creating a giant ~IEverythingService~, break dependencies down into cohesive interfaces:
+- ~IEmployeeService~
+- ~ILeaveService~
+- ~IAttendanceService~
+
+*** How SOLID Principles Work Together
+- *Bad SRP* creates huge classes.
+- *Bad ISP* creates unexpected LSP problems.
+- *Bad DIP* creates rigid, tight coupling.
+- *Bad OCP* forces constant modifications to legacy code.
+
+** Interview Notes
+1. *SRP*: When you moved logic from the Controller to the Service.
+2. *DIP*: When you injected ~IEmployeeService~ instead of the concrete class.
+
+| Concept    | Session 2 Implementation    | SOLID Principle    |
+| :---       | :---                        | :---               |
+| *Layers*     | Controller -> Service -> DB | SRP                |
+| *Interfaces* | IService -> Service         | DIP                |
+| *DI*         | Program.cs Registration     | DIP Implementation |
+
+*Interview Notes:*
+- *What is SRP?* A class should have only one reason to change by owning a single responsibility.
+- *What is DIP?* High-level modules should depend on abstractions instead of concrete implementations to reduce coupling.
+- *DIP vs DI:* Dependency Inversion is the *Principle* (the goal); Dependency Injection is the *Technique* (the tool).
+- *What is OCP?* Software should allow new behavior to be added without modifying existing code.
+- *What is LSP?* Derived classes should be substitutable for their base classes without breaking program behavior.
+- *What is ISP?* Clients should not be forced to depend on methods they do not use.
+
+*** SOLID Cheat Sheet
+- *S* = One class, one reason to change.
+- *O* = Add features without modifying old code.
+- *L* = Children should safely replace parents.
+- *I* = Small, focused interfaces.
+- *D* = Depend on abstractions, not implementations.
