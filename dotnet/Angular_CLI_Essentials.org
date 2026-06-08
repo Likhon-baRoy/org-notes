@@ -1,5 +1,5 @@
 #+TITLE: Angular CLI Essentials Handbook
-#+OPTIONS: toc:2 num:t
+#+OPTIONS: toc:2 num:nil
 
 * Table of Contents                                                     :TOC:
 - [[#introduction-the-role-of-the-angular-cli][Introduction: The Role of the Angular CLI]]

@@ -1,5 +1,5 @@
 #+TITLE: .NET CLI Essentials Handbook
-#+OPTIONS: toc:2 num:t
+#+OPTIONS: toc:2 num:nil
 
 * Table of Contents                                                     :toc:
 - [[#introduction-the-power-of-the-net-toolchain][Introduction: The Power of the .NET Toolchain]]
