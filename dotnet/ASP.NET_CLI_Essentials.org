@@ -12,11 +12,12 @@
   - [[#22-orchestration-blueprint-workflow][2.2 Orchestration Blueprint Workflow]]
   - [[#23-structural-modification-commands][2.3 Structural Modification Commands]]
 - [[#3-project-templates--generation-engine][3. Project Templates & Generation Engine]]
-  - [[#31-discover-available-boilerplate-frameworks][3.1 Discover Available Boilerplate Frameworks]]
-  - [[#32-instantiate-a-basic-console-application][3.2 Instantiate a Basic Console Application]]
-  - [[#33-instantiate-an-mvc-web-application][3.3 Instantiate an MVC Web Application]]
-  - [[#34-instantiate-an-aspnet-core-web-api][3.4 Instantiate an ASP.NET Core Web API]]
-  - [[#35-instantiate-an-empty-web-baseline][3.5 Instantiate an Empty Web Baseline]]
+  - [[#31-understanding-the-difference-name--n-vs-output--o][3.1 Understanding the Difference: Name (-n) vs. Output (-o)]]
+  - [[#32-discover-available-boilerplate-frameworks][3.2 Discover Available Boilerplate Frameworks]]
+  - [[#33-instantiate-a-basic-console-application][3.3 Instantiate a Basic Console Application]]
+  - [[#34-instantiate-an-mvc-web-application][3.4 Instantiate an MVC Web Application]]
+  - [[#35-instantiate-an-aspnet-core-web-api][3.5 Instantiate an ASP.NET Core Web API]]
+  - [[#36-instantiate-an-empty-web-baseline][3.6 Instantiate an Empty Web Baseline]]
 - [[#4-the-compilation--execution-lifecycle][4. The Compilation & Execution Lifecycle]]
   - [[#41-build-and-compile-dependencies][4.1 Build and Compile Dependencies]]
   - [[#42-standard-execution-loop][4.2 Standard Execution Loop]]
@@ -119,49 +120,80 @@ Removes the project association from the solution file metadata without deleting
 
 * 3. Project Templates & Generation Engine
 
-The ~.NET Template Engine~ generates code scaffolding instantly based on curated boilerplate configurations.
+The ~.NET Template Engine~ generates code scaffolding instantly based on curated boilerplate configurations. When creating a project, beginners must master two foundational flags that dictate file layout and internal naming conventions:
+- ~-n~ or ~--name~: Specifies the internal program identity (sets the Namespace and the name of the ~.csproj~ file).
+- ~-o~ or ~--output~: Specifies the physical disk directory path where the files will be created.
 
-** 3.1 Discover Available Boilerplate Frameworks
+** 3.1 Understanding the Difference: Name (-n) vs. Output (-o)
+
+If you omit the flags, the CLI defaults to using your current command-line folder name for both the project name and the directory path. To avoid unorganized file dumps, choose your strategy carefully:
+
+*** Case A: Using only the Output Flag (-o)
+#+begin_src sh
+  dotnet new web -o WebApplication1
+#+end_src
+- *Result:* The CLI automatically creates a brand new directory named =WebApplication1=. Inside it, the internal code project files and namespace will also be called =WebApplication1.csproj=. This is the fastest shorthand for flat applications.
+
+*** Case B: Combining Name (-n) and Output (-o) for Enterprise Routing
+#+begin_src sh
+  dotnet new webapi --use-controllers -n HRMS.API -o src/HRMS.API
+#+end_src
+- *Result:* This is the professional standard approach. It dictates that the physical files should be neatly tucked away inside a nested source folder structure (=src/HRMS.API=), but the internal assembly file identity and project namespaces remain sharply named =HRMS.API=.
+
+*** 3.1.1 Visualizing the Flag Creation Output
+
+
+#+begin_example
+  Your Workspace Root/
+  ├── WebApplication1/             <-- Created via: dotnet new web -o WebApplication1
+  │   └── WebApplication1.csproj   <-- Inherits directory name internally
+  │
+  └── src/                         <-- Target destination set by -o src/HRMS.API
+      └── HRMS.API/
+          └── HRMS.API.csproj      <-- Clean naming set explicitly by -n HRMS.API
+#+end_example
+
+** 3.2 Discover Available Boilerplate Frameworks
 Lists all project styles matching local SDK patterns alongside their shorthand aliases.
 #+begin_src sh
   dotnet new list
 #+end_src
 
-** 3.2 Instantiate a Basic Console Application
+** 3.3 Instantiate a Basic Console Application
 Standard text-based layout suited for foundational scripting and algorithmic testing.
 #+begin_src sh
-  dotnet new console -n HelloApp
+  dotnet new console -n HelloApp -o HelloApp
 #+end_src
 
-** 3.3 Instantiate an MVC Web Application
+** 3.4 Instantiate an MVC Web Application
 Builds an interactive web architecture utilizing the classic Model-View-Controller pattern.
 #+begin_src sh
-  dotnet new mvc -n MvcApp
+  dotnet new mvc -n MvcApp -o MvcApp
 #+end_src
 
-*** 3.3.1 Architectural Layout Responsibilities:
+*** 3.4.1 Architectural Layout Responsibilities:
 - *Controllers/*: Intercepts inbound web streams to coordinate responses.
 - *Models/*: Pure structures representing entity records and data state.
 - *Views/*: Client layouts containing structural markup and C# interpolation (~.cshtml~).
 - *wwwroot/*: Public folder serving raw static files (stylesheets, scripts, images).
 
-** 3.4 Instantiate an ASP.NET Core Web API
+** 3.5 Instantiate an ASP.NET Core Web API
 The standard project choice for building high-performance, decoupled JSON microservices.
 
-*** 3.4.1 Minimal API Layout (Lightweight, Single-File Architecture)
+*** 3.5.1 Minimal API Layout (Lightweight, Single-File Architecture)
 #+begin_src sh
-  dotnet new webapi -n ApiApp
+  dotnet new webapi -n ApiApp -o ApiApp
 #+end_src
 
-*** 3.4.2 Controller-Based Layout (Standard Object Separation)
+*** 3.5.2 Controller-Based Layout (Standard Object Separation)
 #+begin_src sh
-  dotnet new webapi --use-controllers -n ApiApp
+  dotnet new webapi --use-controllers -n ApiApp -o ApiApp
 #+end_src
 
-** 3.5 Instantiate an Empty Web Baseline
-Generates a absolute baseline configuration containing only a pipeline loop, ideal for building custom processing stacks or middleware setups from scratch.
+** 3.6 Instantiate an Empty Web Baseline
+Generates an absolute baseline configuration containing only a pipeline loop, ideal for building custom processing stacks or middleware setups from scratch.
 #+begin_src sh
-  dotnet new web -n EmptyWeb
+  dotnet new web -o EmptyWeb
 #+end_src
 
 * 4. The Compilation & Execution Lifecycle
