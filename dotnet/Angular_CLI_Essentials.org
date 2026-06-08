@@ -1,0 +1,188 @@
+#+TITLE: Angular CLI Essentials Handbook
+#+OPTIONS: toc:2 num:t
+
+* Table of Contents                                                     :TOC:
+- [[#introduction-the-role-of-the-angular-cli][Introduction: The Role of the Angular CLI]]
+- [[#1-global-toolchain-installation--environment-diagnostics][1. Global Toolchain Installation & Environment Diagnostics]]
+  - [[#11-global-framework-installation][1.1 Global Framework Installation]]
+  - [[#12-environment-verification--diagnostics][1.2 Environment Verification & Diagnostics]]
+- [[#2-the-schematics-engine--generation-safeguards][2. The Schematics Engine & Generation Safeguards]]
+  - [[#21-discover-blueprint-capabilities][2.1 Discover Blueprint Capabilities]]
+  - [[#22-the-safeguard-variable-dry-run-execution][2.2 The Safeguard Variable: Dry-Run Execution]]
+  - [[#23-eliminating-scaffolding-noise-skip-tests][2.3 Eliminating Scaffolding Noise: Skip Tests]]
+- [[#3-angular-architecture-artifact-scaffolding][3. Angular Architecture Artifact Scaffolding]]
+  - [[#31-components-presentation--ui-layer][3.1 Components (Presentation & UI Layer)]]
+  - [[#32-services-business-logic--http-client-layer][3.2 Services (Business Logic & HTTP Client Layer)]]
+  - [[#33-http-interceptors-the-requestresponse-pipeline][3.3 HTTP Interceptors (The Request/Response Pipeline)]]
+  - [[#34-route-guards-navigation-security][3.4 Route Guards (Navigation Security)]]
+- [[#4-third-party-feature-integration--package-configurations][4. Third-Party Feature Integration & Package Configurations]]
+  - [[#41-understanding-the-dependency-injection-gap][4.1 Understanding the Dependency Injection Gap]]
+  - [[#42-comprehensive-bootstrap-ui-integration][4.2 Comprehensive Bootstrap UI Integration]]
+  - [[#43-notification-overlay-configuration][4.3 Notification Overlay Configuration]]
+- [[#5-quick-reference-shorthand-summary][5. Quick Reference Shorthand Summary]]
+
+* Introduction: The Role of the Angular CLI
+The Angular Command Line Interface (CLI) is the central orchestration engine for modern Single Page Applications (SPAs). It abstracts away complex build tools like Webpack or Esbuild, handles the generation of modular components conforming to style guides, runs local optimization pipelines, and wires up external library configurations.
+
+* 1. Global Toolchain Installation & Environment Diagnostics
+
+Before constructing a web frontend, you must install the global command-line binaries via the Node Package Manager (~npm~).
+
+** 1.1 Global Framework Installation
+
+*** 1.1.1 Install the Latest Stable Release
+Installs the absolute newest stable compilation toolchain globally onto your machine.
+#+begin_src sh
+  npm install -g @angular/cli
+#+end_src
+
+*** 1.1.2 Install a Specific Major Version Baseline
+Crucial for working on enterprise applications that are locked to specific lifecycle platforms (e.g., matching a backend running target Angular 17 libraries).
+#+begin_src sh
+  npm install -g @angular/cli@17
+#+end_src
+
+** 1.2 Environment Verification & Diagnostics
+To inspect active version maps, verify cross-platform compiler states, or report configuration layouts, use the diagnostic commands below.
+
+*** 1.2.1 Interactive Environment Trace
+Displays an ASCII visual map detailing the active Angular CLI release version, local Node.js environment variables, OS architecture, and package manager versions.
+#+begin_src sh
+  ng version
+#+end_src
+
+*** 1.2.2 Shorthand Diagnostics Alias
+#+begin_src sh
+  ng v
+#+end_src
+
+* 2. The Schematics Engine & Generation Safeguards
+
+The Angular CLI contains an intelligent code generation engine called *Schematics*. Instead of creating raw text files manually, Schematics uses official blueprints to scaffold files, hook up testing blocks, and register new features directly into their parent architecture scopes.
+
+** 2.1 Discover Blueprint Capabilities
+Lists every available built-in schematic framework option along with description flags and shorthand aliases.
+#+begin_src sh
+  ng generate --help
+#+end_src
+
+** 2.2 The Safeguard Variable: Dry-Run Execution
+When running scaffolding operations in large codebases, a mistake can scatter incorrect files across multiple nested folder paths. Append the `--dry-run` flag to run a simulation. The engine prints the exact folder modifications it *would* make, without altering any data on disk.
+
+#+begin_src sh
+  # Simulates file placement safely without writing anything to disk
+  ng generate component navigation-bar --dry-run
+#+end_src
+
+** 2.3 Eliminating Scaffolding Noise: Skip Tests
+By default, the blueprint engine automatically generates a unit-testing specification file (~.spec.ts~) alongside every new artifact. If you are practicing rapid prototyping or separating test suites out of core paths, use this parameter to prevent test-file creation:
+
+#+begin_src sh
+  ng generate component navigation-bar --skip-tests
+#+end_src
+
+* 3. Angular Architecture Artifact Scaffolding
+
+
+
+A standard enterprise convention is to prefix shared architectural directories with an underscore (e.g., `_services/`, `_interceptors/`, `_guards/`). This visually separates core structural infrastructure from regular feature modules and forces them to the top of the workspace directory view.
+
+** 3.1 Components (Presentation & UI Layer)
+Components manage individual layout views and bind logic directly onto the DOM structure.
+
+*** 3.1.1 Standard Scaffolding Command
+#+begin_src sh
+  ng generate component component-name
+#+end_src
+
+*** 3.1.2 Streamlined Production Shorthand
+#+begin_src sh
+  ng g c component-name
+#+end_src
+
+** 3.2 Services (Business Logic & HTTP Client Layer)
+Services encapsulate API communication calls and maintain state across the lifecycle of disparate, decoupled layout components.
+
+#+begin_src sh
+  # Automatically scaffolds an Account processing engine inside the _services directory
+  ng g s _services/account
+#+end_src
+
+** 3.3 HTTP Interceptors (The Request/Response Pipeline)
+Interceptors work as traffic checkpoints on the Angular HTTP client pipeline. They inject global authentication tokens onto outbound requests or catch incoming response failures.
+
+#+begin_src sh
+  # Generates an global error handler interceptor without unit testing artifacts
+  ng g interceptor _interceptors/error --skip-tests
+#+end_src
+
+** 3.4 Route Guards (Navigation Security)
+Guards validate application routing transitions before rendering a view—for example, validating if an active identity payload is present before letting a user visit `/admin`.
+
+#+begin_src sh
+  # Generates a clean route guard definition
+  ng g g _guards/auth --skip-tests
+#+end_src
+
+* 4. Third-Party Feature Integration & Package Configurations
+
+There is a major difference between updating a project workspace via native Angular `ng add` schematics versus pulling low-level files using native Node `npm install`.
+
+** 4.1 Understanding the Dependency Injection Gap
+
+| Command Style | Mechanical Workflow                                                                                     | Best Used For                                                       |
+|---------------+---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------|
+| ~ng add~        | Installs raw files via npm *AND* automatically modifies project files like ~angular.json~ or ~app.config.ts~. | Complex framework libraries requiring automated registration hooks. |
+| ~npm install~   | Downloads package binaries into the local ~node_modules/~ folder without modifying application code.      | Pure styling kits, utilities, or simple functional dependencies.    |
+
+** 4.2 Comprehensive Bootstrap UI Integration
+
+*** 4.2.1 Automated Schematic Method (Recommended)
+This approach automatically installs the underlying library packages and configures all structural style registrations into your workspace files.
+#+begin_src sh
+  ng add ngx-bootstrap
+#+end_src
+
+*** 4.2.2 Manual Node Download Alternative
+#+begin_src sh
+  npm install ngx-bootstrap --save
+#+end_src
+
+*** 4.2.3 Full Responsive Enterprise Stack Integration
+Downloads the base layout framework, utility icons, and the Angular-native component wrapper at once:
+#+begin_src sh
+  npm install ngx-bootstrap bootstrap font-awesome
+#+end_src
+
+*** 4.2.4 Lock Target Dependencies to Explicit Version Schemes
+#+begin_src sh
+  npm install ngx-bootstrap@11 bootstrap@5 font-awesome
+#+end_src
+
+** 4.3 Notification Overlay Configuration
+To add toast warning overlays, download the underlying node modules and manually reference their global stylesheets inside the project config file (~angular.json~).
+
+#+begin_src sh
+  # Step 1: Install the package assets locally
+  npm install ngx-toastr
+#+end_src
+
+*** 4.3.1 Required Global Styling Registration
+Open your global `angular.json` configuration manifest file and ensure the default theme layer is attached to the build schema array:
+#+begin_src js
+  "styles": [
+    "node_modules/bootstrap/dist/css/bootstrap.min.css",
+    "node_modules/ngx-toastr/toastr.css",
+    "src/styles.css"
+  ]
+#+end_src
+
+* 5. Quick Reference Shorthand Summary
+
+- *ng v* = Run toolchain environment verification diagnostics.
+- *-d / --dry-run* = Simulate generation changes without writing files to disk.
+- *--skip-tests* = Prevent creation of unit-testing spec files.
+- *ng g c* = Scaffold a fresh view presentation component block.
+- *ng g s* = Scaffold a reusable, injectable business-logic service wrapper.
+- *ng g interceptor* = Insert a global interceptor into the HTTP data pipeline.
+- *ng g g* = Establish an authorization guard boundary layer over routing targets.

@@ -1,0 +1,295 @@
+#+TITLE: .NET CLI Essentials Handbook
+#+OPTIONS: toc:2 num:t
+
+* Table of Contents                                                     :toc:
+- [[#introduction-the-power-of-the-net-toolchain][Introduction: The Power of the .NET Toolchain]]
+- [[#1-toolchain-verification--environment-diagnostics][1. Toolchain Verification & Environment Diagnostics]]
+  - [[#11-check-active-sdk-version][1.1 Check Active SDK Version]]
+  - [[#12-comprehensive-environment-info][1.2 Comprehensive Environment Info]]
+  - [[#13-list-installed-sdks][1.3 List Installed SDKs]]
+  - [[#14-list-installed-runtimes][1.4 List Installed Runtimes]]
+- [[#2-solution-topology--structural-organization][2. Solution Topology & Structural Organization]]
+  - [[#22-orchestration-blueprint-workflow][2.2 Orchestration Blueprint Workflow]]
+  - [[#23-structural-modification-commands][2.3 Structural Modification Commands]]
+- [[#3-project-templates--generation-engine][3. Project Templates & Generation Engine]]
+  - [[#31-discover-available-boilerplate-frameworks][3.1 Discover Available Boilerplate Frameworks]]
+  - [[#32-instantiate-a-basic-console-application][3.2 Instantiate a Basic Console Application]]
+  - [[#33-instantiate-an-mvc-web-application][3.3 Instantiate an MVC Web Application]]
+  - [[#34-instantiate-an-aspnet-core-web-api][3.4 Instantiate an ASP.NET Core Web API]]
+  - [[#35-instantiate-an-empty-web-baseline][3.5 Instantiate an Empty Web Baseline]]
+- [[#4-the-compilation--execution-lifecycle][4. The Compilation & Execution Lifecycle]]
+  - [[#41-build-and-compile-dependencies][4.1 Build and Compile Dependencies]]
+  - [[#42-standard-execution-loop][4.2 Standard Execution Loop]]
+  - [[#43-reactive-debugging-context-hot-reload-engine][4.3 Reactive Debugging Context (Hot Reload Engine)]]
+  - [[#44-build-production-ready-distributions][4.4 Build Production-Ready Distributions]]
+- [[#5-dependency-management-via-nuget][5. Dependency Management via NuGet]]
+  - [[#51-inject-the-latest-stable-variant-of-a-package][5.1 Inject the Latest Stable Variant of a Package]]
+  - [[#52-inject-a-pinpoint-explicit-package-version][5.2 Inject a Pinpoint Explicit Package Version]]
+  - [[#53-purge-a-package-assembly-from-memory][5.3 Purge a Package Assembly from Memory]]
+  - [[#54-list-current-assembly-package-configurations][5.4 List Current Assembly Package Configurations]]
+- [[#6-entity-framework-core-tooling--schema-migrations][6. Entity Framework Core Tooling & Schema Migrations]]
+  - [[#61-initialize-global-infrastructure-manifests][6.1 Initialize Global Infrastructure Manifests]]
+  - [[#62-managing-the-schema-migration-lifecycle][6.2 Managing the Schema Migration Lifecycle]]
+- [[#7-source-control-optimization--secret-isolation][7. Source Control Optimization & Secret Isolation]]
+  - [[#71-auto-generate-compiler-exclusion-rules-gitignore][7.1 Auto-Generate Compiler Exclusion Rules (~.gitignore~)]]
+  - [[#72-configuration-masking--sensitive-variant-management][7.2 Configuration Masking & Sensitive Variant Management]]
+
+* Introduction: The Power of the .NET Toolchain
+The .NET Command Line Interface (CLI) is a cross-platform toolchain that handles the entire development lifecycle—from project creation and local compilation to dependency configuration, database migrations, and production deployment. Mastering the CLI frees you from heavy IDE dependencies (like Visual Studio) and forms the foundation of automated CI/CD pipelines.
+
+* 1. Toolchain Verification & Environment Diagnostics
+
+Before constructing applications, use these diagnostic parameters to inspect your local runtime environment and determine compilation capabilities.
+
+** 1.1 Check Active SDK Version
+Returns the exact version of the active software development kit currently orchestrating compilation.
+#+begin_src sh
+  dotnet --version
+#+end_src
+
+** 1.2 Comprehensive Environment Info
+Provides deep diagnostic output detailing the host environment, architecture, operating system, installation paths, and cryptographic signing keys.
+#+begin_src sh
+  dotnet --info
+#+end_src
+
+** 1.3 List Installed SDKs
+Lists all installed .NET SDK packages on your machine. Essential for identifying if you have the correct version required by older or newer codebases.
+#+begin_src sh
+  dotnet --list-sdks
+#+end_src
+
+** 1.4 List Installed Runtimes
+Displays the available targeted runtime execution environments (e.g., Microsoft.NETCore.App, Microsoft.AspNetCore.App). Runtimes execute compiled code but cannot compile it.
+#+begin_src sh
+  dotnet --list-runtimes
+#+end_src
+
+* 2. Solution Topology & Structural Organization
+
+Professional .NET systems use a tiered structural layout. A Solution (~.sln~) acts as an overarching metadata container that manages references between individual project assemblies (~.csproj~).
+
+*** 2.1 Visualizing Clean Architecture Topology
+
+
+#+begin_example
+  Solution Root Directory (HRMS/)
+  ├── HRMS.sln                          <-- Global Orchestrator Container
+  ├── src/
+  │   ├── HRMS.API/HRMS.API.csproj      <-- Presentation Layer (Web API)
+  │   ├── HRMS.Core/HRMS.Core.csproj    <-- Core Business Logic Layer
+  │   └── HRMS.Infra/HRMS.Infra.csproj  <-- Data Infrastructure Layer
+#+end_example
+
+** 2.2 Orchestration Blueprint Workflow
+To build a clean, multi-project solution structure from scratch without an IDE, execute this sequence:
+
+#+begin_src bash
+  # Step 1: Create the root system folder and navigate into it
+  mkdir HRMS
+  cd HRMS
+
+  # Step 2: Initialize an empty global solution file
+  dotnet new sln -n HRMS
+
+  # Step 3: Instantiate a Web API project inside a dedicated folder
+  dotnet new webapi --use-controllers -n HRMS.API
+
+  # Step 4: Link the newly built project assembly to the solution canvas
+  dotnet sln add HRMS.API/HRMS.API.csproj
+#+end_src
+
+** 2.3 Structural Modification Commands
+
+*** 2.3.1 Create a Generic Solution File
+#+begin_src sh
+  dotnet new sln -n MySolution
+#+end_src
+
+*** 2.3.2 Attach a Project to the Solution
+#+begin_src sh
+  dotnet sln add ApiApp/ApiApp.csproj
+#+end_src
+
+*** 2.3.3 Remove a Project Reference from the Solution
+Removes the project association from the solution file metadata without deleting the actual code directories from disk.
+#+begin_src sh
+  dotnet sln remove ApiApp/ApiApp.csproj
+#+end_src
+
+* 3. Project Templates & Generation Engine
+
+The ~.NET Template Engine~ generates code scaffolding instantly based on curated boilerplate configurations.
+
+** 3.1 Discover Available Boilerplate Frameworks
+Lists all project styles matching local SDK patterns alongside their shorthand aliases.
+#+begin_src sh
+  dotnet new list
+#+end_src
+
+** 3.2 Instantiate a Basic Console Application
+Standard text-based layout suited for foundational scripting and algorithmic testing.
+#+begin_src sh
+  dotnet new console -n HelloApp
+#+end_src
+
+** 3.3 Instantiate an MVC Web Application
+Builds an interactive web architecture utilizing the classic Model-View-Controller pattern.
+#+begin_src sh
+  dotnet new mvc -n MvcApp
+#+end_src
+
+*** 3.3.1 Architectural Layout Responsibilities:
+- *Controllers/*: Intercepts inbound web streams to coordinate responses.
+- *Models/*: Pure structures representing entity records and data state.
+- *Views/*: Client layouts containing structural markup and C# interpolation (~.cshtml~).
+- *wwwroot/*: Public folder serving raw static files (stylesheets, scripts, images).
+
+** 3.4 Instantiate an ASP.NET Core Web API
+The standard project choice for building high-performance, decoupled JSON microservices.
+
+*** 3.4.1 Minimal API Layout (Lightweight, Single-File Architecture)
+#+begin_src sh
+  dotnet new webapi -n ApiApp
+#+end_src
+
+*** 3.4.2 Controller-Based Layout (Standard Object Separation)
+#+begin_src sh
+  dotnet new webapi --use-controllers -n ApiApp
+#+end_src
+
+** 3.5 Instantiate an Empty Web Baseline
+Generates a absolute baseline configuration containing only a pipeline loop, ideal for building custom processing stacks or middleware setups from scratch.
+#+begin_src sh
+  dotnet new web -n EmptyWeb
+#+end_src
+
+* 4. The Compilation & Execution Lifecycle
+
+These commands control local compilation, live debugging loops, and optimized production building.
+
+** 4.1 Build and Compile Dependencies
+Validates syntax rules, compiles source files into intermediate language binaries (~.dll~), and lists structural compilation errors.
+#+begin_src sh
+  dotnet build
+#+end_src
+
+** 4.2 Standard Execution Loop
+Triggers a background build step and executes the entry point pipeline immediately within an active console process.
+#+begin_src sh
+  dotnet run
+#+end_src
+
+** 4.3 Reactive Debugging Context (Hot Reload Engine)
+Monitors file state across the repository workspace. Any code modification triggers a real-time hot-reload update to the running app without requiring a manual restart loop.
+#+begin_src sh
+  dotnet watch run
+#+end_src
+
+** 4.4 Build Production-Ready Distributions
+Compiles code with optimization flags enabled, strips diagnostic hooks, and packages binaries into an isolated directory ready for cloud infrastructure.
+#+begin_src sh
+  dotnet publish -c Release -o publish/
+#+end_src
+
+* 5. Dependency Management via NuGet
+
+Manage code dependencies and package ecosystems using the central NuGet package index.
+
+** 5.1 Inject the Latest Stable Variant of a Package
+#+begin_src sh
+  dotnet add package Microsoft.EntityFrameworkCore
+#+end_src
+
+** 5.2 Inject a Pinpoint Explicit Package Version
+Essential for keeping framework libraries matching database providers or specific enterprise platforms.
+#+begin_src sh
+  dotnet add package Microsoft.EntityFrameworkCore --version 8.0.0
+#+end_src
+
+** 5.3 Purge a Package Assembly from Memory
+Strips package configurations out of target metadata files and cleans up local references.
+#+begin_src sh
+  dotnet remove package Microsoft.EntityFrameworkCore
+#+end_src
+
+** 5.4 List Current Assembly Package Configurations
+Prints a tree diagram detailing every active package dependency running inside the project.
+#+begin_src sh
+  dotnet list package
+#+end_src
+
+* 6. Entity Framework Core Tooling & Schema Migrations
+
+Entity Framework Core (EF Core) requires specialized object tools extensions to bridge the gap between application models and relational database schemas.
+
+** 6.1 Initialize Global Infrastructure Manifests
+
+*** 6.1.1 Add Global EF Core Command Tooling
+#+begin_src sh
+  dotnet tool install --global dotnet-ef
+#+end_src
+
+*** 6.1.2 Sync Global Tooling to Modern Releases
+#+begin_src sh
+  dotnet tool update --global dotnet-ef
+#+end_src
+
+*** 6.1.3 Confirm Operational Tooling Status
+#+begin_src sh
+  dotnet ef --version
+#+end_src
+
+** 6.2 Managing the Schema Migration Lifecycle
+
+*** 6.2.1 Generate a New Migration Package
+Scans changes inside C# model declarations against current database snapshots to generate code blueprints detailing schema evolution adjustments.
+#+begin_src sh
+  dotnet ef migrations add UserEntityUpdated
+#+end_src
+
+*** 6.2.2 Push Database Schema Updates
+Applies unmapped local code modifications directly onto the targeted database engine instance.
+#+begin_src sh
+  dotnet ef database update
+#+end_src
+
+*** 6.2.3 Undo the Last Migration Package
+Strips out the newest migration step from your local project files. *Caution:* This only works if that migration has not yet been applied to a database via `database update`.
+#+begin_src sh
+  dotnet ef migrations remove
+#+end_src
+
+*** 6.2.4 Wipe out a Database Instance
+Drops the target database schema, completely wiping out all stored tables and records.
+#+begin_src sh
+  dotnet ef database drop
+#+end_src
+
+* 7. Source Control Optimization & Secret Isolation
+
+** 7.1 Auto-Generate Compiler Exclusion Rules (~.gitignore~)
+Compilers generate transient temporary binaries (~/bin~, ~/obj~, local caching modules) that change constantly and do not belong in your shared codebase history. Generate a standardized .NET template rule file instantly:
+#+begin_src sh
+  dotnet new gitignore
+#+end_src
+
+** 7.2 Configuration Masking & Sensitive Variant Management
+Never push production keys, connection strings, or cloud access passwords into public git platforms.
+
+*** 7.2.1 Isolation Strategy Checklist:
+1. Store configurations in separate staging profiles like ~appsettings.json~ and ~appsettings.Production.json~.
+2. Explicitly add sensitive production settings profiles directly into your global ~.gitignore~ matrix.
+3. Commit a safe structural file called ~appsettings.json.example~ to the code repository. This provides future developers a clear architectural layout blueprint without exposing live production data.
+
+*** 7.2.2 Architecture Example Layout (~appsettings.json.example~)
+#+begin_src js
+  {
+    "ConnectionStrings": {
+      "DefaultConnection": "Server=YOUR_SERVER;Database=YOUR_DB;User Id=YOUR_USER;Password=YOUR_PASSWORD;"
+    },
+    "JwtSettings": {
+      "Secret": "PLACEHOLDER_FOR_SECURE_TOKEN_GENERATION_KEY"
+    }
+  }
+#+end_src
